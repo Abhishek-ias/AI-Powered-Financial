@@ -39,6 +39,8 @@ In all three cases, customers either give up or make uninformed decisions.
 
 ## 3. Solution
 
+> **AI Understands → Rules Validate → Human Approves → Audit Records**
+
 An AI copilot that:
 
 - **Understands intent** from natural language using structured LLM classification
