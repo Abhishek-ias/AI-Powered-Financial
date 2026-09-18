@@ -1,5 +1,5 @@
 import React from 'react';
-import { Shield, Sparkles, User, Database, Server } from 'lucide-react';
+import { Shield, Sparkles, User, Server, Database } from 'lucide-react';
 import { Badge } from './Badge';
 import { getActiveUser, setActiveUser } from '../../api/client';
 import { ReadyStatus, UserRole } from '../../types';
@@ -32,71 +32,73 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="app-header">
-      {/* Brand & Tagline */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+    <header
+      style={{
+        height: 'var(--header-height)',
+        background: 'var(--bg-surface)',
+        borderBottom: '1px solid var(--border-subtle)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '0 var(--space-6)',
+        position: 'sticky',
+        top: 0,
+        zIndex: 50,
+      }}
+    >
+      {/* Brand & Product Identity */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
         <div
           style={{
-            width: '38px',
-            height: '38px',
-            borderRadius: 'var(--radius-md)',
-            background: 'var(--primary-gradient)',
+            width: '32px',
+            height: '32px',
+            borderRadius: 'var(--radius-sm)',
+            background: 'var(--primary)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 2px 8px rgba(59, 130, 246, 0.4)',
           }}
         >
-          <Shield size={22} color="#ffffff" />
+          <Shield size={18} color="#ffffff" />
         </div>
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
-            <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.25rem', letterSpacing: '-0.03em' }}>
-              ClaimSahay
-            </span>
-            <Badge variant="blue" size="sm">
-              <Sparkles size={11} style={{ marginRight: '3px' }} />
-              Copilot
-            </Badge>
-          </div>
-          <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-            AI Financial Journey Copilot • Team NOVA
-          </p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <span style={{ fontWeight: 700, fontSize: '1.0625rem', letterSpacing: '-0.02em', color: '#ffffff' }}>
+            ClaimSahay
+          </span>
+          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', borderLeft: '1px solid var(--border-medium)', paddingLeft: '0.5rem' }}>
+            AI Financial Journey Copilot
+          </span>
         </div>
       </div>
 
-      {/* Center/Status Badges */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-        {/* Backend Heartbeat */}
+      {/* Center Status Indicators */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
         <Badge variant={backendOnline ? 'green' : 'red'}>
-          <Server size={12} style={{ marginRight: '4px' }} />
-          {backendOnline ? 'Backend Online :3000' : 'Backend Disconnected'}
+          <Server size={11} />
+          <span>{backendOnline ? 'Backend Online' : 'Backend Disconnected'}</span>
         </Badge>
 
-        {/* Sandbox/Mock Provider Label */}
-        {readyStatus && (
-          <Badge variant="amber">
-            <Database size={12} style={{ marginRight: '4px' }} />
-            Sandbox Environment ({readyStatus.providerSummary.mockCount} Mocks)
-          </Badge>
-        )}
+        <Badge variant="amber">
+          <Database size={11} />
+          <span>Sandbox / Mock Mode</span>
+        </Badge>
       </div>
 
-      {/* Right Controls: Demo Identity Switcher */}
+      {/* Right Controls: Persona Switcher */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
         <div
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '0.5rem',
-            background: 'rgba(30, 41, 59, 0.7)',
-            padding: '0.35rem 0.75rem',
-            borderRadius: 'var(--radius-md)',
+            gap: '0.375rem',
+            background: 'var(--bg-surface-elevated)',
+            padding: '0.25rem 0.625rem',
+            borderRadius: 'var(--radius-sm)',
             border: '1px solid var(--border-subtle)',
           }}
         >
-          <User size={15} style={{ color: 'var(--text-secondary)' }} />
-          <span style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)' }}>Persona:</span>
+          <User size={13} style={{ color: 'var(--text-muted)' }} />
+          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Persona:</span>
           <select
             value={currentUser.userId}
             onChange={handleUserSelect}
@@ -104,8 +106,8 @@ export const Header: React.FC<HeaderProps> = ({
               background: 'transparent',
               border: 'none',
               color: 'var(--text-primary)',
-              fontSize: '0.8125rem',
-              fontWeight: 600,
+              fontSize: '0.75rem',
+              fontWeight: 500,
               outline: 'none',
               cursor: 'pointer',
             }}

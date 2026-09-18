@@ -1,5 +1,5 @@
 import React from 'react';
-import { BookOpen, ShieldCheck, Pin, FileText, CheckCircle2, Bookmark } from 'lucide-react';
+import { Bookmark, Pin, ShieldCheck, FileText } from 'lucide-react';
 import { PolicyCitation as PolicyCitationType } from '../../types';
 import { Badge } from '../common/Badge';
 
@@ -23,17 +23,19 @@ export const PolicyCitation: React.FC<PolicyCitationProps> = ({
   version = '2024-v1',
   score = 0.94,
 }) => {
-  const sectionName = matchedClause?.section || citation?.section || 'Coverage Terms';
+  const sectionName = matchedClause?.section || citation?.section || 'Room Rent';
   const pageNum = matchedClause?.page || citation?.page || 12;
-  const content = matchedClause?.content || 'Clause content retrieved from policy schedule.';
+  const content =
+    matchedClause?.content ||
+    'Room, Boarding, and Nursing Expenses as provided by the Hospital / Nursing Home: Up to 1% of the Sum Insured per day, subject to a maximum of ₹5,000 per day for normal room.';
   const polNum = citation?.policy || policyNumber;
   const ver = citation?.version || version;
 
   return (
     <div
       style={{
-        background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.85) 100%)',
-        border: '1px solid rgba(96, 165, 250, 0.3)',
+        background: 'var(--surface-sunken)',
+        border: '1px solid var(--border-subtle)',
         borderRadius: 'var(--radius-md)',
         padding: '1.25rem',
         display: 'flex',
@@ -41,68 +43,44 @@ export const PolicyCitation: React.FC<PolicyCitationProps> = ({
         gap: '0.875rem',
       }}
     >
-      {/* Header: Section, Page, and Pinned Version */}
+      {/* 20. POLICY SOURCE Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.5rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <div
+        <div>
+          <span
             style={{
-              width: '32px',
-              height: '32px',
-              borderRadius: 'var(--radius-sm)',
-              background: 'rgba(59, 130, 246, 0.15)',
-              border: '1px solid rgba(59, 130, 246, 0.3)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
+              fontSize: '0.6875rem',
+              fontWeight: 700,
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+              color: 'var(--text-muted)',
             }}
           >
-            <Bookmark size={16} color="#60a5fa" />
-          </div>
-
-          <div>
-            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>
-              Pinned Policy Citation
-            </div>
-            <h4 style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-primary)', marginTop: '0.125rem' }}>
-              Section: {sectionName} (Page {pageNum})
-            </h4>
+            Policy Source
+          </span>
+          <h4 style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-primary)', marginTop: '0.125rem' }}>
+            SafeGuard Health Insurance
+          </h4>
+          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+            Contract: {polNum} • Pinned version: <strong>{ver}</strong>
           </div>
         </div>
 
-        <div style={{ display: 'flex', gap: '0.375rem', alignItems: 'center', flexWrap: 'wrap' }}>
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.25rem',
-              background: 'rgba(59, 130, 246, 0.15)',
-              border: '1px solid rgba(59, 130, 246, 0.3)',
-              borderRadius: '9999px',
-              padding: '0.2rem 0.6rem',
-              fontSize: '0.6875rem',
-              fontWeight: 600,
-              color: '#93c5fd',
-            }}
-            title="Policy version pinned deterministically to prevent floating clause shifts"
-          >
-            <Pin size={11} />
-            <span>Pinned: {ver}</span>
-          </div>
-
-          <Badge variant="blue">Match: {Math.round(score * 100)}%</Badge>
+        <div style={{ display: 'flex', gap: '0.375rem', alignItems: 'center' }}>
+          <Badge variant="blue">Clause 4.2 • Page {pageNum}</Badge>
+          <Badge variant="gray">Match: {Math.round(score * 100)}%</Badge>
         </div>
       </div>
 
-      {/* Verbatim Clause Content */}
+      {/* Verbatim Clause Text */}
       <blockquote
         style={{
           margin: 0,
-          padding: '0.875rem 1rem',
-          background: 'rgba(15, 23, 42, 0.6)',
-          borderLeft: '3px solid #3b82f6',
+          padding: '0.75rem 1rem',
+          background: 'var(--surface-card)',
+          borderLeft: '3px solid var(--primary)',
           borderRadius: '0 var(--radius-sm) var(--radius-sm) 0',
           fontSize: '0.875rem',
-          color: '#e2e8f0',
+          color: 'var(--text-primary)',
           lineHeight: 1.5,
           fontStyle: 'italic',
         }}
@@ -110,31 +88,9 @@ export const PolicyCitation: React.FC<PolicyCitationProps> = ({
         "{content}"
       </blockquote>
 
-      {/* Citation Metadata Footer */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          fontSize: '0.75rem',
-          color: 'var(--text-muted)',
-          borderTop: '1px solid rgba(255, 255, 255, 0.05)',
-          paddingTop: '0.5rem',
-          flexWrap: 'wrap',
-          gap: '0.5rem',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
-          <FileText size={13} color="var(--text-secondary)" />
-          <span>
-            Contract: <strong style={{ color: 'var(--text-primary)' }}>{polNum}</strong> • Version: {ver}
-          </span>
-        </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', color: '#34d399' }}>
-          <ShieldCheck size={13} />
-          <span>Grounded in Active Policy Schedule</span>
-        </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', fontSize: '0.75rem', color: 'var(--success)' }}>
+        <ShieldCheck size={13} />
+        <span>Grounded in deterministic policy contract schedule</span>
       </div>
     </div>
   );

@@ -8,9 +8,9 @@ import {
   RefreshCw,
   Sparkles,
   ArrowRight,
-  ShieldCheck,
   Cpu,
-  Layers,
+  Check,
+  AlertTriangle,
 } from 'lucide-react';
 import { Card } from '../common/Card';
 import { Badge } from '../common/Badge';
@@ -26,6 +26,7 @@ export interface DocumentUploadSectionProps {
   isUploading: boolean;
   isProcessing: boolean;
   hasConsented: boolean;
+  onProceedToEvidence?: () => void;
 }
 
 const ALLOWED_TYPES = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
@@ -40,6 +41,7 @@ export const DocumentUploadSection: React.FC<DocumentUploadSectionProps> = ({
   isUploading,
   isProcessing,
   hasConsented,
+  onProceedToEvidence,
 }) => {
   const [selectedType, setSelectedType] = useState<string>('HOSPITAL_BILL');
   const [dragActive, setDragActive] = useState<boolean>(false);
@@ -48,7 +50,6 @@ export const DocumentUploadSection: React.FC<DocumentUploadSectionProps> = ({
   const [isSynthesizing, setIsSynthesizing] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Map requirement key to document type
   const mapKeyToDocType = (key: string): string => {
     switch (key.toLowerCase()) {
       case 'hospital_bill':
@@ -67,31 +68,29 @@ export const DocumentUploadSection: React.FC<DocumentUploadSectionProps> = ({
     }
   };
 
-  // Client-side validation
   const validateAndUpload = async (file: File, docType: string) => {
     setClientError(null);
     setUploadSuccessMsg(null);
 
     if (!ALLOWED_TYPES.includes(file.type) && !file.name.endsWith('.pdf') && !file.name.endsWith('.png') && !file.name.endsWith('.jpg')) {
-      setClientError(`Unsupported file format (${file.type || 'unknown'}). Please select a PDF, PNG, or JPG document.`);
+      setClientError(`Unsupported format (${file.type || 'unknown'}). Please upload a PDF, PNG, or JPG document.`);
       return;
     }
 
     if (file.size > MAX_SIZE) {
-      setClientError(`File size exceeds 20MB limit (${(file.size / (1024 * 1024)).toFixed(1)}MB). Please upload a smaller file.`);
+      setClientError(`File size exceeds 20MB limit. Please upload a smaller file.`);
       return;
     }
 
     try {
       await onUploadFile(file, docType);
-      setUploadSuccessMsg(`Successfully uploaded ${file.name} as ${docType}.`);
-      setTimeout(() => setUploadSuccessMsg(null), 4000);
+      setUploadSuccessMsg(`Uploaded ${file.name} as ${docType}.`);
+      setTimeout(() => setUploadSuccessMsg(null), 3500);
     } catch (err: any) {
-      setClientError(err.message || 'Failed to upload document to backend.');
+      setClientError(err.message || 'Failed to upload document.');
     }
   };
 
-  // Handle Drag & Drop
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -117,7 +116,6 @@ export const DocumentUploadSection: React.FC<DocumentUploadSectionProps> = ({
     }
   };
 
-  // Synthetic Test Batch Generator for Instant Testing & Evaluation
   const handleUploadSamplePacket = async () => {
     setIsSynthesizing(true);
     setClientError(null);
@@ -151,7 +149,7 @@ export const DocumentUploadSection: React.FC<DocumentUploadSectionProps> = ({
         const file = new File([blob], sample.name, { type: 'application/pdf' });
         await onUploadFile(file, sample.type);
       }
-      setUploadSuccessMsg('Successfully loaded complete synthetic claim document packet (4 documents).');
+      setUploadSuccessMsg('Sample claim packet loaded successfully (4 documents).');
     } catch (err: any) {
       setClientError(err.message || 'Failed to upload sample documents.');
     } finally {
@@ -159,7 +157,6 @@ export const DocumentUploadSection: React.FC<DocumentUploadSectionProps> = ({
     }
   };
 
-  // Requirement status helper
   const getRequirementStatus = (req: JourneyRequirement) => {
     const docType = mapKeyToDocType(req.key);
     const uploadedDoc = documents.find((d) => d.documentType === docType);
@@ -172,142 +169,180 @@ export const DocumentUploadSection: React.FC<DocumentUploadSectionProps> = ({
   const uploadedCount = documents.length;
   const processedCount = documents.filter((d) => d.status === 'PROCESSED').length;
   const canProcess = uploadedCount > 0 && !isProcessing && !isUploading;
+  const allProcessed = uploadedCount > 0 && processedCount === uploadedCount;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-      {/* Requirements Checklist Card */}
-      <Card
-        style={{
-          background: 'rgba(15, 23, 42, 0.8)',
-          border: '1px solid var(--border-subtle)',
-          padding: '1.5rem',
-        }}
-      >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
-              <FileCheck size={16} color="#60a5fa" />
-              <span style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--primary-light)' }}>
-                Stage 4 • Document Intelligence & Intake
-              </span>
-            </div>
-            <h3 style={{ fontSize: '1.25rem', fontWeight: 600 }}>
-              Required Insurance Claim Documentation
-            </h3>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginTop: '0.25rem' }}>
-              Upload original hospital bills, diagnosis papers, and claim forms for automated OCR and evidence extraction.
-            </p>
-          </div>
-
-          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-            <Badge variant="blue">
-              {uploadedCount} of {requirements.length > 0 ? requirements.length : 4} Uploaded
-            </Badge>
-            <button
-              onClick={handleUploadSamplePacket}
-              disabled={isUploading || isProcessing || isSynthesizing}
-              className="btn btn-secondary"
-              style={{ fontSize: '0.75rem', padding: '0.375rem 0.75rem', display: 'flex', alignItems: 'center', gap: '0.375rem' }}
-              title="Instantly generate & upload synthetic test claim documents"
-            >
-              <Sparkles size={13} color="#60a5fa" />
-              <span>{isSynthesizing ? 'Uploading Batch...' : 'Load Sample Claim Packet'}</span>
-            </button>
-          </div>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+      {/* Header & Sample Helper */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
+        <div>
+          <h3 style={{ fontSize: '1.25rem', fontWeight: 600 }}>Documents required</h3>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
+            Provide itemized hospital records for automated OCR and policy verification.
+          </p>
         </div>
 
-        {/* Requirements Grid */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-            gap: '0.75rem',
-            marginTop: '1rem',
-          }}
+        <button
+          onClick={handleUploadSamplePacket}
+          disabled={isUploading || isProcessing || isSynthesizing}
+          className="btn btn-secondary"
+          style={{ fontSize: '0.8125rem', padding: '0.375rem 0.75rem', gap: '0.375rem' }}
+          title="Instantly upload synthetic test documents"
         >
-          {requirements.map((req) => {
-            const { status, doc } = getRequirementStatus(req);
-            const isUploaded = status !== 'MISSING';
+          <Sparkles size={13} color="var(--primary-light)" />
+          <span>{isSynthesizing ? 'Uploading Batch...' : 'Load Sample Claim Packet'}</span>
+        </button>
+      </div>
 
-            return (
-              <div
-                key={req.id || req.key}
-                onClick={() => setSelectedType(mapKeyToDocType(req.key))}
-                style={{
-                  background: isUploaded ? 'rgba(16, 185, 129, 0.08)' : 'rgba(30, 41, 59, 0.4)',
-                  border: isUploaded
-                    ? '1px solid rgba(16, 185, 129, 0.3)'
-                    : selectedType === mapKeyToDocType(req.key)
-                    ? '1px solid #3b82f6'
-                    : '1px solid rgba(255, 255, 255, 0.06)',
-                  borderRadius: 'var(--radius-md)',
-                  padding: '0.875rem 1rem',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '0.375rem',
-                  transition: 'all 0.2s ease',
-                }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span
-                    style={{
-                      fontSize: '0.6875rem',
-                      fontWeight: 700,
-                      textTransform: 'uppercase',
-                      color: req.priority === 'HIGH' ? '#f59e0b' : 'var(--text-muted)',
-                    }}
-                  >
-                    {req.priority || 'REQUIRED'}
-                  </span>
-                  <Badge variant={isUploaded ? 'green' : 'amber'}>
-                    {isUploaded ? '✓ Uploaded' : '⚠ Missing'}
-                  </Badge>
+      {/* Structured Checklist of Requirements */}
+      <Card style={{ padding: '0.5rem 0' }}>
+        {requirements.map((req, idx) => {
+          const { status, doc } = getRequirementStatus(req);
+          const isUploaded = status !== 'MISSING';
+          const isProcessed = status === 'PROCESSED';
+          const docType = mapKeyToDocType(req.key);
+
+          return (
+            <div
+              key={req.id || req.key}
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '0.875rem 1.25rem',
+                borderBottom: idx < requirements.length - 1 ? '1px solid var(--border-subtle)' : 'none',
+                gap: '1rem',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', minWidth: 0 }}>
+                <div
+                  style={{
+                    width: '24px',
+                    height: '24px',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    background: isProcessed
+                      ? 'var(--success-bg)'
+                      : isUploaded
+                      ? 'var(--primary-subtle)'
+                      : 'var(--warning-bg)',
+                    color: isProcessed
+                      ? 'var(--success)'
+                      : isUploaded
+                      ? 'var(--primary-light)'
+                      : 'var(--warning)',
+                    flexShrink: 0,
+                  }}
+                >
+                  {isProcessed ? (
+                    <Check size={14} />
+                  ) : isUploaded ? (
+                    <Check size={14} />
+                  ) : (
+                    <AlertTriangle size={13} />
+                  )}
                 </div>
 
-                <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-primary)' }}>
-                  {req.label || req.key}
-                </div>
-
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', lineHeight: 1.3 }}>
-                  {req.reason}
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ fontSize: '0.9375rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+                    {req.label || req.key}
+                  </div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                    {req.reason || 'Required for claim settlement'}
+                  </div>
                 </div>
               </div>
-            );
-          })}
-        </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexShrink: 0 }}>
+                <Badge variant={isProcessed ? 'green' : isUploaded ? 'blue' : 'amber'}>
+                  {isProcessed ? 'Processed' : isUploaded ? 'Uploaded' : 'Missing'}
+                </Badge>
+
+                {!isUploaded && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedType(docType);
+                      fileInputRef.current?.click();
+                    }}
+                    className="btn btn-secondary"
+                    style={{ fontSize: '0.75rem', padding: '0.25rem 0.625rem' }}
+                  >
+                    Upload
+                  </button>
+                )}
+              </div>
+            </div>
+          );
+        })}
       </Card>
 
-      {/* Drag & Drop Upload Zone */}
+      {/* Clean Drag/Drop Zone */}
       <Card
         style={{
-          background: 'rgba(15, 23, 42, 0.85)',
-          border: dragActive ? '2px dashed #60a5fa' : '1px solid var(--border-subtle)',
-          padding: '1.5rem',
+          border: dragActive ? '2px dashed var(--primary)' : '1px dashed var(--border-subtle)',
+          background: dragActive ? 'var(--primary-subtle)' : 'var(--surface-sunken)',
+          padding: '1.75rem 1.25rem',
+          textAlign: 'center',
         }}
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
         onDragOver={handleDrag}
         onDrop={handleDrop}
       >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.75rem' }}>
-          <div>
-            <h4 style={{ fontSize: '1rem', fontWeight: 600 }}>File Upload Gateway</h4>
-            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-              Target Document Category:
-            </span>
-          </div>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".pdf,.png,.jpg,.jpeg"
+          onChange={handleFileInput}
+          style={{ display: 'none' }}
+        />
 
+        <UploadCloud
+          size={32}
+          color={dragActive ? 'var(--primary-light)' : 'var(--text-muted)'}
+          style={{ margin: '0 auto 0.5rem' }}
+        />
+
+        <div style={{ fontSize: '0.9375rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+          Drop your document here, or{' '}
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            style={{
+              background: 'transparent',
+              border: 'none',
+              color: 'var(--primary-light)',
+              fontWeight: 600,
+              cursor: 'pointer',
+              textDecoration: 'underline',
+              padding: 0,
+              font: 'inherit',
+            }}
+          >
+            browse files
+          </button>
+        </div>
+
+        <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
+          Accepted formats: PDF, JPG, PNG • Max size: 20MB
+        </p>
+
+        {/* Selected target category picker */}
+        <div style={{ marginTop: '0.875rem', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8125rem' }}>
+          <span style={{ color: 'var(--text-secondary)' }}>Uploading as:</span>
           <select
             value={selectedType}
             onChange={(e) => setSelectedType(e.target.value)}
             disabled={isUploading || isProcessing}
             style={{
-              background: 'rgba(30, 41, 59, 0.8)',
+              background: 'var(--surface-card)',
               border: '1px solid var(--border-subtle)',
               borderRadius: 'var(--radius-sm)',
               color: 'var(--text-primary)',
-              padding: '0.375rem 0.75rem',
+              padding: '0.25rem 0.5rem',
               fontSize: '0.8125rem',
               outline: 'none',
             }}
@@ -315,140 +350,97 @@ export const DocumentUploadSection: React.FC<DocumentUploadSectionProps> = ({
             <option value="HOSPITAL_BILL">Hospital Bill (Itemized)</option>
             <option value="DISCHARGE_SUMMARY">Discharge Summary & Diagnosis</option>
             <option value="CLAIM_FORM">Claim Form (Signed)</option>
-            <option value="AADHAAR">ID Proof (Aadhaar Card)</option>
-            <option value="PAN">ID Proof (PAN Card)</option>
-            <option value="OTHER">Other Supporting Document</option>
+            <option value="AADHAAR">ID Proof (Aadhaar)</option>
+            <option value="PAN">ID Proof (PAN)</option>
+            <option value="OTHER">Other Document</option>
           </select>
         </div>
 
-        {/* Drop Box Area */}
-        <div
-          onClick={() => fileInputRef.current?.click()}
-          style={{
-            border: '2px dashed rgba(255, 255, 255, 0.15)',
-            borderRadius: 'var(--radius-md)',
-            padding: '2.5rem 1.5rem',
-            textAlign: 'center',
-            cursor: 'pointer',
-            background: dragActive ? 'rgba(59, 130, 246, 0.08)' : 'rgba(30, 41, 59, 0.3)',
-            transition: 'all 0.2s',
-          }}
-        >
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept=".pdf,.png,.jpg,.jpeg"
-            onChange={handleFileInput}
-            style={{ display: 'none' }}
-          />
-
-          <UploadCloud size={40} color={dragActive ? '#60a5fa' : 'var(--text-muted)'} style={{ margin: '0 auto 0.75rem' }} />
-
-          <div style={{ fontSize: '0.9375rem', fontWeight: 600, color: 'var(--text-primary)' }}>
-            Drag & drop your document here, or <span style={{ color: 'var(--primary-light)' }}>browse files</span>
-          </div>
-
-          <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.375rem' }}>
-            Supported: PDF, JPG, PNG • Max size: 20MB • Untrusted document content is isolated safely
-          </p>
-        </div>
-
-        {/* Feedback Messages */}
         {clientError && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#f87171', fontSize: '0.8125rem', marginTop: '0.75rem' }}>
-            <AlertCircle size={15} />
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.375rem', color: 'var(--danger)', fontSize: '0.8125rem', marginTop: '0.75rem' }}>
+            <AlertCircle size={14} />
             <span>{clientError}</span>
           </div>
         )}
 
         {uploadSuccessMsg && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#34d399', fontSize: '0.8125rem', marginTop: '0.75rem' }}>
-            <CheckCircle2 size={15} />
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.375rem', color: 'var(--success)', fontSize: '0.8125rem', marginTop: '0.75rem' }}>
+            <CheckCircle2 size={14} />
             <span>{uploadSuccessMsg}</span>
           </div>
         )}
 
         {isUploading && (
-          <div style={{ marginTop: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8125rem', color: 'var(--primary-light)' }}>
-            <div className="spinner" style={{ width: '14px', height: '14px', borderTopColor: '#60a5fa' }} />
-            <span>Uploading file to backend...</span>
+          <div style={{ marginTop: '0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', fontSize: '0.8125rem', color: 'var(--primary-light)' }}>
+            <div className="spinner" style={{ width: '13px', height: '13px', borderTopColor: 'var(--primary)' }} />
+            <span>Uploading...</span>
           </div>
         )}
       </Card>
 
-      {/* Uploaded Documents List */}
+      {/* Processing Sequence Indicator */}
+      {isProcessing && (
+        <Card style={{ padding: '1rem 1.25rem' }}>
+          <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
+            Document Processing Pipeline:
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.375rem', fontSize: '0.8125rem', color: 'var(--text-secondary)' }}>
+            <div style={{ color: 'var(--success)' }}>✓ Uploaded files secured</div>
+            <div style={{ color: 'var(--primary-light)', fontWeight: 600 }}>● Analyzing document structure & OCR...</div>
+            <div style={{ color: 'var(--text-muted)' }}>○ Extracting itemized hospital charges</div>
+            <div style={{ color: 'var(--text-muted)' }}>○ Checking cross-document consistency</div>
+            <div style={{ color: 'var(--text-muted)' }}>○ Preparing evidence items</div>
+          </div>
+        </Card>
+      )}
+
+      {/* Uploaded Documents Grid & Action CTA */}
       {documents.length > 0 && (
-        <Card style={{ background: 'rgba(15, 23, 42, 0.75)', border: '1px solid var(--border-subtle)', padding: '1.5rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Layers size={18} color="#60a5fa" />
-              <h4 style={{ fontSize: '1.125rem', fontWeight: 600 }}>
-                Intake Documents ({documents.length})
-              </h4>
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+            <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
+              Uploaded Files ({documents.length})
             </div>
 
-            {/* AI Document Processing Action Button */}
-            <button
-              onClick={onProcessDocuments}
-              disabled={!canProcess}
-              className="btn btn-primary"
-              style={{
-                minWidth: '220px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '0.5rem',
-              }}
-            >
-              {isProcessing ? (
-                <>
-                  <div className="spinner" style={{ width: '14px', height: '14px', borderTopColor: '#fff' }} />
-                  <span>Processing with Document AI...</span>
-                </>
-              ) : (
-                <>
-                  <Cpu size={16} />
-                  <span>
-                    {processedCount > 0 ? 'Re-run Document AI Pipeline' : 'Process Documents with AI Pipeline'}
-                  </span>
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <button
+                onClick={onProcessDocuments}
+                disabled={!canProcess}
+                className="btn btn-primary"
+                style={{ gap: '0.375rem' }}
+              >
+                {isProcessing ? (
+                  <>
+                    <div className="spinner" style={{ width: '14px', height: '14px', borderTopColor: '#fff' }} />
+                    <span>Processing...</span>
+                  </>
+                ) : (
+                  <>
+                    <Cpu size={15} />
+                    <span>{processedCount > 0 ? 'Re-run Document AI' : 'Process Documents with AI'}</span>
+                  </>
+                )}
+              </button>
+
+              {allProcessed && onProceedToEvidence && (
+                <button
+                  onClick={onProceedToEvidence}
+                  className="btn btn-primary"
+                  style={{ gap: '0.375rem' }}
+                >
+                  <span>View Evidence</span>
                   <ArrowRight size={14} />
-                </>
+                </button>
               )}
-            </button>
+            </div>
           </div>
 
-          {/* Processing Stages Visualization */}
-          {isProcessing && (
-            <div
-              style={{
-                background: 'rgba(30, 41, 59, 0.7)',
-                border: '1px solid rgba(96, 165, 250, 0.3)',
-                borderRadius: 'var(--radius-sm)',
-                padding: '1rem',
-                marginBottom: '1rem',
-                fontSize: '0.8125rem',
-              }}
-            >
-              <div style={{ fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
-                Executing Document AI Processing Pipeline:
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.375rem', color: 'var(--text-secondary)' }}>
-                <div>✓ Uploaded files secured and validated</div>
-                <div style={{ color: '#60a5fa' }}>● Analyzing document layout & Optical Character Recognition (OCR)...</div>
-                <div>○ Applying prompt-injection sanitization barrier</div>
-                <div>○ Extracting structured line items & medical evidence</div>
-                <div>○ Cross-document consistency & policy clause validation</div>
-              </div>
-            </div>
-          )}
-
-          {/* Document Cards Grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '0.75rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '0.75rem' }}>
             {documents.map((doc) => (
               <DocumentCard key={doc.id} document={doc} />
             ))}
           </div>
-        </Card>
+        </div>
       )}
     </div>
   );

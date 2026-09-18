@@ -1,29 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Shield,
-  Sparkles,
-  ArrowRight,
   RotateCcw,
+  LifeBuoy,
   Copy,
   Check,
-  FileCheck2,
-  HelpCircle,
-  Clock,
-  Layers,
-  CheckCircle2,
-  UploadCloud,
-  Cpu,
-  Search,
-  Scale,
-  Compass,
-  FileCheck,
-  Activity,
-  LifeBuoy,
+  ArrowRight,
 } from 'lucide-react';
 import { Card } from '../components/common/Card';
 import { Badge } from '../components/common/Badge';
 import { ErrorBanner } from '../components/common/ErrorBanner';
-import { LoadingState } from '../components/common/LoadingState';
 import { JourneyStepper } from '../components/journey/JourneyStepper';
 import { GoalEntryCard } from '../components/journey/GoalEntryCard';
 import { DynamicQuestionnaire } from '../components/journey/DynamicQuestionnaire';
@@ -33,6 +18,7 @@ import { EvidenceSection } from '../components/journey/EvidenceSection';
 import { PolicyExplanationCard } from '../components/journey/PolicyExplanationCard';
 import { ReviewApprovalCard } from '../components/journey/ReviewApprovalCard';
 import { TimelineView } from '../components/journey/TimelineView';
+import { NextBestActionCard } from '../components/journey/NextBestActionCard';
 import { HumanEscalationModal } from '../components/journey/HumanEscalationModal';
 import { journeysApi } from '../api/journeys';
 import {
@@ -79,15 +65,11 @@ export const ClaimSahayView: React.FC<ClaimSahayViewProps> = ({
   const [isReconciling, setIsReconciling] = useState<boolean>(false);
 
   // Error state
-  const [apiError, setApiError] = useState<{ message: string; code?: string; details?: unknown } | null>(null);
-
-  // Clipboard copy state
+  const [apiError, setApiError] = useState<{ message: string; details?: unknown } | null>(null);
   const [copiedId, setCopiedId] = useState<boolean>(false);
 
-  // Active view step
-  const [viewStep, setViewStep] = useState<
-    'goal' | 'questions' | 'consent' | 'documents' | 'evidence' | 'reconcile' | 'review' | 'timeline'
-  >('goal');
+  // Active view step: goal | questions | consent | documents | evidence | reconcile | review | timeline
+  const [viewStep, setViewStep] = useState<string>('goal');
 
   // Human Escalation Modal state
   const [isEscalateModalOpen, setIsEscalateModalOpen] = useState<boolean>(false);
@@ -96,7 +78,6 @@ export const ClaimSahayView: React.FC<ClaimSahayViewProps> = ({
   useEffect(() => {
     if (!journey?.id) return;
 
-    // Fetch requirements if empty
     if (requirements.length === 0) {
       journeysApi
         .getRequirements(journey.id)
@@ -108,7 +89,6 @@ export const ClaimSahayView: React.FC<ClaimSahayViewProps> = ({
         .catch(() => {});
     }
 
-    // Fetch documents
     journeysApi
       .getDocuments(journey.id)
       .then((res) => {
@@ -118,12 +98,12 @@ export const ClaimSahayView: React.FC<ClaimSahayViewProps> = ({
       })
       .catch(() => {});
 
-    // Fetch evidence if journey has already processed
     if (
       journey.status === 'VALIDATING' ||
       journey.status === 'NEEDS_ACTION' ||
       journey.status === 'READY_FOR_REVIEW' ||
-      journey.status === 'USER_CONFIRMED'
+      journey.status === 'USER_CONFIRMED' ||
+      journey.status === 'INSTITUTION_REVIEW'
     ) {
       journeysApi
         .getEvidence(journey.id)
@@ -145,83 +125,67 @@ export const ClaimSahayView: React.FC<ClaimSahayViewProps> = ({
     }
   }, [journey?.id, journey?.status]);
 
-  // Auto-trigger initial policy reconciliation when entering Stage 5 (reconcile)
-  useEffect(() => {
-    if (journey?.id && viewStep === 'reconcile' && !reconciliation && !isReconciling) {
-      handleReconcile(
-        'ROOM_RENT_CAPPING',
-        'Room rent sub-limit deduction: room tariff ₹7,500/day vs ₹5,000/day private room'
-      );
-    }
-  }, [journey?.id, viewStep, reconciliation, isReconciling]);
-
-  // Handle journey creation from goal
-  const handleCreateJourney = async (goalMessage: string) => {
+  // Handle Goal Submission & Journey Creation
+  const handleStartJourney = async (goalText: string) => {
     setIsCreatingJourney(true);
     setApiError(null);
 
     try {
-      const response = await journeysApi.createJourney({
-        message: goalMessage,
+      const journeyRes = await journeysApi.createJourney({
+        goal: goalText,
+        message: goalText,
         domain: 'INSURANCE',
         journeyType: 'HEALTH_INSURANCE_CLAIM',
-        goal: goalMessage,
       });
 
-      setJourney(response.journey);
-      if (response.intent) {
-        setIntentResult(response.intent);
-      }
-      if (response.questions && response.questions.length > 0) {
-        setQuestions(response.questions);
+      setJourney(journeyRes.journey);
+      setIntentResult(
+        journeyRes.intent || {
+          domain: 'INSURANCE',
+          journeyType: 'HEALTH_INSURANCE_CLAIM',
+          goal: goalText,
+          confidence: 0.95,
+        }
+      );
+
+      if (journeyRes.questions && journeyRes.questions.length > 0) {
+        setQuestions(journeyRes.questions);
         setViewStep('questions');
       } else {
-        try {
-          const qRes = await journeysApi.getQuestions(response.journey.id);
-          setQuestions(qRes.questions);
-          setViewStep('questions');
-        } catch {
-          // If questions fetch fails, stay on created journey
-        }
+        setViewStep('consent');
       }
     } catch (err: any) {
       setApiError({
-        message: err.message || 'Failed to analyze goal and initialize ClaimSahay journey.',
-        code: err.code || 'CREATION_FAILED',
-        details: err.details,
+        message: err.message || 'Failed to initialize ClaimSahay journey with backend.',
       });
     } finally {
       setIsCreatingJourney(false);
     }
   };
 
-  // Handle answering a question
+  // Handle Question Answering
   const handleAnswerQuestion = async (questionId: string, answer: string): Promise<boolean> => {
     if (!journey) return false;
     setIsSubmittingAnswer(true);
     setApiError(null);
 
     try {
-      const res = await journeysApi.answerQuestion(journey.id, questionId, answer);
-
+      await journeysApi.answerQuestion(journey.id, questionId, answer);
       setQuestions((prev) =>
         prev.map((q) => (q.id === questionId ? { ...q, answer, status: 'ANSWERED' } : q))
       );
 
-      if (res.journey) {
-        setJourney(res.journey);
-      }
+      const jRes = await journeysApi.getJourney(journey.id);
+      setJourney(jRes.journey);
 
-      if (res.allRequiredAnswered) {
+      const allDone = jRes.journey.status !== 'QUESTIONS_PENDING';
+      if (allDone) {
         setViewStep('consent');
-        return true;
       }
-      return false;
+      return allDone;
     } catch (err: any) {
       setApiError({
-        message: err.message || 'Failed to submit answer to question.',
-        code: err.code || 'ANSWER_FAILED',
-        details: err.details,
+        message: err.message || 'Failed to submit question answer.',
       });
       throw err;
     } finally {
@@ -229,33 +193,24 @@ export const ClaimSahayView: React.FC<ClaimSahayViewProps> = ({
     }
   };
 
-  // Handle granting consent
+  // Handle Consent
   const handleGrantConsent = async (purposes: string[]) => {
     if (!journey) return;
     setIsSubmittingConsent(true);
     setApiError(null);
 
     try {
-      const res = await journeysApi.grantConsent(journey.id, purposes, 'HEALTH_CLAIM_RESOLUTION');
-
-      // Refresh journey state from backend
-      const refreshedJourney = await journeysApi.getJourney(journey.id);
-      setJourney(refreshedJourney.journey);
-
+      const res = await journeysApi.grantConsent(journey.id, purposes);
       if (res.requirements && res.requirements.length > 0) {
         setRequirements(res.requirements);
-      } else {
-        const reqRes = await journeysApi.getRequirements(journey.id);
-        setRequirements(reqRes.requirements);
       }
 
-      // Advance to documents upload stage
+      const jRes = await journeysApi.getJourney(journey.id);
+      setJourney(jRes.journey);
       setViewStep('documents');
     } catch (err: any) {
       setApiError({
-        message: err.message || 'Failed to record consent in backend audit log.',
-        code: err.code || 'CONSENT_FAILED',
-        details: err.details,
+        message: err.message || 'Failed to record consent.',
       });
       throw err;
     } finally {
@@ -263,7 +218,7 @@ export const ClaimSahayView: React.FC<ClaimSahayViewProps> = ({
     }
   };
 
-  // Handle uploading a document
+  // Handle Document Upload
   const handleUploadFile = async (file: File, documentType: string) => {
     if (!journey) return;
     setIsUploading(true);
@@ -271,15 +226,15 @@ export const ClaimSahayView: React.FC<ClaimSahayViewProps> = ({
 
     try {
       await journeysApi.uploadDocument(journey.id, file, documentType);
-
-      // Refresh documents list from backend
       const docsRes = await journeysApi.getDocuments(journey.id);
-      setDocuments(docsRes.documents);
+      if (docsRes.documents) {
+        setDocuments(docsRes.documents);
+      }
+      const jRes = await journeysApi.getJourney(journey.id);
+      setJourney(jRes.journey);
     } catch (err: any) {
       setApiError({
-        message: err.message || 'Failed to upload document to backend.',
-        code: err.code || 'UPLOAD_FAILED',
-        details: err.details,
+        message: err.message || 'Failed to upload document file.',
       });
       throw err;
     } finally {
@@ -287,45 +242,36 @@ export const ClaimSahayView: React.FC<ClaimSahayViewProps> = ({
     }
   };
 
-  // Handle processing documents via Document AI pipeline
+  // Handle Process Documents
   const handleProcessDocuments = async () => {
     if (!journey) return;
     setIsProcessing(true);
     setApiError(null);
 
     try {
-      const processRes = await journeysApi.processDocuments(journey.id);
-      setValidation(processRes.validation);
-      if (processRes.nextActions) {
-        setNextActions(processRes.nextActions);
-      }
+      const res = await journeysApi.processDocuments(journey.id);
+      const jRes = await journeysApi.getJourney(journey.id);
+      setJourney(jRes.journey);
 
-      // Fetch newly extracted evidence
-      const evidenceRes = await journeysApi.getEvidence(journey.id);
-      setEvidence(evidenceRes.evidence);
+      const evRes = await journeysApi.getEvidence(journey.id);
+      if (evRes.evidence) setEvidence(evRes.evidence);
+      if (res.validation) setValidation(res.validation);
+      if (res.nextActions) setNextActions(res.nextActions);
 
-      // Fetch refreshed documents with PROCESSED status & timings
       const docsRes = await journeysApi.getDocuments(journey.id);
-      setDocuments(docsRes.documents);
+      if (docsRes.documents) setDocuments(docsRes.documents);
 
-      // Refresh journey authoritative state from backend
-      const journeyRes = await journeysApi.getJourney(journey.id);
-      setJourney(journeyRes.journey);
-
-      // Advance view to Evidence & Validation section
       setViewStep('evidence');
     } catch (err: any) {
       setApiError({
-        message: err.message || 'Failed to execute Document AI pipeline.',
-        code: err.code || 'PROCESSING_FAILED',
-        details: err.details,
+        message: err.message || 'Failed to run document processing pipeline.',
       });
     } finally {
       setIsProcessing(false);
     }
   };
 
-  // Handle policy clause reconciliation
+  // Handle Reconcile
   const handleReconcile = async (queryType: string, queryText: string) => {
     if (!journey) return;
     setIsReconciling(true);
@@ -335,70 +281,87 @@ export const ClaimSahayView: React.FC<ClaimSahayViewProps> = ({
       const res = await journeysApi.reconcile(journey.id, {
         queryType,
         queryText,
-        policyId: 'policy-001',
+        policyId: 'POL-HEALTH-2024-001',
         policyVersion: '2024-v1',
       });
       setReconciliation(res);
 
-      // Refresh next actions
-      const actionsRes = await journeysApi.getNextActions(journey.id);
-      if (actionsRes.nextActions) {
-        setNextActions(actionsRes.nextActions);
-      }
-
-      // Refresh journey status from backend
       const jRes = await journeysApi.getJourney(journey.id);
       setJourney(jRes.journey);
+
+      if (res.nextAction) {
+        setNextActions([{ action: res.nextAction, reason: res.explanation }]);
+      }
     } catch (err: any) {
       setApiError({
-        message: err.message || 'Failed to execute policy clause reconciliation.',
-        code: err.code || 'RECONCILE_FAILED',
-        details: err.details,
+        message: err.message || 'Failed to reconcile claim against policy schedule.',
       });
     } finally {
       setIsReconciling(false);
     }
   };
 
-  // Handle Step 1: Confirmation gate
-  const handleConfirmJourney = async (): Promise<ApprovalRequest> => {
-    if (!journey) throw new Error('No active journey to confirm.');
+  // Handle Consequential Confirmation
+  const handleConfirm = async (): Promise<ApprovalRequest> => {
+    if (!journey) throw new Error('No active journey');
     setApiError(null);
+
     try {
       const res = await journeysApi.confirmJourney(journey.id);
-      const refreshed = await journeysApi.getJourney(journey.id);
-      setJourney(refreshed.journey);
+      const jRes = await journeysApi.getJourney(journey.id);
+      setJourney(jRes.journey);
       return res.approval;
     } catch (err: any) {
       setApiError({
-        message: err.message || 'Failed to record confirmation with backend.',
-        code: err.code || 'CONFIRM_FAILED',
-        details: err.details,
+        message: err.message || 'Failed to record consequential confirmation.',
       });
       throw err;
     }
   };
 
-  // Handle Step 2: Approval & Submission
-  const handleApproveAction = async (approvalId: string) => {
-    if (!journey) throw new Error('No active journey to approve.');
+  // Handle Approval Gate Submission
+  const handleApprove = async (approvalId: string) => {
+    if (!journey) throw new Error('No active journey');
     setApiError(null);
+
     try {
       const res = await journeysApi.approveAction(journey.id, { approvalId, approved: true });
-      const refreshed = await journeysApi.getJourney(journey.id);
-      setJourney(refreshed.journey);
+      const jRes = await journeysApi.getJourney(journey.id);
+      setJourney(jRes.journey);
       return res;
     } catch (err: any) {
       setApiError({
-        message: err.message || 'Failed to submit approved case.',
-        code: err.code || 'APPROVE_FAILED',
-        details: err.details,
+        message: err.message || 'Failed to complete approval dispatch.',
       });
       throw err;
     }
   };
 
-  // Reset current journey
+  // Handle Next Best Action selection
+  const handleSelectNextAction = (action: NextBestAction) => {
+    if (action.action === 'ESCALATE_TO_HUMAN') {
+      setIsEscalateModalOpen(true);
+      return;
+    }
+    if (action.action === 'CORRECT_FIELD' || action.action === 'REVIEW_EVIDENCE') {
+      setViewStep('evidence');
+      return;
+    }
+    if (action.action === 'REVIEW_POLICY' || action.action === 'RESPOND_TO_INSURER') {
+      setViewStep('reconcile');
+      return;
+    }
+    if (action.action === 'CONFIRM_CLAIM' || action.action === 'CONFIRM_AND_SUBMIT') {
+      setViewStep('review');
+      return;
+    }
+    if (action.action === 'UPLOAD_DOCUMENT') {
+      setViewStep('documents');
+      return;
+    }
+    setViewStep('reconcile');
+  };
+
   const handleResetJourney = () => {
     setJourney(null);
     setQuestions([]);
@@ -410,7 +373,6 @@ export const ClaimSahayView: React.FC<ClaimSahayViewProps> = ({
     setReconciliation(null);
     setNextActions([]);
     setViewStep('goal');
-    setApiError(null);
     if (onResetGoal) onResetGoal();
   };
 
@@ -421,30 +383,53 @@ export const ClaimSahayView: React.FC<ClaimSahayViewProps> = ({
     setTimeout(() => setCopiedId(false), 2000);
   };
 
-  const currentStatus: JourneyStatus = journey?.status || 'CREATED';
-  const allRequiredDone =
-    questions.length > 0 &&
-    questions.filter((q) => q.required ?? q.isRequired ?? true).every((q) => q.status === 'ANSWERED');
+  const currentStatus: JourneyStatus = journey ? journey.status : 'CREATED';
+  const allRequiredQuestions = questions.filter((q) => q.required ?? q.isRequired ?? true);
+  const answeredRequired = allRequiredQuestions.filter((q) => q.status === 'ANSWERED');
+  const allRequiredDone = allRequiredQuestions.length > 0 && answeredRequired.length === allRequiredQuestions.length;
   const isConsentGranted =
-    journey?.consentState === 'GRANTED' ||
-    (journey?.status !== 'CONSENT_PENDING' &&
-      journey?.status !== 'QUESTIONS_PENDING' &&
-      journey?.status !== 'CREATED' &&
-      journey?.status !== 'GOAL_IDENTIFIED');
+    currentStatus === 'DOCUMENTS_PENDING' ||
+    currentStatus === 'DOCUMENT_PROCESSING' ||
+    currentStatus === 'VALIDATING' ||
+    currentStatus === 'NEEDS_ACTION' ||
+    currentStatus === 'READY_FOR_REVIEW' ||
+    currentStatus === 'USER_CONFIRMED' ||
+    currentStatus === 'ACTION_PENDING' ||
+    currentStatus === 'SUBMITTED' ||
+    currentStatus === 'INSTITUTION_REVIEW' ||
+    currentStatus === 'COMPLETED';
+
+  // Customer-friendly status label
+  const getDisplayStatus = (st: JourneyStatus) => {
+    switch (st) {
+      case 'INSTITUTION_REVIEW':
+        return { label: 'Under review', variant: 'blue' as const, note: 'Submitted for review to insurer adjudication.' };
+      case 'SUBMITTED':
+        return { label: 'Submitted', variant: 'green' as const, note: 'Case packet successfully dispatched.' };
+      case 'NEEDS_ACTION':
+        return { label: 'Needs attention', variant: 'amber' as const, note: 'Hospital tariff exceeds policy limit.' };
+      case 'READY_FOR_REVIEW':
+        return { label: 'Ready for review', variant: 'blue' as const, note: 'Evidence verified and reconciled.' };
+      case 'USER_CONFIRMED':
+        return { label: 'Confirmed by you', variant: 'green' as const, note: 'Approval record created.' };
+      case 'DOCUMENT_PROCESSING':
+        return { label: 'Processing', variant: 'amber' as const, note: 'Running document OCR and fact extraction.' };
+      case 'DOCUMENTS_PENDING':
+        return { label: 'Documents required', variant: 'blue' as const, note: 'Upload hospital bill & discharge summary.' };
+      case 'CONSENT_PENDING':
+        return { label: 'Consent required', variant: 'blue' as const, note: 'Authorize medical document processing.' };
+      case 'QUESTIONS_PENDING':
+        return { label: 'In progress', variant: 'blue' as const, note: 'Answer clarification questions.' };
+      default:
+        return { label: 'Active', variant: 'blue' as const, note: 'Exploring claim assistance.' };
+    }
+  };
+
+  const statusInfo = getDisplayStatus(currentStatus);
 
   return (
-    <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-      {/* Global Error Alert */}
-      {apiError && (
-        <ErrorBanner
-          title={`Error Encountered (${apiError.code || 'API_ERROR'})`}
-          message={apiError.message}
-          details={apiError.details}
-          onDismiss={() => setApiError(null)}
-        />
-      )}
-
-      {/* Journey Header */}
+    <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+      {/* 9. HEADER: ClaimSahay Header */}
       <div
         style={{
           display: 'flex',
@@ -452,472 +437,304 @@ export const ClaimSahayView: React.FC<ClaimSahayViewProps> = ({
           alignItems: 'flex-start',
           flexWrap: 'wrap',
           gap: '1rem',
-          background: 'rgba(15, 23, 42, 0.7)',
-          padding: '1.25rem 1.5rem',
-          borderRadius: 'var(--radius-lg)',
-          border: '1px solid var(--border-subtle)',
+          paddingBottom: '0.5rem',
+          borderBottom: '1px solid var(--border-subtle)',
         }}
       >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.375rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', flexWrap: 'wrap' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
-              <Shield size={20} color="#3b82f6" />
-              <strong style={{ fontSize: '1.125rem', color: '#ffffff' }}>ClaimSahay</strong>
-            </div>
-            <Badge variant="blue">Domain: Insurance</Badge>
-            <Badge
-              variant={
-                currentStatus === 'DOCUMENTS_PENDING' || currentStatus === 'READY_FOR_REVIEW'
-                  ? 'green'
-                  : currentStatus === 'NEEDS_ACTION'
-                  ? 'red'
-                  : 'amber'
-              }
-            >
-              Status: {currentStatus}
-            </Badge>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', marginBottom: '0.25rem' }}>
+            <h1 style={{ fontSize: '1.5rem', fontWeight: 700, letterSpacing: '-0.02em', margin: 0 }}>
+              ClaimSahay
+            </h1>
+            <span style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>• Insurance claim assistance</span>
             {journey && (
-              <button
-                onClick={copyJourneyId}
-                style={{
-                  background: 'rgba(30, 41, 59, 0.6)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  borderRadius: 'var(--radius-sm)',
-                  padding: '0.25rem 0.5rem',
-                  color: 'var(--text-secondary)',
-                  fontSize: '0.75rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.375rem',
-                  cursor: 'pointer',
-                }}
-                title="Click to copy journey ID"
-              >
-                <code>ID: {journey.id.slice(0, 8)}...</code>
-                {copiedId ? <Check size={12} color="#34d399" /> : <Copy size={12} />}
-              </button>
+              <Badge variant={statusInfo.variant}>
+                ● {statusInfo.label}
+              </Badge>
             )}
           </div>
 
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 600, marginTop: '0.25rem' }}>
-            Evidence-Backed Insurance Claim Settlement
-          </h2>
-
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', maxWidth: '750px' }}>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', margin: 0, maxWidth: '720px' }}>
             {journey?.goal ||
               initialGoal ||
               'Guided resolution of hospital reimbursement queries, pre-auth rejections, and room rent capping disputes.'}
           </p>
         </div>
 
-        {/* Action Controls */}
-        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-          {journey && (
+        {/* Header Secondary Actions */}
+        {journey && (
+          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
             <button
               type="button"
               onClick={() => setIsEscalateModalOpen(true)}
               className="btn btn-secondary"
-              style={{
-                fontSize: '0.8125rem',
-                padding: '0.5rem 0.875rem',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.375rem',
-                color: '#c084fc',
-                borderColor: 'rgba(192, 132, 252, 0.4)',
-              }}
+              style={{ fontSize: '0.8125rem', padding: '0.375rem 0.75rem', gap: '0.375rem' }}
             >
-              <LifeBuoy size={14} />
-              <span>Talk to Specialist</span>
+              <LifeBuoy size={14} color="var(--primary-light)" />
+              <span>Specialist Help</span>
             </button>
-          )}
 
-          {journey && (
             <button
               onClick={handleResetJourney}
               className="btn btn-secondary"
-              style={{ fontSize: '0.8125rem', padding: '0.5rem 0.875rem', display: 'flex', alignItems: 'center', gap: '0.375rem' }}
+              style={{ fontSize: '0.8125rem', padding: '0.375rem 0.75rem', gap: '0.375rem' }}
             >
-              <RotateCcw size={14} />
-              <span>Start New Journey</span>
+              <RotateCcw size={13} />
+              <span>New Journey</span>
             </button>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
-      {/* Visual Milestone Stepper */}
+      {/* Global API Error Banner */}
+      {apiError && (
+        <ErrorBanner
+          message={apiError.message}
+          onDismiss={() => setApiError(null)}
+        />
+      )}
+
+      {/* 9. PROGRESS: Visual Milestone Stepper */}
       <JourneyStepper
         status={currentStatus}
         allQuestionsAnswered={allRequiredDone}
         consentGranted={isConsentGranted}
+        currentStepId={viewStep}
+        onSelectStep={(stepId) => setViewStep(stepId)}
       />
 
-      {/* Stage Navigation Tabs (When Journey is Active) */}
-      {journey && (
-        <div
-          style={{
-            display: 'flex',
-            gap: '0.5rem',
-            background: 'rgba(15, 23, 42, 0.5)',
-            padding: '0.375rem',
-            borderRadius: 'var(--radius-md)',
-            border: '1px solid var(--border-subtle)',
-            overflowX: 'auto',
-            width: 'fit-content',
-            maxWidth: '100%',
-          }}
-        >
-          <button
-            onClick={() => setViewStep('goal')}
-            style={{
-              background: viewStep === 'goal' ? 'rgba(59, 130, 246, 0.2)' : 'transparent',
-              border: viewStep === 'goal' ? '1px solid #3b82f6' : 'none',
-              borderRadius: 'var(--radius-sm)',
-              padding: '0.375rem 0.75rem',
-              color: viewStep === 'goal' ? '#ffffff' : 'var(--text-muted)',
-              fontSize: '0.8125rem',
-              fontWeight: 600,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.375rem',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <Sparkles size={14} />
-            <span>1. Goal</span>
-          </button>
-
-          <button
-            onClick={() => setViewStep('questions')}
-            style={{
-              background: viewStep === 'questions' ? 'rgba(59, 130, 246, 0.2)' : 'transparent',
-              border: viewStep === 'questions' ? '1px solid #3b82f6' : 'none',
-              borderRadius: 'var(--radius-sm)',
-              padding: '0.375rem 0.75rem',
-              color: viewStep === 'questions' ? '#ffffff' : 'var(--text-muted)',
-              fontSize: '0.8125rem',
-              fontWeight: 600,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.375rem',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <HelpCircle size={14} />
-            <span>2. Questions</span>
-          </button>
-
-          <button
-            onClick={() => setViewStep('consent')}
-            style={{
-              background: viewStep === 'consent' ? 'rgba(59, 130, 246, 0.2)' : 'transparent',
-              border: viewStep === 'consent' ? '1px solid #3b82f6' : 'none',
-              borderRadius: 'var(--radius-sm)',
-              padding: '0.375rem 0.75rem',
-              color: viewStep === 'consent' ? '#ffffff' : 'var(--text-muted)',
-              fontSize: '0.8125rem',
-              fontWeight: 600,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.375rem',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <FileCheck2 size={14} />
-            <span>3. Consent</span>
-          </button>
-
-          <button
-            onClick={() => setViewStep('documents')}
-            style={{
-              background: viewStep === 'documents' ? 'rgba(59, 130, 246, 0.2)' : 'transparent',
-              border: viewStep === 'documents' ? '1px solid #3b82f6' : 'none',
-              borderRadius: 'var(--radius-sm)',
-              padding: '0.375rem 0.75rem',
-              color: viewStep === 'documents' ? '#ffffff' : 'var(--text-muted)',
-              fontSize: '0.8125rem',
-              fontWeight: 600,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.375rem',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <UploadCloud size={14} />
-            <span>4. Documents ({documents.length})</span>
-          </button>
-
-          {evidence.length > 0 && (
-            <button
-              onClick={() => setViewStep('evidence')}
-              style={{
-                background: viewStep === 'evidence' ? 'rgba(59, 130, 246, 0.2)' : 'transparent',
-                border: viewStep === 'evidence' ? '1px solid #3b82f6' : 'none',
-                borderRadius: 'var(--radius-sm)',
-                padding: '0.375rem 0.75rem',
-                color: viewStep === 'evidence' ? '#ffffff' : 'var(--text-muted)',
-                fontSize: '0.8125rem',
-                fontWeight: 600,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.375rem',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              <Search size={14} />
-              <span>5. Evidence & Conflicts ({evidence.length})</span>
-            </button>
+      {/* 47. RESPONSIVE CLAIMSAHAY LAYOUT: Master-Detail 2-Column Grid */}
+      <div className="workspace-grid">
+        {/* Left Column: Primary Workspace */}
+        <div className="workspace-main">
+          {/* STEP: GOAL */}
+          {!journey && (
+            <GoalEntryCard
+              initialGoal={initialGoal}
+              onSubmitGoal={handleStartJourney}
+              isSubmitting={isCreatingJourney}
+              intentResult={intentResult}
+            />
           )}
 
-          {evidence.length > 0 && (
-            <button
-              onClick={() => setViewStep('reconcile')}
-              style={{
-                background: viewStep === 'reconcile' ? 'rgba(59, 130, 246, 0.2)' : 'transparent',
-                border: viewStep === 'reconcile' ? '1px solid #3b82f6' : 'none',
-                borderRadius: 'var(--radius-sm)',
-                padding: '0.375rem 0.75rem',
-                color: viewStep === 'reconcile' ? '#ffffff' : 'var(--text-muted)',
-                fontSize: '0.8125rem',
-                fontWeight: 600,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.375rem',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              <Scale size={14} />
-              <span>6. Policy Citation & Explanation</span>
-            </button>
+          {journey && viewStep === 'goal' && (
+            <GoalEntryCard
+              initialGoal={journey.goal}
+              onSubmitGoal={handleStartJourney}
+              isSubmitting={isCreatingJourney}
+              intentResult={intentResult || { domain: journey.domain, journeyType: journey.journeyType, goal: journey.goal }}
+              disabled={true}
+            />
           )}
 
-          {evidence.length > 0 && (
-            <button
-              onClick={() => setViewStep('review')}
-              style={{
-                background: viewStep === 'review' ? 'rgba(59, 130, 246, 0.2)' : 'transparent',
-                border: viewStep === 'review' ? '1px solid #3b82f6' : 'none',
-                borderRadius: 'var(--radius-sm)',
-                padding: '0.375rem 0.75rem',
-                color: viewStep === 'review' ? '#ffffff' : 'var(--text-muted)',
-                fontSize: '0.8125rem',
-                fontWeight: 600,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.375rem',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              <FileCheck size={14} />
-              <span>7. Review & Submit</span>
-            </button>
+          {/* STEP: QUESTIONS */}
+          {journey && viewStep === 'questions' && (
+            <DynamicQuestionnaire
+              journeyId={journey.id}
+              questions={questions}
+              onAnswerQuestion={handleAnswerQuestion}
+              onAllCompleted={() => setViewStep('consent')}
+              isSubmittingAnswer={isSubmittingAnswer}
+            />
           )}
 
-          {journey && (
-            <button
-              onClick={() => setViewStep('timeline')}
-              style={{
-                background: viewStep === 'timeline' ? 'rgba(59, 130, 246, 0.2)' : 'transparent',
-                border: viewStep === 'timeline' ? '1px solid #3b82f6' : 'none',
-                borderRadius: 'var(--radius-sm)',
-                padding: '0.375rem 0.75rem',
-                color: viewStep === 'timeline' ? '#ffffff' : 'var(--text-muted)',
-                fontSize: '0.8125rem',
-                fontWeight: 600,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.375rem',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              <Activity size={14} />
-              <span>8. Audit Timeline</span>
-            </button>
+          {/* STEP: CONSENT */}
+          {journey && viewStep === 'consent' && (
+            <ConsentCard
+              journeyId={journey.id}
+              onGrantConsent={handleGrantConsent}
+              isSubmittingConsent={isSubmittingConsent}
+              consentGranted={isConsentGranted}
+              onBack={() => setViewStep('questions')}
+            />
           )}
-        </div>
-      )}
 
-      {/* 1. Goal View */}
-      {!journey && (
-        <GoalEntryCard
-          initialGoal={initialGoal}
-          onSubmitGoal={handleCreateJourney}
-          isSubmitting={isCreatingJourney}
-          intentResult={intentResult}
-        />
-      )}
+          {/* STEP: DOCUMENTS */}
+          {journey && viewStep === 'documents' && (
+            <DocumentUploadSection
+              journeyId={journey.id}
+              requirements={requirements}
+              documents={documents}
+              onUploadFile={handleUploadFile}
+              onProcessDocuments={handleProcessDocuments}
+              isUploading={isUploading}
+              isProcessing={isProcessing}
+              hasConsented={isConsentGranted}
+              onProceedToEvidence={() => setViewStep('evidence')}
+            />
+          )}
 
-      {journey && viewStep === 'goal' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <GoalEntryCard
-            initialGoal={journey.goal}
-            onSubmitGoal={handleCreateJourney}
-            isSubmitting={isCreatingJourney}
-            intentResult={intentResult}
-            disabled={true}
-          />
-          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <button
-              onClick={() => setViewStep('questions')}
-              className="btn btn-primary"
-              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-            >
-              <span>Continue to Questionnaire</span>
-              <ArrowRight size={16} />
-            </button>
-          </div>
-        </div>
-      )}
+          {/* STEP: EVIDENCE */}
+          {journey && viewStep === 'evidence' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <EvidenceSection
+                evidence={evidence}
+                validation={validation}
+                totalDocuments={documents.length}
+                processedDocuments={documents.filter((d) => d.status === 'PROCESSED').length}
+                onNavigateToUpload={() => setViewStep('documents')}
+                onEscalate={() => setIsEscalateModalOpen(true)}
+              />
 
-      {/* 2. Questions View */}
-      {journey && viewStep === 'questions' && (
-        <DynamicQuestionnaire
-          journeyId={journey.id}
-          questions={questions}
-          onAnswerQuestion={handleAnswerQuestion}
-          onAllCompleted={() => setViewStep('consent')}
-          isSubmittingAnswer={isSubmittingAnswer}
-        />
-      )}
-
-      {/* 3. Consent View */}
-      {journey && viewStep === 'consent' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <ConsentCard
-            journeyId={journey.id}
-            onGrantConsent={handleGrantConsent}
-            isSubmittingConsent={isSubmittingConsent}
-            consentGranted={isConsentGranted}
-            requirements={requirements}
-          />
-
-          {isConsentGranted && (
-            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <button
-                onClick={() => setViewStep('documents')}
-                className="btn btn-primary"
-                style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-              >
-                <span>Proceed to Document Upload</span>
-                <ArrowRight size={16} />
-              </button>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '0.5rem' }}>
+                <button
+                  onClick={() => setViewStep('reconcile')}
+                  className="btn btn-primary"
+                  style={{ gap: '0.5rem' }}
+                >
+                  <span>Proceed to Policy Explanation</span>
+                  <ArrowRight size={15} />
+                </button>
+              </div>
             </div>
           )}
-        </div>
-      )}
 
-      {/* 4. Document Upload View */}
-      {journey && viewStep === 'documents' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <DocumentUploadSection
-            journeyId={journey.id}
-            requirements={requirements}
-            documents={documents}
-            onUploadFile={handleUploadFile}
-            onProcessDocuments={handleProcessDocuments}
-            isUploading={isUploading}
-            isProcessing={isProcessing}
-            hasConsented={isConsentGranted}
-          />
+          {/* STEP: POLICY RECONCILE & EXPLANATION */}
+          {journey && viewStep === 'reconcile' && (
+            <PolicyExplanationCard
+              journeyId={journey.id}
+              reconciliation={reconciliation}
+              nextActions={nextActions}
+              onReconcile={handleReconcile}
+              isReconciling={isReconciling}
+              onEscalateToHuman={() => setIsEscalateModalOpen(true)}
+              onProceedToReview={() => setViewStep('review')}
+            />
+          )}
 
-          {evidence.length > 0 && (
-            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <button
-                onClick={() => setViewStep('evidence')}
-                className="btn btn-primary"
-                style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-              >
-                <span>View Extracted Evidence & Conflicts ({evidence.length})</span>
-                <ArrowRight size={16} />
-              </button>
-            </div>
+          {/* STEP: REVIEW & APPROVAL */}
+          {journey && viewStep === 'review' && (
+            <ReviewApprovalCard
+              journey={journey}
+              documents={documents}
+              evidence={evidence}
+              validation={validation}
+              reconciliation={reconciliation}
+              nextActions={nextActions}
+              onConfirm={handleConfirm}
+              onApprove={handleApprove}
+              onViewTimeline={() => setViewStep('timeline')}
+              onEscalate={() => setIsEscalateModalOpen(true)}
+            />
+          )}
+
+          {/* STEP: TRACK & TIMELINE */}
+          {journey && viewStep === 'timeline' && (
+            <TimelineView
+              journeyId={journey.id}
+              status={currentStatus}
+              onEscalate={() => setIsEscalateModalOpen(true)}
+              onRefreshJourney={() => {
+                journeysApi.getJourney(journey.id).then((res) => setJourney(res.journey));
+              }}
+            />
           )}
         </div>
-      )}
 
-      {/* 5. Evidence & Conflicts View */}
-      {journey && viewStep === 'evidence' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-          <EvidenceSection
-            evidence={evidence}
-            validation={validation}
-            totalDocuments={documents.length}
-            processedDocuments={documents.filter((d) => d.status === 'PROCESSED').length}
-            onNavigateToUpload={() => setViewStep('documents')}
-            onEscalate={onNavigateToSupport}
-          />
+        {/* Right Column: Context Panel Rail (Shown when Journey Active) */}
+        {journey && (
+          <div className="workspace-rail">
+            {/* 25. Authoritative Status Card */}
+            <Card style={{ padding: '1.25rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                <span style={{ fontSize: '0.6875rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-muted)' }}>
+                  Current Status
+                </span>
+                <Badge variant={statusInfo.variant}>● {statusInfo.label}</Badge>
+              </div>
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
-            <button
-              onClick={() => setViewStep('documents')}
-              className="btn btn-secondary"
-            >
-              Upload Additional Documents
-            </button>
+              <p style={{ fontSize: '0.875rem', color: 'var(--text-primary)', lineHeight: 1.4, margin: '0 0 0.75rem' }}>
+                {statusInfo.note}
+              </p>
 
-            <button
-              onClick={() => setViewStep('reconcile')}
-              className="btn btn-primary"
-              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-            >
-              <span>Examine Policy Citations & Grounded Reasoning</span>
-              <ArrowRight size={16} />
-            </button>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', paddingTop: '0.75rem', borderTop: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span>Case ID:</span>
+                <button
+                  type="button"
+                  onClick={copyJourneyId}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    color: 'var(--primary-light)',
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '0.75rem',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.25rem',
+                  }}
+                  title="Copy full Journey ID"
+                >
+                  <span>{journey.id.slice(0, 12)}...</span>
+                  {copiedId ? <Check size={11} color="var(--success)" /> : <Copy size={11} />}
+                </button>
+              </div>
+            </Card>
+
+            {/* 22. Next Best Action (Authoritative from Backend) */}
+            {nextActions.length > 0 && (
+              <NextBestActionCard
+                actions={nextActions}
+                onSelectAction={handleSelectNextAction}
+                onEscalate={() => setIsEscalateModalOpen(true)}
+              />
+            )}
+
+            {/* Evidence & Document Summary Metrics (Only when docs exist) */}
+            {documents.length > 0 && (
+              <Card style={{ padding: '1.25rem' }}>
+                <div style={{ fontSize: '0.6875rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-muted)', marginBottom: '0.75rem' }}>
+                  Dossier Summary
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.8125rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: 'var(--text-secondary)' }}>Documents processed:</span>
+                    <strong style={{ color: 'var(--text-primary)' }}>
+                      {documents.filter((d) => d.status === 'PROCESSED').length} of {documents.length}
+                    </strong>
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: 'var(--text-secondary)' }}>Verified facts:</span>
+                    <strong style={{ color: 'var(--text-primary)' }}>{evidence.length}</strong>
+                  </div>
+
+                  {validation && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span style={{ color: 'var(--text-secondary)' }}>Review flags:</span>
+                      <strong style={{ color: validation.blocking?.length ? 'var(--warning)' : 'var(--success)' }}>
+                        {validation.blocking?.length || 0} issues
+                      </strong>
+                    </div>
+                  )}
+                </div>
+              </Card>
+            )}
+
+            {/* Human Specialist Handoff Tile */}
+            <Card style={{ padding: '1.25rem', background: 'var(--surface-sunken)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.375rem' }}>
+                <LifeBuoy size={16} color="var(--primary-light)" />
+                <h5 style={{ fontSize: '0.875rem', fontWeight: 600, margin: 0 }}>Human Review Option</h5>
+              </div>
+              <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', lineHeight: 1.4, margin: '0 0 0.75rem' }}>
+                Our senior claims advocate can review your policy deductions with insurer TPA desks.
+              </p>
+              <button
+                type="button"
+                onClick={() => setIsEscalateModalOpen(true)}
+                className="btn btn-secondary"
+                style={{ width: '100%', fontSize: '0.75rem', padding: '0.375rem 0.5rem', justifyContent: 'center' }}
+              >
+                Escalate to Specialist
+              </button>
+            </Card>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
-      {/* 6. Policy & Explanation View (Phase 5) */}
-      {journey && viewStep === 'reconcile' && (
-        <PolicyExplanationCard
-          journeyId={journey.id}
-          reconciliation={reconciliation}
-          nextActions={nextActions}
-          onReconcile={handleReconcile}
-          isReconciling={isReconciling}
-          onEscalateToHuman={() => setIsEscalateModalOpen(true)}
-          onProceedToReview={() => setViewStep('review')}
-        />
-      )}
-
-      {/* 7. Review & Consequential Approval View (Phase 6) */}
-      {journey && viewStep === 'review' && (
-        <ReviewApprovalCard
-          journey={journey}
-          documents={documents}
-          evidence={evidence}
-          validation={validation}
-          reconciliation={reconciliation}
-          nextActions={nextActions}
-          onConfirm={handleConfirmJourney}
-          onApprove={handleApproveAction}
-          onViewTimeline={() => setViewStep('timeline')}
-          onEscalate={() => setIsEscalateModalOpen(true)}
-        />
-      )}
-
-      {/* 8. Audit Timeline & Authoritative Status View (Phase 6) */}
-      {journey && viewStep === 'timeline' && (
-        <TimelineView
-          journeyId={journey.id}
-          status={journey.status}
-          onEscalate={() => setIsEscalateModalOpen(true)}
-          onRefreshJourney={async () => {
-            const refreshed = await journeysApi.getJourney(journey.id);
-            setJourney(refreshed.journey);
-          }}
-        />
-      )}
-
-      {/* Human Specialist Escalation Modal (Phase 6) */}
+      {/* Human Escalation Modal */}
       {journey && (
         <HumanEscalationModal
           isOpen={isEscalateModalOpen}
@@ -925,13 +742,13 @@ export const ClaimSahayView: React.FC<ClaimSahayViewProps> = ({
           journeyId={journey.id}
           goal={journey.goal}
           unresolvedIssue={
-            validation?.blocking[0]?.details ||
             reconciliation?.conflict?.description ||
-            'Cross-document validation discrepancy or room rent sub-limit capping requiring specialist intervention.'
+            (validation?.blocking && validation.blocking[0]?.details) ||
+            'Hospital tariff exceeds policy limit.'
           }
-          onEscalationSuccess={async () => {
-            const refreshed = await journeysApi.getJourney(journey.id);
-            setJourney(refreshed.journey);
+          onEscalationSuccess={() => {
+            journeysApi.getJourney(journey.id).then((res) => setJourney(res.journey));
+            setViewStep('timeline');
           }}
         />
       )}

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
   Scale,
   Sparkles,
-  BookOpen,
   AlertTriangle,
   ArrowRight,
   ShieldCheck,
@@ -11,13 +10,11 @@ import {
   FileText,
   Copy,
   Check,
-  RefreshCw,
 } from 'lucide-react';
 import { Card } from '../common/Card';
 import { Badge } from '../common/Badge';
 import { ReconciliationResult, NextBestAction } from '../../types';
 import { PolicyCitation } from './PolicyCitation';
-import { NextBestActionCard } from './NextBestActionCard';
 
 export interface PolicyExplanationCardProps {
   journeyId: string;
@@ -31,7 +28,7 @@ export interface PolicyExplanationCardProps {
 
 const RECONCILIATION_SCENARIOS = [
   {
-    title: 'Room Rent Sub-Limit Query',
+    title: 'Room Rent Capping Discrepancy',
     queryType: 'ROOM_RENT_CAPPING',
     queryText: 'Room rent sub-limit deduction: room tariff ₹7,500/day vs ₹5,000/day private room',
     badge: 'Standard Scenario',
@@ -43,10 +40,10 @@ const RECONCILIATION_SCENARIOS = [
     badge: 'Coverage Check',
   },
   {
-    title: 'Cosmetic / Uncovered Procedure',
+    title: 'Cosmetic / Uncovered Query',
     queryType: 'UNCOVERED_QUERY',
     queryText: 'Experimental cosmetic scar surgery rhinoplasty laser therapy',
-    badge: 'No-Source Guardrail Test',
+    badge: 'Safety Guardrail Test',
   },
 ];
 
@@ -84,47 +81,33 @@ export const PolicyExplanationCard: React.FC<PolicyExplanationCardProps> = ({
     setTimeout(() => setCopiedExplanation(false), 2000);
   };
 
-  const hasConflict = !!reconciliation?.conflict;
   const isNoSourceGuardrail =
     reconciliation?.conflict?.type === 'NO_MATCHING_CLAUSE' ||
     reconciliation?.requiresHumanReview === true;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.75rem' }}>
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
-            <Scale size={16} color="#60a5fa" />
-            <span style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--primary-light)' }}>
-              Stage 5 • Policy Citation & Grounded Explanation
-            </span>
-          </div>
           <h3 style={{ fontSize: '1.25rem', fontWeight: 600 }}>
-            Automated Policy Clause Reconciliation & RAG Grounding
+            Policy Clause Reconciliation & Explanation
           </h3>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginTop: '0.25rem' }}>
-            Cross-referencing hospital evidence items against pinned terms from SafeGuard Health Insurance Policy (POL-HEALTH-2024-001).
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
+            Cross-referencing hospital evidence items against SafeGuard Health Insurance Policy (POL-HEALTH-2024-001).
           </p>
         </div>
 
         <Badge variant="blue">Policy Pinned: 2024-v1</Badge>
       </div>
 
-      {/* Interactive Scenario Selector & Query Trigger */}
-      <Card
-        style={{
-          background: 'rgba(15, 23, 42, 0.85)',
-          border: '1px solid var(--border-subtle)',
-          padding: '1.5rem',
-        }}
-      >
+      {/* Interactive Scenario Selector & Query Input */}
+      <Card style={{ padding: '1.25rem' }}>
         <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.75rem' }}>
-          Select or input an insurer query to reconcile against policy terms:
+          Select or customize the insurer deduction query to reconcile:
         </div>
 
-        {/* Quick Scenarios */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '0.625rem', marginBottom: '1rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.5rem', marginBottom: '0.875rem' }}>
           {RECONCILIATION_SCENARIOS.map((sc, idx) => (
             <button
               key={idx}
@@ -133,17 +116,16 @@ export const PolicyExplanationCard: React.FC<PolicyExplanationCardProps> = ({
               disabled={isReconciling}
               style={{
                 textAlign: 'left',
-                padding: '0.75rem 1rem',
+                padding: '0.625rem 0.875rem',
                 borderRadius: 'var(--radius-md)',
-                background: selectedScenarioIdx === idx ? 'rgba(59, 130, 246, 0.15)' : 'rgba(30, 41, 59, 0.4)',
-                border: selectedScenarioIdx === idx ? '1px solid #3b82f6' : '1px solid rgba(255, 255, 255, 0.08)',
+                background: selectedScenarioIdx === idx ? 'var(--primary-subtle)' : 'var(--surface-sunken)',
+                border: selectedScenarioIdx === idx ? '1px solid var(--primary)' : '1px solid var(--border-subtle)',
                 cursor: 'pointer',
-                transition: 'all 0.2s',
+                transition: 'all 0.15s ease',
               }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
-                <strong style={{ fontSize: '0.8125rem', color: '#ffffff' }}>{sc.title}</strong>
-                <Badge variant={idx === 2 ? 'amber' : 'blue'}>{sc.badge}</Badge>
+                <strong style={{ fontSize: '0.8125rem', color: 'var(--text-primary)' }}>{sc.title}</strong>
               </div>
               <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {sc.queryText}
@@ -152,24 +134,14 @@ export const PolicyExplanationCard: React.FC<PolicyExplanationCardProps> = ({
           ))}
         </div>
 
-        {/* Query Input Area */}
         <form onSubmit={handleTriggerReconcile} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
           <textarea
             value={customQueryText}
             onChange={(e) => setCustomQueryText(e.target.value)}
             disabled={isReconciling}
             rows={2}
-            style={{
-              width: '100%',
-              background: 'rgba(30, 41, 59, 0.7)',
-              border: '1px solid var(--border-subtle)',
-              borderRadius: 'var(--radius-sm)',
-              color: 'var(--text-primary)',
-              padding: '0.75rem 1rem',
-              fontSize: '0.875rem',
-              outline: 'none',
-              resize: 'vertical',
-            }}
+            className="input-text"
+            style={{ resize: 'vertical' }}
           />
 
           <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
@@ -177,17 +149,17 @@ export const PolicyExplanationCard: React.FC<PolicyExplanationCardProps> = ({
               type="submit"
               disabled={isReconciling || !customQueryText.trim()}
               className="btn btn-primary"
-              style={{ minWidth: '240px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
+              style={{ minWidth: '200px', gap: '0.5rem' }}
             >
               {isReconciling ? (
                 <>
                   <div className="spinner" style={{ width: '14px', height: '14px', borderTopColor: '#fff' }} />
-                  <span>Reconciling with Policy Clauses...</span>
+                  <span>Reconciling...</span>
                 </>
               ) : (
                 <>
-                  <Sparkles size={15} />
-                  <span>Execute Grounded Reconciliation</span>
+                  <Sparkles size={14} />
+                  <span>Reconcile Against Policy</span>
                   <ArrowRight size={14} />
                 </>
               )}
@@ -200,53 +172,35 @@ export const PolicyExplanationCard: React.FC<PolicyExplanationCardProps> = ({
       {reconciliation && isNoSourceGuardrail && (
         <Card
           style={{
-            background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(15, 23, 42, 0.8) 100%)',
-            border: '1px solid rgba(245, 158, 11, 0.4)',
-            padding: '1.5rem',
+            background: 'var(--surface-card)',
+            border: '1px solid var(--warning-border)',
+            padding: '1.25rem',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.875rem' }}>
-            <AlertTriangle size={24} color="#fbbf24" style={{ flexShrink: 0, marginTop: '2px' }} />
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
+            <AlertTriangle size={20} color="var(--warning)" style={{ flexShrink: 0, marginTop: '2px' }} />
             <div style={{ flex: 1 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.375rem', flexWrap: 'wrap' }}>
-                <strong style={{ fontSize: '1.0625rem', color: '#ffffff' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.375rem' }}>
+                <strong style={{ fontSize: '0.9375rem', color: 'var(--text-primary)' }}>
                   Safety Guardrail: No Grounded Policy Source Found (UNCERTAIN)
                 </strong>
                 <Badge variant="amber">Requires Human Review</Badge>
               </div>
 
-              <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.5, marginBottom: '1rem' }}>
-                The automated retrieval system could not locate a matching policy clause in <strong>SafeGuard Health Insurance Policy (POL-HEALTH-2024-001)</strong> for
-                this specific query. Under Team NOVA's explainability guardrails, the copilot will not invent or extrapolate policy terms.
+              <p style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', lineHeight: 1.4, marginBottom: '0.75rem' }}>
+                No matching policy clause exists in <strong>SafeGuard Health Insurance (POL-HEALTH-2024-001)</strong> for this specific claim procedure. To uphold strict financial governance, the copilot will never hallucinate or assume unverified terms.
               </p>
 
-              <div
-                style={{
-                  background: 'rgba(15, 23, 42, 0.65)',
-                  border: '1px solid rgba(255, 255, 255, 0.08)',
-                  borderRadius: 'var(--radius-sm)',
-                  padding: '0.875rem 1rem',
-                  marginBottom: '1rem',
-                  fontSize: '0.8125rem',
-                  color: '#fde047',
-                }}
-              >
-                <strong>System Guidance: </strong>
-                {reconciliation.conflict?.description || 'Could not find a matching policy clause for this query. Requires human review.'}
-              </div>
-
-              <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-                {onEscalateToHuman && (
-                  <button
-                    onClick={onEscalateToHuman}
-                    className="btn btn-primary"
-                    style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-                  >
-                    <LifeBuoy size={16} />
-                    <span>Escalate to Human Insurance Specialist</span>
-                  </button>
-                )}
-              </div>
+              {onEscalateToHuman && (
+                <button
+                  onClick={onEscalateToHuman}
+                  className="btn btn-primary"
+                  style={{ gap: '0.375rem', fontSize: '0.8125rem' }}
+                >
+                  <LifeBuoy size={14} />
+                  <span>Escalate to Human Insurance Specialist</span>
+                </button>
+              )}
             </div>
           </div>
         </Card>
@@ -255,7 +209,7 @@ export const PolicyExplanationCard: React.FC<PolicyExplanationCardProps> = ({
       {/* Grounded Reconciliation Results */}
       {reconciliation && !isNoSourceGuardrail && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-          {/* Pinned Policy Citation */}
+          {/* Policy Source Card */}
           {reconciliation.matchedClause && (
             <PolicyCitation
               matchedClause={reconciliation.matchedClause}
@@ -265,148 +219,84 @@ export const PolicyExplanationCard: React.FC<PolicyExplanationCardProps> = ({
             />
           )}
 
-          {/* Conflict Analysis Table (Room Rent Sub-limit Capping Calculation) */}
-          {((reconciliation.conflict && reconciliation.conflict.type === 'AMOUNT_EXCEEDS_LIMIT') ||
-            reconciliation.matchedClause?.section === 'Room Rent') && (
-            <Card
-              style={{
-                background: 'rgba(30, 41, 59, 0.6)',
-                border: '1px solid rgba(245, 158, 11, 0.3)',
-                padding: '1.25rem',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.875rem' }}>
-                <Scale size={18} color="#fbbf24" />
-                <h4 style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-primary)' }}>
-                  Room Rent Sub-Limit Capping Calculation
-                </h4>
+          {/* Structured 3-Part AI Explanation */}
+          <Card style={{ padding: '1.5rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Sparkles size={16} color="var(--primary-light)" />
+                <h4 style={{ fontSize: '1rem', fontWeight: 600 }}>Plain-Language Policy Guidance</h4>
               </div>
 
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
-                  gap: '0.75rem',
-                  marginBottom: '0.875rem',
-                }}
+              <button
+                type="button"
+                onClick={copyExplanation}
+                className="btn btn-secondary"
+                style={{ fontSize: '0.75rem', padding: '0.25rem 0.625rem', gap: '0.25rem' }}
               >
-                <div style={{ background: 'rgba(15, 23, 42, 0.5)', padding: '0.75rem', borderRadius: 'var(--radius-sm)' }}>
-                  <div style={{ fontSize: '0.6875rem', color: 'var(--text-muted)' }}>Billed Hospital Rate:</div>
-                  <div style={{ fontSize: '1.125rem', fontWeight: 700, color: '#fca5a5', marginTop: '0.25rem' }}>
-                    ₹{(reconciliation.conflict?.claimed ?? 7500).toLocaleString('en-IN')} / day
-                  </div>
-                </div>
+                {copiedExplanation ? <Check size={12} color="var(--success)" /> : <Copy size={12} />}
+                <span>{copiedExplanation ? 'Copied' : 'Copy Explanation'}</span>
+              </button>
+            </div>
 
-                <div style={{ background: 'rgba(15, 23, 42, 0.5)', padding: '0.75rem', borderRadius: 'var(--radius-sm)' }}>
-                  <div style={{ fontSize: '0.6875rem', color: 'var(--text-muted)' }}>Policy Cap Limit:</div>
-                  <div style={{ fontSize: '1.125rem', fontWeight: 700, color: '#34d399', marginTop: '0.25rem' }}>
-                    ₹{(reconciliation.conflict?.policyLimit ?? 5000).toLocaleString('en-IN')} / day
-                  </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              {/* WHAT THE POLICY SAYS */}
+              <div style={{ background: 'var(--surface-sunken)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
+                <div style={{ fontSize: '0.6875rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-muted)', marginBottom: '0.375rem' }}>
+                  What the Policy Says
                 </div>
-
-                <div style={{ background: 'rgba(15, 23, 42, 0.5)', padding: '0.75rem', borderRadius: 'var(--radius-sm)' }}>
-                  <div style={{ fontSize: '0.6875rem', color: 'var(--text-muted)' }}>Daily Excess Amount:</div>
-                  <div style={{ fontSize: '1.125rem', fontWeight: 700, color: '#fde047', marginTop: '0.25rem' }}>
-                    ₹{(reconciliation.conflict?.excess ?? 2500).toLocaleString('en-IN')} / day
-                  </div>
-                </div>
-
-                <div style={{ background: 'rgba(15, 23, 42, 0.5)', padding: '0.75rem', borderRadius: 'var(--radius-sm)' }}>
-                  <div style={{ fontSize: '0.6875rem', color: 'var(--text-muted)' }}>Estimated Out-of-Pocket:</div>
-                  <div style={{ fontSize: '1.125rem', fontWeight: 700, color: '#ffffff', marginTop: '0.25rem' }}>
-                    ₹{(reconciliation.conflict?.excessTotal ?? 12500).toLocaleString('en-IN')} (5 days)
-                  </div>
+                <div style={{ fontSize: '0.875rem', color: 'var(--text-primary)', lineHeight: 1.5 }}>
+                  {reconciliation.matchedClause?.content || 'Clause 4.2: Room rent capped at 1% of Sum Insured (max ₹5,000/day for normal room).'}
                 </div>
               </div>
 
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
-                <strong>Impact Analysis: </strong>
-                Because room rent is capped at ₹5,000/day, proportionate deductions may also apply to associated hospital services.
-              </div>
-            </Card>
-          )}
-
-          {/* Grounded Explanation Narrative */}
-          {reconciliation.explanation && (
-            <Card
-              style={{
-                background: 'rgba(15, 23, 42, 0.85)',
-                border: '1px solid var(--border-subtle)',
-                padding: '1.5rem',
-              }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <Sparkles size={18} color="#60a5fa" />
-                  <h4 style={{ fontSize: '1.0625rem', fontWeight: 600, color: 'var(--text-primary)' }}>
-                    Grounded AI Policy Explanation
-                  </h4>
+              {/* WHAT THIS MEANS FOR YOU */}
+              <div style={{ background: 'var(--surface-sunken)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
+                <div style={{ fontSize: '0.6875rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-muted)', marginBottom: '0.375rem' }}>
+                  What This Means For You
                 </div>
-
-                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                  <Badge variant="green">Grounded Reasoning</Badge>
-                  <button
-                    onClick={copyExplanation}
-                    className="btn btn-secondary"
-                    style={{ fontSize: '0.75rem', padding: '0.25rem 0.625rem', display: 'flex', alignItems: 'center', gap: '0.375rem' }}
-                  >
-                    {copiedExplanation ? <Check size={12} color="#34d399" /> : <Copy size={12} />}
-                    <span>{copiedExplanation ? 'Copied' : 'Copy'}</span>
-                  </button>
+                <div style={{ fontSize: '0.875rem', color: 'var(--text-primary)', lineHeight: 1.5 }}>
+                  {reconciliation.explanation ||
+                    'Your hospital billed ₹7,500/day which exceeds the ₹5,000/day policy limit. You have an excess tariff of ₹2,500/day across 5 days (₹12,500 total) which is subject to proportionate deduction.'}
                 </div>
               </div>
 
-              <div
-                style={{
-                  fontSize: '0.9375rem',
-                  color: 'var(--text-primary)',
-                  lineHeight: 1.6,
-                  whiteSpace: 'pre-wrap',
-                }}
-              >
-                {reconciliation.explanation}
-              </div>
+              {/* WHAT YOU CAN DO NEXT */}
+              <div style={{ background: 'var(--primary-subtle)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--primary)' }}>
+                <div style={{ fontSize: '0.6875rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--primary-light)', marginBottom: '0.375rem' }}>
+                  What You Can Do Next
+                </div>
+                <div style={{ fontSize: '0.875rem', color: 'var(--text-primary)', lineHeight: 1.5, marginBottom: '0.75rem' }}>
+                  {reconciliation.nextAction ||
+                    'Review the room-rent evidence and submit a proportionate deduction waiver appeal, or request specialist escalation to verify ICU tariff exemptions.'}
+                </div>
 
-              <div
-                style={{
-                  marginTop: '1.25rem',
-                  paddingTop: '0.75rem',
-                  borderTop: '1px solid rgba(255, 255, 255, 0.06)',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  fontSize: '0.75rem',
-                  color: 'var(--text-muted)',
-                  flexWrap: 'wrap',
-                  gap: '0.5rem',
-                }}
-              >
-                <div>
-                  Evidence Sources: <strong>Hospital Bill (Page 3)</strong>, <strong>Discharge Summary (Page 1)</strong>
-                </div>
-                <div>
-                  Prompt Injection Barrier: <strong style={{ color: '#34d399' }}>Enforced</strong>
+                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                  {onProceedToReview && (
+                    <button
+                      onClick={onProceedToReview}
+                      className="btn btn-primary"
+                      style={{ fontSize: '0.8125rem', padding: '0.375rem 0.75rem', gap: '0.375rem' }}
+                    >
+                      <span>Proceed to Review & Confirm</span>
+                      <ArrowRight size={13} />
+                    </button>
+                  )}
+
+                  {onEscalateToHuman && (
+                    <button
+                      onClick={onEscalateToHuman}
+                      className="btn btn-secondary"
+                      style={{ fontSize: '0.8125rem', padding: '0.375rem 0.75rem', gap: '0.375rem' }}
+                    >
+                      <LifeBuoy size={13} />
+                      <span>Escalate to Human</span>
+                    </button>
+                  )}
                 </div>
               </div>
-            </Card>
-          )}
+            </div>
+          </Card>
         </div>
-      )}
-
-      {/* Authoritative Next Best Actions */}
-      {nextActions && nextActions.length > 0 && (
-        <NextBestActionCard
-          actions={nextActions}
-          onSelectAction={(action) => {
-            if (action.action === 'ESCALATE_TO_HUMAN' && onEscalateToHuman) {
-              onEscalateToHuman();
-            } else if ((action.action === 'CONFIRM_CLAIM' || action.action === 'CONFIRM_AND_SUBMIT') && onProceedToReview) {
-              onProceedToReview();
-            } else if (action.action === 'REVIEW_POLICY') {
-              handleScenarioChange(0);
-            }
-          }}
-        />
       )}
     </div>
   );

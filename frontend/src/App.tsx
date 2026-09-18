@@ -73,60 +73,56 @@ export function App() {
       />
 
       {/* Primary Navigation Tabs */}
-      <div
-        style={{
-          background: 'rgba(15, 23, 42, 0.95)',
-          borderBottom: '1px solid var(--border-subtle)',
-          padding: '0.5rem 2rem',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          overflowX: 'auto',
-        }}
-      >
+      <div className="nav-bar">
         <div className="nav-tabs">
           <button
             onClick={() => setActiveTab('home')}
             className={`nav-tab ${activeTab === 'home' ? 'active' : ''}`}
           >
-            <Home size={16} /> Home
+            <Home size={15} />
+            <span>Home</span>
           </button>
           <button
             onClick={() => setActiveTab('claimsahay')}
             className={`nav-tab ${activeTab === 'claimsahay' ? 'active' : ''}`}
           >
-            <Shield size={16} color="#3b82f6" /> ClaimSahay (Insurance)
+            <Shield size={15} />
+            <span>ClaimSahay (Insurance)</span>
           </button>
           <button
             onClick={() => setActiveTab('lending')}
             className={`nav-tab ${activeTab === 'lending' ? 'active' : ''}`}
           >
-            <DollarSign size={16} color="#10b981" /> Lending Copilot
+            <DollarSign size={15} />
+            <span>Lending Copilot</span>
           </button>
           <button
             onClick={() => setActiveTab('fintech')}
             className={`nav-tab ${activeTab === 'fintech' ? 'active' : ''}`}
           >
-            <CreditCard size={16} color="#8b5cf6" /> Fintech Disputes
+            <CreditCard size={15} />
+            <span>Fintech Disputes</span>
           </button>
           <button
             onClick={() => setActiveTab('journeys')}
             className={`nav-tab ${activeTab === 'journeys' ? 'active' : ''}`}
           >
-            <History size={16} /> Journeys / History
+            <History size={15} />
+            <span>Journeys & Audit</span>
           </button>
           <button
             onClick={() => setActiveTab('support')}
             className={`nav-tab ${activeTab === 'support' ? 'active' : ''}`}
           >
-            <LifeBuoy size={16} /> Support & Compliance
+            <LifeBuoy size={15} />
+            <span>Support Specialist</span>
           </button>
         </div>
 
         {/* Current Active Persona Indicator */}
-        <div style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <span>Acting as:</span>
-          <strong style={{ color: 'var(--text-primary)' }}>{currentUser.userId}</strong>
+        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+          <span>Session:</span>
+          <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{currentUser.userId}</span>
         </div>
       </div>
 

@@ -7,7 +7,6 @@ import {
   Send,
   LifeBuoy,
   Scale,
-  Sparkles,
   CheckCircle2,
 } from 'lucide-react';
 import { NextBestAction } from '../../types';
@@ -17,147 +16,131 @@ import { Badge } from '../common/Badge';
 export interface NextBestActionCardProps {
   actions: NextBestAction[];
   onSelectAction?: (action: NextBestAction) => void;
+  onEscalate?: () => void;
 }
 
 export const NextBestActionCard: React.FC<NextBestActionCardProps> = ({
   actions,
   onSelectAction,
+  onEscalate,
 }) => {
   if (!actions || actions.length === 0) {
     return null;
   }
 
-  // Helper to format action button label and icon
-  const getActionDetails = (actionName: string) => {
-    switch (actionName) {
+  // Pick the primary action
+  const primaryAction = actions[0];
+  const otherActions = actions.slice(1);
+
+  const formatActionName = (name: string) => {
+    switch (name) {
       case 'CORRECT_FIELD':
-        return {
-          label: 'Review & Correct Conflicting Field',
-          icon: AlertTriangle,
-          variant: 'amber' as const,
-        };
+        return 'Review the room-rent evidence';
       case 'REVIEW_POLICY':
-        return {
-          label: 'Examine Pinned Policy Clause',
-          icon: Scale,
-          variant: 'blue' as const,
-        };
+        return 'Examine pinned policy clause';
       case 'RESPOND_TO_INSURER':
-        return {
-          label: 'Draft Rebuttal / Evidence Packet',
-          icon: Send,
-          variant: 'green' as const,
-        };
+        return 'Draft insurer appeal packet';
       case 'CONFIRM_CLAIM':
       case 'CONFIRM_AND_SUBMIT':
-        return {
-          label: 'Proceed to Consequential Confirmation',
-          icon: CheckCircle2,
-          variant: 'green' as const,
-        };
+        return 'Review & confirm submission';
       case 'ESCALATE_TO_HUMAN':
-        return {
-          label: 'Escalate to Insurance Specialist',
-          icon: LifeBuoy,
-          variant: 'purple' as const,
-        };
+        return 'Escalate to human specialist';
       case 'UPLOAD_DOCUMENT':
-        return {
-          label: 'Upload Missing Document',
-          icon: FileCheck,
-          variant: 'blue' as const,
-        };
+        return 'Upload missing documents';
       default:
-        return {
-          label: actionName.replace(/_/g, ' '),
-          icon: ArrowRight,
-          variant: 'blue' as const,
-        };
+        return name.split('_').map((w) => w.charAt(0) + w.slice(1).toLowerCase()).join(' ');
     }
   };
 
+  const whyText =
+    primaryAction.reason ||
+    primaryAction.why ||
+    'Recommended by ClaimSahay policy reconciliation engine.';
+
   return (
-    <Card
-      glow
-      style={{
-        background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%)',
-        border: '1px solid rgba(96, 165, 250, 0.4)',
-        padding: '1.5rem',
-      }}
-    >
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <Compass size={18} color="#60a5fa" />
-          <h4 style={{ fontSize: '1.0625rem', fontWeight: 600, color: 'var(--text-primary)' }}>
-            Authoritative Next Best Actions ({actions.length})
-          </h4>
+    <Card style={{ padding: '1.25rem', border: '1px solid var(--primary)' }}>
+      {/* 22. NEXT BEST ACTION Dominant Card */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+        <span
+          style={{
+            fontSize: '0.6875rem',
+            fontWeight: 700,
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
+            color: 'var(--primary-light)',
+          }}
+        >
+          Next Step
+        </span>
+        <Badge variant="blue">Recommended</Badge>
+      </div>
+
+      <h4 style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.375rem' }}>
+        {formatActionName(primaryAction.action)}
+      </h4>
+
+      <p style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', lineHeight: 1.4, marginBottom: '1rem' }}>
+        <strong>Why: </strong>"{whyText}"
+      </p>
+
+      {/* Primary and Secondary CTA */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+        {onSelectAction && (
+          <button
+            type="button"
+            onClick={() => onSelectAction(primaryAction)}
+            className="btn btn-primary"
+            style={{ width: '100%', justifyContent: 'center', gap: '0.375rem' }}
+          >
+            <span>{formatActionName(primaryAction.action)}</span>
+            <ArrowRight size={14} />
+          </button>
+        )}
+
+        {onEscalate && (
+          <button
+            type="button"
+            onClick={onEscalate}
+            className="btn btn-secondary"
+            style={{ width: '100%', justifyContent: 'center', gap: '0.375rem', fontSize: '0.8125rem' }}
+          >
+            <LifeBuoy size={13} />
+            <span>Escalate to human</span>
+          </button>
+        )}
+      </div>
+
+      {/* Other actions if available */}
+      {otherActions.length > 0 && (
+        <div style={{ marginTop: '1rem', paddingTop: '0.75rem', borderTop: '1px solid var(--border-subtle)' }}>
+          <span style={{ fontSize: '0.6875rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+            Alternative Actions:
+          </span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.375rem', marginTop: '0.375rem' }}>
+            {otherActions.map((act, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => onSelectAction && onSelectAction(act)}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  padding: '0.25rem 0',
+                  color: 'var(--primary-light)',
+                  fontSize: '0.75rem',
+                  textAlign: 'left',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.25rem',
+                }}
+              >
+                <span>• {formatActionName(act.action)}</span>
+              </button>
+            ))}
+          </div>
         </div>
-
-        <Badge variant="blue">Engine-Recommended</Badge>
-      </div>
-
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem' }}>
-        {actions.map((act, idx) => {
-          const { label, icon: ActionIcon, variant } = getActionDetails(act.action);
-          const reasonText = act.reason || act.why || 'Recommended by ClaimSahay decision tree.';
-          const isBlocking = act.blocking ?? false;
-          const priority = act.priority || 'HIGH';
-
-          return (
-            <div
-              key={idx}
-              style={{
-                background: isBlocking ? 'rgba(239, 68, 68, 0.08)' : 'rgba(30, 41, 59, 0.5)',
-                border: isBlocking
-                  ? '1px solid rgba(239, 68, 68, 0.3)'
-                  : '1px solid rgba(255, 255, 255, 0.08)',
-                borderRadius: 'var(--radius-md)',
-                padding: '1rem',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                flexWrap: 'wrap',
-                gap: '1rem',
-              }}
-            >
-              <div style={{ flex: 1, minWidth: '260px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.375rem', flexWrap: 'wrap' }}>
-                  <strong style={{ fontSize: '0.9375rem', color: '#ffffff' }}>
-                    {act.action.replace(/_/g, ' ')}
-                  </strong>
-                  <Badge variant={priority === 'HIGH' ? 'amber' : 'gray'}>
-                    Priority: {priority}
-                  </Badge>
-                  {isBlocking && <Badge variant="red">Blocking</Badge>}
-                </div>
-
-                <p style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
-                  {reasonText}
-                </p>
-              </div>
-
-              {onSelectAction && (
-                <button
-                  type="button"
-                  onClick={() => onSelectAction(act)}
-                  className="btn btn-primary"
-                  style={{
-                    fontSize: '0.8125rem',
-                    padding: '0.5rem 1rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  <ActionIcon size={14} />
-                  <span>{label}</span>
-                </button>
-              )}
-            </div>
-          );
-        })}
-      </div>
+      )}
     </Card>
   );
 };

@@ -5,10 +5,9 @@ import {
   AlertCircle,
   ArrowRight,
   ArrowLeft,
-  Calendar,
   Sparkles,
   ChevronRight,
-  ListFilter,
+  Check,
 } from 'lucide-react';
 import { Card } from '../common/Card';
 import { Badge } from '../common/Badge';
@@ -29,18 +28,18 @@ export const DynamicQuestionnaire: React.FC<DynamicQuestionnaireProps> = ({
   onAllCompleted,
   isSubmittingAnswer,
 }) => {
-  // Sort questions by order
+  // Sort questions deterministically by order
   const sortedQuestions = [...questions].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 
-  // Find the first unanswered question, or default to 0
+  // Find first unanswered question
   const initialIndex = sortedQuestions.findIndex((q) => q.status === 'PENDING');
   const [currentIndex, setCurrentIndex] = useState<number>(initialIndex >= 0 ? initialIndex : 0);
   const [currentInput, setCurrentInput] = useState<string>('');
   const [localError, setLocalError] = useState<string | null>(null);
+  const [isFillingDemo, setIsFillingDemo] = useState<boolean>(false);
 
   const currentQ = sortedQuestions[currentIndex];
 
-  // Whenever currentIndex changes or question status changes, populate input with existing answer
   useEffect(() => {
     if (currentQ) {
       setCurrentInput(currentQ.answer || '');
@@ -61,7 +60,6 @@ export const DynamicQuestionnaire: React.FC<DynamicQuestionnaireProps> = ({
   const answeredRequiredCount = sortedQuestions.filter(
     (q) => (q.required ?? q.isRequired ?? true) && q.status === 'ANSWERED'
   ).length;
-  const percentComplete = Math.round((answeredCount / sortedQuestions.length) * 100);
   const allRequiredDone = answeredRequiredCount === requiredCount;
 
   // Safe parse options for SELECT questions
@@ -79,13 +77,12 @@ export const DynamicQuestionnaire: React.FC<DynamicQuestionnaireProps> = ({
     }
   }
 
-  // Handle answering
   const handleSaveAnswer = async (answerValue?: string) => {
     const valueToSubmit = answerValue !== undefined ? answerValue : currentInput;
     const isRequired = currentQ.required ?? currentQ.isRequired ?? true;
 
     if (isRequired && !valueToSubmit.trim()) {
-      setLocalError('This question is required to proceed with your insurance claim verification.');
+      setLocalError('This question is required to continue.');
       return;
     }
 
@@ -93,7 +90,6 @@ export const DynamicQuestionnaire: React.FC<DynamicQuestionnaireProps> = ({
     try {
       const allDone = await onAnswerQuestion(currentQ.id, valueToSubmit);
 
-      // Auto advance to next unanswered question if available
       if (currentIndex < sortedQuestions.length - 1) {
         setCurrentIndex(currentIndex + 1);
       } else if (allDone || allRequiredDone) {
@@ -104,100 +100,56 @@ export const DynamicQuestionnaire: React.FC<DynamicQuestionnaireProps> = ({
     }
   };
 
-  const handleSkip = () => {
-    if (currentIndex < sortedQuestions.length - 1) {
-      setCurrentIndex(currentIndex + 1);
+  const handleQuickFillDemo = async () => {
+    setIsFillingDemo(true);
+    setLocalError(null);
+    try {
+      for (let i = 0; i < sortedQuestions.length; i++) {
+        const q = sortedQuestions[i];
+        if (q.status !== 'ANSWERED') {
+          let ans = 'Yes';
+          const key = (q.key || q.questionKey || '').toLowerCase();
+          if (key.includes('hospital')) ans = 'Apollo Hospital Bangalore';
+          else if (key.includes('bill') || key.includes('amount')) ans = '165000';
+          else if (key.includes('date')) ans = '2024-08-10';
+          else if (key.includes('diagnosis')) ans = 'Acute Appendicitis';
+          else if (key.includes('policy')) ans = 'POL-HEALTH-2024-001';
+          else if (key.includes('rent')) ans = '7500';
+          await onAnswerQuestion(q.id, ans);
+        }
+      }
+      onAllCompleted();
+    } catch (err: any) {
+      setLocalError(err.message || 'Demo answer fill encountered an error.');
+    } finally {
+      setIsFillingDemo(false);
     }
   };
 
   const questionType = (currentQ.type || currentQ.questionType || 'TEXT').toUpperCase();
-  const reasonText = currentQ.reason || currentQ.rationale || 'Required for accurate policy and claim verification.';
+  const reasonText = currentQ.reason || currentQ.rationale || 'Required to match policy schedules and claim records.';
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-      {/* Questionnaire Progress Banner */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          background: 'rgba(15, 23, 42, 0.6)',
-          padding: '0.75rem 1.25rem',
-          borderRadius: 'var(--radius-md)',
-          border: '1px solid var(--border-subtle)',
-          flexWrap: 'wrap',
-          gap: '0.75rem',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
-            <ListFilter size={16} color="#60a5fa" />
-            <strong style={{ fontSize: '0.875rem' }}>Claim Clarification Questionnaire</strong>
-          </div>
-          <Badge variant={allRequiredDone ? 'green' : 'blue'}>
-            {answeredCount} of {sortedQuestions.length} answered ({percentComplete}%)
-          </Badge>
-        </div>
-
-        {/* Question pagination pills */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', overflowX: 'auto', maxWidth: '100%' }}>
-          {sortedQuestions.map((q, idx) => {
-            const isAnswered = q.status === 'ANSWERED';
-            const isCurrent = idx === currentIndex;
-            return (
-              <button
-                key={q.id}
-                onClick={() => setCurrentIndex(idx)}
-                style={{
-                  width: '28px',
-                  height: '28px',
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '0.75rem',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  border: isCurrent
-                    ? '2px solid #60a5fa'
-                    : isAnswered
-                    ? '1px solid #10b981'
-                    : '1px solid rgba(255, 255, 255, 0.1)',
-                  background: isCurrent
-                    ? 'var(--primary-gradient)'
-                    : isAnswered
-                    ? 'rgba(16, 185, 129, 0.2)'
-                    : 'rgba(30, 41, 59, 0.6)',
-                  color: isCurrent || isAnswered ? '#ffffff' : 'var(--text-muted)',
-                  transition: 'all 0.2s',
-                }}
-                title={`Question ${idx + 1}: ${q.text || q.questionText}`}
-              >
-                {isAnswered ? '✓' : idx + 1}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Active Question Card */}
-      <Card
-        glow
-        style={{
-          border: '1px solid var(--border-focus)',
-          background: 'rgba(15, 23, 42, 0.85)',
-          padding: '1.75rem',
-        }}
-      >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.25rem' }}>
+      {/* Active Question Focus Card */}
+      <Card style={{ padding: '1.75rem' }}>
+        {/* Header: Progress Counter & Demo Helper */}
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '1.25rem',
+            flexWrap: 'wrap',
+            gap: '0.75rem',
+          }}
+        >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <span
               style={{
-                fontSize: '0.75rem',
-                fontWeight: 700,
-                textTransform: 'uppercase',
-                letterSpacing: '0.05em',
-                color: 'var(--primary-light)',
+                fontSize: '0.8125rem',
+                fontWeight: 600,
+                color: 'var(--text-secondary)',
               }}
             >
               Question {currentIndex + 1} of {sortedQuestions.length}
@@ -207,12 +159,22 @@ export const DynamicQuestionnaire: React.FC<DynamicQuestionnaireProps> = ({
             ) : (
               <Badge variant="gray">Optional</Badge>
             )}
-            {currentQ.status === 'ANSWERED' && <Badge variant="green">Answered</Badge>}
+            {currentQ.status === 'ANSWERED' && (
+              <Badge variant="green">Answered</Badge>
+            )}
           </div>
 
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-            Key: <code style={{ color: 'var(--text-secondary)' }}>{currentQ.key || currentQ.questionKey}</code>
-          </div>
+          <button
+            type="button"
+            onClick={handleQuickFillDemo}
+            disabled={isSubmittingAnswer || isFillingDemo}
+            className="btn btn-secondary"
+            style={{ fontSize: '0.75rem', padding: '0.375rem 0.75rem', gap: '0.375rem' }}
+            title="Pre-populate answers for seamless testing"
+          >
+            <Sparkles size={13} color="var(--primary-light)" />
+            <span>{isFillingDemo ? 'Filling...' : 'Auto-fill Demo Answers'}</span>
+          </button>
         </div>
 
         {/* Question Text */}
@@ -228,14 +190,14 @@ export const DynamicQuestionnaire: React.FC<DynamicQuestionnaireProps> = ({
           {currentQ.text || currentQ.questionText}
         </h3>
 
-        {/* Explainability / Rationale Pill */}
+        {/* Clear Explainability / Reason */}
         <div
           style={{
             display: 'flex',
             alignItems: 'flex-start',
             gap: '0.5rem',
-            background: 'rgba(59, 130, 246, 0.08)',
-            borderLeft: '3px solid #3b82f6',
+            background: 'var(--primary-subtle)',
+            borderLeft: '3px solid var(--primary)',
             padding: '0.625rem 0.875rem',
             borderRadius: '0 var(--radius-sm) var(--radius-sm) 0',
             marginBottom: '1.5rem',
@@ -243,60 +205,56 @@ export const DynamicQuestionnaire: React.FC<DynamicQuestionnaireProps> = ({
             color: 'var(--text-secondary)',
           }}
         >
-          <HelpCircle size={15} color="#60a5fa" style={{ flexShrink: 0, marginTop: '2px' }} />
+          <HelpCircle size={15} color="var(--primary-light)" style={{ flexShrink: 0, marginTop: '2px' }} />
           <div>
             <strong style={{ color: 'var(--text-primary)', marginRight: '0.375rem' }}>Why we ask this:</strong>
             {reasonText}
           </div>
         </div>
 
-        {/* Input Rendering based on question type */}
-        <div style={{ marginBottom: '1.5rem' }}>
-          {/* SELECT / CHOICE */}
+        {/* Input area */}
+        <div style={{ marginBottom: '1.75rem' }}>
+          {/* SELECT */}
           {questionType === 'SELECT' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.625rem' }}>
-                {parsedOptions.map((opt, idx) => {
-                  const isSelected = currentInput === opt;
-                  return (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => {
-                        setCurrentInput(opt);
-                        handleSaveAnswer(opt);
-                      }}
-                      disabled={isSubmittingAnswer}
-                      style={{
-                        padding: '0.75rem 1rem',
-                        borderRadius: 'var(--radius-md)',
-                        textAlign: 'left',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        background: isSelected
-                          ? 'linear-gradient(135deg, rgba(59, 130, 246, 0.25) 0%, rgba(37, 99, 235, 0.15) 100%)'
-                          : 'rgba(30, 41, 59, 0.6)',
-                        border: isSelected ? '1px solid #60a5fa' : '1px solid var(--border-subtle)',
-                        color: isSelected ? '#ffffff' : 'var(--text-primary)',
-                        fontSize: '0.875rem',
-                        fontWeight: isSelected ? 600 : 500,
-                        transition: 'all 0.2s ease',
-                      }}
-                    >
-                      <span>{opt}</span>
-                      {isSelected && <CheckCircle2 size={16} color="#60a5fa" />}
-                    </button>
-                  );
-                })}
-              </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.625rem' }}>
+              {parsedOptions.map((opt, idx) => {
+                const isSelected = currentInput === opt;
+                return (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => {
+                      setCurrentInput(opt);
+                      handleSaveAnswer(opt);
+                    }}
+                    disabled={isSubmittingAnswer}
+                    style={{
+                      padding: '0.75rem 1rem',
+                      borderRadius: 'var(--radius-md)',
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      background: isSelected ? 'var(--primary-subtle)' : 'var(--surface-sunken)',
+                      border: isSelected ? '1px solid var(--primary)' : '1px solid var(--border-subtle)',
+                      color: isSelected ? 'var(--text-primary)' : 'var(--text-secondary)',
+                      fontSize: '0.875rem',
+                      fontWeight: isSelected ? 600 : 400,
+                      transition: 'all 0.15s ease',
+                    }}
+                  >
+                    <span>{opt}</span>
+                    {isSelected && <Check size={16} color="var(--primary-light)" />}
+                  </button>
+                );
+              })}
             </div>
           )}
 
           {/* BOOLEAN */}
           {questionType === 'BOOLEAN' && (
-            <div style={{ display: 'flex', gap: '1rem' }}>
+            <div style={{ display: 'flex', gap: '0.75rem', maxWidth: '320px' }}>
               {['Yes', 'No'].map((val) => {
                 const isSelected = currentInput.toLowerCase() === val.toLowerCase();
                 return (
@@ -308,25 +266,10 @@ export const DynamicQuestionnaire: React.FC<DynamicQuestionnaireProps> = ({
                       handleSaveAnswer(val);
                     }}
                     disabled={isSubmittingAnswer}
-                    style={{
-                      flex: 1,
-                      padding: '0.75rem 1.5rem',
-                      borderRadius: 'var(--radius-md)',
-                      fontSize: '0.9375rem',
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '0.5rem',
-                      background: isSelected ? 'var(--primary-gradient)' : 'rgba(30, 41, 59, 0.6)',
-                      border: isSelected ? '1px solid #60a5fa' : '1px solid var(--border-subtle)',
-                      color: '#ffffff',
-                      transition: 'all 0.2s',
-                    }}
+                    className={isSelected ? 'btn btn-primary' : 'btn btn-secondary'}
+                    style={{ flex: 1, padding: '0.75rem 1.25rem' }}
                   >
                     {val}
-                    {isSelected && <CheckCircle2 size={16} />}
                   </button>
                 );
               })}
@@ -335,36 +278,27 @@ export const DynamicQuestionnaire: React.FC<DynamicQuestionnaireProps> = ({
 
           {/* DATE */}
           {questionType === 'DATE' && (
-            <div style={{ position: 'relative', maxWidth: '320px' }}>
+            <div style={{ maxWidth: '280px' }}>
               <input
                 type="date"
                 value={currentInput}
                 onChange={(e) => setCurrentInput(e.target.value)}
                 disabled={isSubmittingAnswer}
-                style={{
-                  width: '100%',
-                  background: 'rgba(30, 41, 59, 0.7)',
-                  border: '1px solid var(--border-subtle)',
-                  borderRadius: 'var(--radius-md)',
-                  color: 'var(--text-primary)',
-                  padding: '0.75rem 1rem',
-                  fontSize: '0.9375rem',
-                  outline: 'none',
-                }}
+                className="input-text"
               />
             </div>
           )}
 
           {/* NUMBER */}
           {questionType === 'NUMBER' && (
-            <div style={{ display: 'flex', alignItems: 'center', maxWidth: '360px', position: 'relative' }}>
+            <div style={{ display: 'flex', alignItems: 'center', maxWidth: '280px', position: 'relative' }}>
               <span
                 style={{
                   position: 'absolute',
-                  left: '1rem',
+                  left: '0.875rem',
                   color: 'var(--text-muted)',
                   fontWeight: 600,
-                  fontSize: '1rem',
+                  fontSize: '0.9375rem',
                 }}
               >
                 ₹
@@ -375,21 +309,13 @@ export const DynamicQuestionnaire: React.FC<DynamicQuestionnaireProps> = ({
                 onChange={(e) => setCurrentInput(e.target.value)}
                 disabled={isSubmittingAnswer}
                 placeholder="0.00"
-                style={{
-                  width: '100%',
-                  background: 'rgba(30, 41, 59, 0.7)',
-                  border: '1px solid var(--border-subtle)',
-                  borderRadius: 'var(--radius-md)',
-                  color: 'var(--text-primary)',
-                  padding: '0.75rem 1rem 0.75rem 2.25rem',
-                  fontSize: '1rem',
-                  outline: 'none',
-                }}
+                className="input-text"
+                style={{ paddingLeft: '2rem' }}
               />
             </div>
           )}
 
-          {/* TEXT (Default) */}
+          {/* TEXT */}
           {questionType === 'TEXT' && (
             <div>
               <input
@@ -404,28 +330,19 @@ export const DynamicQuestionnaire: React.FC<DynamicQuestionnaireProps> = ({
                 }}
                 disabled={isSubmittingAnswer}
                 placeholder="Type your response here..."
-                style={{
-                  width: '100%',
-                  background: 'rgba(30, 41, 59, 0.7)',
-                  border: '1px solid var(--border-subtle)',
-                  borderRadius: 'var(--radius-md)',
-                  color: 'var(--text-primary)',
-                  padding: '0.75rem 1rem',
-                  fontSize: '0.9375rem',
-                  outline: 'none',
-                }}
+                className="input-text"
+                autoFocus
               />
             </div>
           )}
 
-          {/* Local error message if validation fails */}
           {localError && (
             <div
               style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.5rem',
-                color: '#f87171',
+                color: 'var(--danger)',
                 fontSize: '0.8125rem',
                 marginTop: '0.5rem',
               }}
@@ -436,73 +353,60 @@ export const DynamicQuestionnaire: React.FC<DynamicQuestionnaireProps> = ({
           )}
         </div>
 
-        {/* Action Buttons */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
+        {/* Footer Actions: Back & Continue */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <button
             type="button"
             onClick={() => currentIndex > 0 && setCurrentIndex(currentIndex - 1)}
             disabled={currentIndex === 0 || isSubmittingAnswer}
             className="btn btn-secondary"
-            style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}
+            style={{ gap: '0.375rem' }}
           >
             <ArrowLeft size={16} />
-            <span>Previous</span>
+            <span>Back</span>
           </button>
 
-          <div style={{ display: 'flex', gap: '0.75rem' }}>
-            {!(currentQ.required ?? currentQ.isRequired ?? true) && (
-              <button
-                type="button"
-                onClick={handleSkip}
-                disabled={isSubmittingAnswer}
-                className="btn btn-ghost"
-              >
-                Skip Question
-              </button>
+          <button
+            type="button"
+            onClick={() => handleSaveAnswer()}
+            disabled={isSubmittingAnswer}
+            className="btn btn-primary"
+            style={{ minWidth: '140px', gap: '0.5rem' }}
+          >
+            {isSubmittingAnswer ? (
+              <>
+                <div className="spinner" style={{ width: '14px', height: '14px', borderTopColor: '#fff' }} />
+                <span>Saving...</span>
+              </>
+            ) : (
+              <>
+                <span>Continue</span>
+                <ArrowRight size={16} />
+              </>
             )}
-
-            <button
-              type="button"
-              onClick={() => handleSaveAnswer()}
-              disabled={isSubmittingAnswer}
-              className="btn btn-primary"
-              style={{ minWidth: '160px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
-            >
-              {isSubmittingAnswer ? (
-                <>
-                  <div className="spinner" style={{ width: '14px', height: '14px', borderTopColor: '#fff' }} />
-                  <span>Submitting...</span>
-                </>
-              ) : (
-                <>
-                  <span>{currentQ.status === 'ANSWERED' ? 'Update Answer' : 'Save & Continue'}</span>
-                  <ArrowRight size={16} />
-                </>
-              )}
-            </button>
-          </div>
+          </button>
         </div>
       </Card>
 
-      {/* Answered Questions Review Summary */}
+      {/* Answered Questions Quick Review */}
       {answeredCount > 0 && (
         <div
           style={{
-            background: 'rgba(15, 23, 42, 0.5)',
-            border: '1px solid rgba(255, 255, 255, 0.05)',
+            background: 'var(--surface-sunken)',
+            border: '1px solid var(--border-subtle)',
             borderRadius: 'var(--radius-md)',
             padding: '1rem 1.25rem',
           }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
             <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
-              Answered Details ({answeredCount}/{sortedQuestions.length})
+              Completed Answers ({answeredCount} of {sortedQuestions.length})
             </span>
             {allRequiredDone && (
               <button
                 onClick={onAllCompleted}
                 className="btn btn-primary"
-                style={{ padding: '0.375rem 0.875rem', fontSize: '0.8125rem', display: 'flex', alignItems: 'center', gap: '0.375rem' }}
+                style={{ padding: '0.375rem 0.75rem', fontSize: '0.8125rem', gap: '0.375rem' }}
               >
                 <span>Proceed to Consent</span>
                 <ChevronRight size={14} />
@@ -510,7 +414,7 @@ export const DynamicQuestionnaire: React.FC<DynamicQuestionnaireProps> = ({
             )}
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '0.625rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '0.5rem' }}>
             {sortedQuestions
               .filter((q) => q.status === 'ANSWERED')
               .map((q) => (
@@ -521,10 +425,10 @@ export const DynamicQuestionnaire: React.FC<DynamicQuestionnaireProps> = ({
                     if (idx >= 0) setCurrentIndex(idx);
                   }}
                   style={{
-                    background: 'rgba(30, 41, 59, 0.4)',
+                    background: 'var(--surface-card)',
                     padding: '0.625rem 0.875rem',
                     borderRadius: 'var(--radius-sm)',
-                    border: '1px solid rgba(255, 255, 255, 0.05)',
+                    border: '1px solid var(--border-subtle)',
                     cursor: 'pointer',
                     display: 'flex',
                     flexDirection: 'column',
@@ -535,7 +439,7 @@ export const DynamicQuestionnaire: React.FC<DynamicQuestionnaireProps> = ({
                     <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                       {q.text || q.questionText}
                     </span>
-                    <CheckCircle2 size={13} color="#34d399" />
+                    <Check size={12} color="var(--success)" />
                   </div>
                   <strong style={{ fontSize: '0.875rem', color: 'var(--text-primary)' }}>
                     {q.answer}

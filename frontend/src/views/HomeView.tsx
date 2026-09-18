@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Shield, DollarSign, CreditCard, ArrowRight, Sparkles, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Shield, DollarSign, CreditCard, ArrowRight, Sparkles, CheckCircle2 } from 'lucide-react';
 import { Card } from '../components/common/Card';
 import { Badge } from '../components/common/Badge';
 import { ReadyStatus } from '../types';
@@ -13,7 +13,6 @@ export interface HomeViewProps {
 export const HomeView: React.FC<HomeViewProps> = ({
   onStartJourney,
   onNavigateTab,
-  readyStatus,
 }) => {
   const [goalText, setGoalText] = useState('');
 
@@ -23,212 +22,163 @@ export const HomeView: React.FC<HomeViewProps> = ({
     onStartJourney(goalText);
   };
 
-  const sampleGoals = [
+  const sampleJourneys = [
     {
-      title: 'Hospital Claim Query',
-      text: "My hospital claim was queried/rejected and I don't understand what is missing.",
       domain: 'INSURANCE' as const,
-      tag: 'Primary Demo',
-      color: 'blue' as const,
+      tab: 'claimsahay',
+      title: 'ClaimSahay (Insurance)',
+      tagline: 'Resolve a hospital claim query or rejection',
+      prompt: "My hospital claim was queried/rejected and I don't understand what is missing.",
+      icon: Shield,
+      color: '#3b82f6',
+      badge: 'Primary Experience',
     },
     {
-      title: 'Home Renovation Loan',
-      text: 'I need a home renovation loan of ₹10 Lakhs for 5 years.',
       domain: 'LENDING' as const,
-      tag: 'Lending',
-      color: 'green' as const,
+      tab: 'lending',
+      title: 'Lending Copilot',
+      tagline: 'Explore loan eligibility, EMI & affordability',
+      prompt: 'I need a home renovation loan of ₹10 Lakhs for 5 years.',
+      icon: DollarSign,
+      color: '#10b981',
+      badge: 'Multi-Scenario',
     },
     {
-      title: 'Failed UPI Transaction',
-      text: 'My UPI payment of ₹4,999 failed but money was debited from my account.',
       domain: 'FINTECH' as const,
-      tag: 'Fintech',
-      color: 'purple' as const,
+      tab: 'fintech',
+      title: 'Fintech Disputes',
+      tagline: 'Resolve failed-but-debited payment transactions',
+      prompt: 'My UPI payment of ₹4,999 failed but money was debited from my account.',
+      icon: CreditCard,
+      color: '#8b5cf6',
+      badge: 'Instant Triage',
     },
   ];
 
   return (
-    <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
+    <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-8)' }}>
       {/* Hero Section */}
-      <div style={{ textAlign: 'center', maxWidth: '820px', margin: '1rem auto 0' }}>
-        <Badge variant="blue" size="md">
-          <Sparkles size={12} style={{ marginRight: '4px' }} />
-          Multi-Domain Financial Copilot
-        </Badge>
-        <h1
-          style={{
-            fontSize: 'clamp(2rem, 4vw, 3.25rem)',
-            lineHeight: 1.15,
-            marginTop: '1rem',
-            marginBottom: '1rem',
-            background: 'linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-          }}
-        >
-          One Conversation. Every Financial Goal.
+      <div style={{ textAlign: 'center', maxWidth: '720px', margin: 'var(--space-4) auto 0' }}>
+        <h1 style={{ fontSize: '2rem', fontWeight: 700, letterSpacing: '-0.03em', color: '#ffffff', marginBottom: 'var(--space-2)' }}>
+          How can we help you today?
         </h1>
-        <p style={{ fontSize: '1.125rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-          An evidence-backed financial copilot that connects your goal with dynamic questions,
-          document intelligence, policy terms, and verifiable explanations before any consequential action.
+        <p style={{ fontSize: '1rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+          Tell us what you're trying to accomplish. We'll guide you through the next steps.
         </p>
 
-        {/* Natural Language Goal Input */}
-        <form onSubmit={handleStart} style={{ marginTop: '2rem' }}>
+        {/* Main Goal Input */}
+        <form onSubmit={handleStart} style={{ marginTop: 'var(--space-6)' }}>
           <div
             style={{
               display: 'flex',
-              gap: '0.75rem',
-              background: 'rgba(15, 23, 42, 0.9)',
-              padding: '0.5rem',
+              gap: 'var(--space-2)',
+              background: 'var(--bg-surface)',
+              border: '1px solid var(--border-medium)',
               borderRadius: 'var(--radius-lg)',
-              border: '1px solid var(--border-highlight)',
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5)',
+              padding: 'var(--space-2)',
+              boxShadow: 'var(--shadow-md)',
             }}
           >
             <input
               type="text"
-              placeholder="What financial goal can we assist you with today? (e.g. claim help, loan EMI, transaction dispute)..."
+              placeholder="e.g. My hospital claim was queried and I don't understand why..."
               value={goalText}
-              onChange={e => setGoalText(e.target.value)}
-              className="input-text"
-              style={{ border: 'none', background: 'transparent', fontSize: '1rem' }}
+              onChange={(e) => setGoalText(e.target.value)}
+              style={{
+                flex: 1,
+                background: 'transparent',
+                border: 'none',
+                color: 'var(--text-primary)',
+                padding: '0.625rem 0.875rem',
+                fontSize: '0.9375rem',
+                outline: 'none',
+              }}
             />
             <button
               type="submit"
               disabled={!goalText.trim()}
               className="btn btn-primary"
-              style={{ padding: '0.75rem 1.5rem', borderRadius: 'var(--radius-md)' }}
+              style={{ padding: '0.625rem 1.25rem' }}
             >
-              Start Journey <ArrowRight size={16} />
+              <span>Start Journey</span>
+              <ArrowRight size={15} />
             </button>
           </div>
         </form>
 
-        {/* Quick Click Prompts */}
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', justifyContent: 'center', marginTop: '1.25rem' }}>
-          <span style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', alignSelf: 'center' }}>
-            Quick Prompts:
-          </span>
-          {sampleGoals.map((sample, idx) => (
-            <button
-              key={idx}
-              onClick={() => onStartJourney(sample.text, sample.domain)}
-              className="btn btn-secondary"
-              style={{ fontSize: '0.8125rem', padding: '0.35rem 0.75rem' }}
-            >
-              <Badge variant={sample.color} size="sm">{sample.tag}</Badge>
-              {sample.title}
-            </button>
-          ))}
-        </div>
+        <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: 'var(--space-3)' }}>
+          One conversation. Every financial goal. Evidence-backed guidance before any consequential action.
+        </p>
       </div>
 
-      {/* Domain Pillars */}
-      <div>
-        <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <span>Financial Pillars</span>
-          <span style={{ fontSize: '0.875rem', fontWeight: 400, color: 'var(--text-muted)' }}>
-            — Evidence-backed execution across 3 domains
-          </span>
-        </h3>
-        <div className="grid-3">
-          {/* ClaimSahay */}
-          <Card
-            interactive
-            onClick={() => onNavigateTab('claimsahay')}
-            style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', cursor: 'pointer' }}
-          >
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
-                <div style={{ background: 'rgba(59, 130, 246, 0.15)', padding: '0.75rem', borderRadius: 'var(--radius-md)' }}>
-                  <Shield size={24} color="#3b82f6" />
-                </div>
-                <Badge variant="blue">ClaimSahay Deep Journey</Badge>
-              </div>
-              <h4 style={{ fontSize: '1.125rem', marginBottom: '0.5rem' }}>Insurance Claims</h4>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.5 }}>
-                Resolves complex insurer queries by reconciling medical bills and discharge summaries
-                against policy clauses with full citation provenance.
-              </p>
-            </div>
-            <div style={{ marginTop: '1.5rem', display: 'flex', alignItems: 'center', color: '#60a5fa', fontSize: '0.875rem', fontWeight: 600 }}>
-              Launch ClaimSahay <ArrowRight size={14} style={{ marginLeft: '4px' }} />
-            </div>
-          </Card>
+      {/* Suggested Journeys Grid */}
+      <div style={{ maxWidth: '960px', margin: '0 auto', width: '100%' }}>
+        <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 'var(--space-3)' }}>
+          Suggested Financial Journeys
+        </div>
 
-          {/* Lending */}
-          <Card
-            interactive
-            onClick={() => onNavigateTab('lending')}
-            style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', cursor: 'pointer' }}
-          >
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
-                <div style={{ background: 'rgba(16, 185, 129, 0.15)', padding: '0.75rem', borderRadius: 'var(--radius-md)' }}>
-                  <DollarSign size={24} color="#10b981" />
-                </div>
-                <Badge variant="green">Lending Copilot</Badge>
-              </div>
-              <h4 style={{ fontSize: '1.125rem', marginBottom: '0.5rem' }}>Personal & Home Loans</h4>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.5 }}>
-                Authoritative mathematical calculations for EMI schedules, DTI affordability ratios,
-                and income verification between salary slips and bank records.
-              </p>
-            </div>
-            <div style={{ marginTop: '1.5rem', display: 'flex', alignItems: 'center', color: '#34d399', fontSize: '0.875rem', fontWeight: 600 }}>
-              Explore Lending Tools <ArrowRight size={14} style={{ marginLeft: '4px' }} />
-            </div>
-          </Card>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 'var(--space-4)' }}>
+          {sampleJourneys.map((j, idx) => {
+            const Icon = j.icon;
+            return (
+              <div
+                key={idx}
+                onClick={() => onStartJourney(j.prompt, j.domain)}
+                style={{
+                  background: 'var(--bg-surface)',
+                  border: '1px solid var(--border-subtle)',
+                  borderRadius: 'var(--radius-md)',
+                  padding: 'var(--space-5)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  transition: 'border-color 0.15s ease, transform 0.15s ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--border-strong)';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--border-subtle)';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
+              >
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-3)' }}>
+                    <div
+                      style={{
+                        width: '32px',
+                        height: '32px',
+                        borderRadius: 'var(--radius-sm)',
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <Icon size={16} color={j.color} />
+                    </div>
+                    <Badge variant={idx === 0 ? 'blue' : 'gray'}>{j.badge}</Badge>
+                  </div>
 
-          {/* Fintech */}
-          <Card
-            interactive
-            onClick={() => onNavigateTab('fintech')}
-            style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', cursor: 'pointer' }}
-          >
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
-                <div style={{ background: 'rgba(139, 92, 246, 0.15)', padding: '0.75rem', borderRadius: 'var(--radius-md)' }}>
-                  <CreditCard size={24} color="#8b5cf6" />
+                  <h3 style={{ fontSize: '1rem', fontWeight: 600, color: '#ffffff', marginBottom: 'var(--space-1)' }}>
+                    {j.title}
+                  </h3>
+                  <p style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', lineHeight: 1.4, marginBottom: 'var(--space-4)' }}>
+                    {j.tagline}
+                  </p>
                 </div>
-                <Badge variant="purple">Fintech Disputes</Badge>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', fontSize: '0.8125rem', color: '#60a5fa', fontWeight: 500 }}>
+                  <span>Launch Journey</span>
+                  <ArrowRight size={13} />
+                </div>
               </div>
-              <h4 style={{ fontSize: '1.125rem', marginBottom: '0.5rem' }}>Payment Disputes</h4>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.5 }}>
-                Automated triage of failed-but-debited UPI transactions, resolution timeline estimation,
-                and chargeback dispute filing.
-              </p>
-            </div>
-            <div style={{ marginTop: '1.5rem', display: 'flex', alignItems: 'center', color: '#a78bfa', fontSize: '0.875rem', fontWeight: 600 }}>
-              Track Transactions <ArrowRight size={14} style={{ marginLeft: '4px' }} />
-            </div>
-          </Card>
+            );
+          })}
         </div>
       </div>
-
-      {/* Backend & Environment Health Status Card */}
-      {readyStatus && (
-        <Card style={{ background: 'rgba(15, 23, 42, 0.7)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-            <div>
-              <h4 style={{ fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <CheckCircle2 size={18} color="#10b981" />
-                Backend System Status: Verified & Frozen
-              </h4>
-              <p style={{ color: 'var(--text-muted)', fontSize: '0.8125rem', marginTop: '0.25rem' }}>
-                Active on localhost:3000 • 27 Database Tables • 44 Unit Tests Passing
-              </p>
-            </div>
-            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-              <Badge variant="green">DB: SQLite Ready</Badge>
-              <Badge variant="amber">Azure AI: Sandbox</Badge>
-              <Badge variant="amber">Doc Intelligence: Sandbox</Badge>
-              <Badge variant="amber">n8n Workflow: Sandbox</Badge>
-            </div>
-          </div>
-        </Card>
-      )}
     </div>
   );
 };

@@ -7,8 +7,8 @@ import {
   Search,
   Scale,
   CheckCircle2,
-  Send,
   LifeBuoy,
+  Check,
 } from 'lucide-react';
 import { JourneyStatus } from '../../types';
 
@@ -16,22 +16,24 @@ export interface JourneyStepperProps {
   status: JourneyStatus;
   allQuestionsAnswered?: boolean;
   consentGranted?: boolean;
+  currentStepId?: string;
+  onSelectStep?: (stepId: string) => void;
 }
 
-interface StepItem {
+export interface StepItem {
   id: string;
   label: string;
-  subLabel: string;
+  shortLabel: string;
   icon: React.ComponentType<{ size?: number; color?: string }>;
   isComplete: (status: JourneyStatus, questionsDone?: boolean, consentDone?: boolean) => boolean;
   isActive: (status: JourneyStatus, questionsDone?: boolean, consentDone?: boolean) => boolean;
 }
 
-const STEPS: StepItem[] = [
+export const JOURNEY_STEPS: StepItem[] = [
   {
-    id: 'understand',
+    id: 'goal',
     label: 'Understand',
-    subLabel: 'Goal & Intent',
+    shortLabel: 'Goal',
     icon: Brain,
     isComplete: (st) => st !== 'CREATED',
     isActive: (st) => st === 'CREATED' || st === 'GOAL_IDENTIFIED',
@@ -39,45 +41,51 @@ const STEPS: StepItem[] = [
   {
     id: 'questions',
     label: 'Questions',
-    subLabel: 'Clarification',
+    shortLabel: 'Questions',
     icon: HelpCircle,
     isComplete: (st, qDone) =>
-      qDone ||
-      st === 'CONSENT_PENDING' ||
-      st === 'DOCUMENTS_PENDING' ||
-      st === 'DOCUMENT_PROCESSING' ||
-      st === 'VALIDATING' ||
-      st === 'NEEDS_ACTION' ||
-      st === 'READY_FOR_REVIEW' ||
-      st === 'USER_CONFIRMED' ||
-      st === 'ACTION_PENDING' ||
-      st === 'SUBMITTED' ||
-      st === 'COMPLETED',
+      Boolean(
+        qDone ||
+        st === 'CONSENT_PENDING' ||
+        st === 'DOCUMENTS_PENDING' ||
+        st === 'DOCUMENT_PROCESSING' ||
+        st === 'VALIDATING' ||
+        st === 'NEEDS_ACTION' ||
+        st === 'READY_FOR_REVIEW' ||
+        st === 'USER_CONFIRMED' ||
+        st === 'ACTION_PENDING' ||
+        st === 'SUBMITTED' ||
+        st === 'INSTITUTION_REVIEW' ||
+        st === 'COMPLETED'
+      ),
     isActive: (st, qDone) => st === 'QUESTIONS_PENDING' && !qDone,
   },
   {
     id: 'consent',
     label: 'Consent',
-    subLabel: 'Permissions',
+    shortLabel: 'Consent',
     icon: FileCheck2,
     isComplete: (st, _, cDone) =>
-      cDone ||
-      st === 'DOCUMENTS_PENDING' ||
-      st === 'DOCUMENT_PROCESSING' ||
-      st === 'VALIDATING' ||
-      st === 'NEEDS_ACTION' ||
-      st === 'READY_FOR_REVIEW' ||
-      st === 'USER_CONFIRMED' ||
-      st === 'ACTION_PENDING' ||
-      st === 'SUBMITTED' ||
-      st === 'COMPLETED',
+      Boolean(
+        cDone ||
+        st === 'DOCUMENTS_PENDING' ||
+        st === 'DOCUMENT_PROCESSING' ||
+        st === 'VALIDATING' ||
+        st === 'NEEDS_ACTION' ||
+        st === 'READY_FOR_REVIEW' ||
+        st === 'USER_CONFIRMED' ||
+        st === 'ACTION_PENDING' ||
+        st === 'SUBMITTED' ||
+        st === 'INSTITUTION_REVIEW' ||
+        st === 'COMPLETED'
+      ),
     isActive: (st, qDone, cDone) =>
       Boolean((st === 'CONSENT_PENDING' || qDone) && !cDone && st !== 'DOCUMENTS_PENDING'),
   },
   {
     id: 'documents',
     label: 'Documents',
-    subLabel: 'Bills & Discharge',
+    shortLabel: 'Documents',
     icon: UploadCloud,
     isComplete: (st) =>
       st === 'DOCUMENT_PROCESSING' ||
@@ -87,13 +95,14 @@ const STEPS: StepItem[] = [
       st === 'USER_CONFIRMED' ||
       st === 'ACTION_PENDING' ||
       st === 'SUBMITTED' ||
+      st === 'INSTITUTION_REVIEW' ||
       st === 'COMPLETED',
     isActive: (st) => st === 'DOCUMENTS_PENDING',
   },
   {
-    id: 'verify',
+    id: 'evidence',
     label: 'Verify',
-    subLabel: 'AI Extraction',
+    shortLabel: 'Verify',
     icon: Search,
     isComplete: (st) =>
       st === 'VALIDATING' ||
@@ -102,49 +111,48 @@ const STEPS: StepItem[] = [
       st === 'USER_CONFIRMED' ||
       st === 'ACTION_PENDING' ||
       st === 'SUBMITTED' ||
+      st === 'INSTITUTION_REVIEW' ||
       st === 'COMPLETED',
     isActive: (st) => st === 'DOCUMENT_PROCESSING',
   },
   {
-    id: 'explain',
+    id: 'reconcile',
     label: 'Explain',
-    subLabel: 'Policy Rules',
+    shortLabel: 'Explain',
     icon: Scale,
     isComplete: (st) =>
       st === 'READY_FOR_REVIEW' ||
       st === 'USER_CONFIRMED' ||
       st === 'ACTION_PENDING' ||
       st === 'SUBMITTED' ||
+      st === 'INSTITUTION_REVIEW' ||
       st === 'COMPLETED',
     isActive: (st) => st === 'VALIDATING' || st === 'NEEDS_ACTION',
   },
   {
     id: 'review',
     label: 'Review',
-    subLabel: 'Reconciliation',
+    shortLabel: 'Review',
     icon: CheckCircle2,
     isComplete: (st) =>
       st === 'USER_CONFIRMED' ||
       st === 'ACTION_PENDING' ||
       st === 'SUBMITTED' ||
+      st === 'INSTITUTION_REVIEW' ||
       st === 'COMPLETED',
     isActive: (st) => st === 'READY_FOR_REVIEW',
   },
   {
-    id: 'act',
-    label: 'Act',
-    subLabel: 'Approval Gate',
-    icon: Send,
-    isComplete: (st) => st === 'SUBMITTED' || st === 'COMPLETED',
-    isActive: (st) => st === 'USER_CONFIRMED' || st === 'ACTION_PENDING',
-  },
-  {
-    id: 'track',
+    id: 'timeline',
     label: 'Track',
-    subLabel: 'Audit & Outcome',
+    shortLabel: 'Track',
     icon: LifeBuoy,
     isComplete: (st) => st === 'COMPLETED',
-    isActive: (st) => st === 'SUBMITTED' || st === 'INSTITUTION_REVIEW' || st === 'HUMAN_REVIEW' || st === 'COMPLETED',
+    isActive: (st) =>
+      st === 'SUBMITTED' ||
+      st === 'INSTITUTION_REVIEW' ||
+      st === 'HUMAN_REVIEW' ||
+      st === 'COMPLETED',
   },
 ];
 
@@ -152,15 +160,16 @@ export const JourneyStepper: React.FC<JourneyStepperProps> = ({
   status,
   allQuestionsAnswered = false,
   consentGranted = false,
+  currentStepId,
+  onSelectStep,
 }) => {
   return (
     <div
       style={{
-        background: 'rgba(15, 23, 42, 0.75)',
-        backdropFilter: 'blur(12px)',
+        background: 'var(--surface-card)',
         border: '1px solid var(--border-subtle)',
         borderRadius: 'var(--radius-lg)',
-        padding: '1rem 1.25rem',
+        padding: '0.875rem 1.25rem',
         overflowX: 'auto',
       }}
     >
@@ -169,98 +178,101 @@ export const JourneyStepper: React.FC<JourneyStepperProps> = ({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          minWidth: '780px',
+          minWidth: '720px',
           position: 'relative',
         }}
       >
-        {STEPS.map((step, idx) => {
+        {JOURNEY_STEPS.map((step, idx) => {
           const complete = step.isComplete(status, allQuestionsAnswered, consentGranted);
-          const active = !complete && step.isActive(status, allQuestionsAnswered, consentGranted);
-          const Icon = step.icon;
+          const isCurrentActive = currentStepId
+            ? currentStepId === step.id
+            : !complete && step.isActive(status, allQuestionsAnswered, consentGranted);
+          const isAccessible = complete || isCurrentActive || Boolean(onSelectStep);
 
           return (
             <React.Fragment key={step.id}>
-              {/* Step item */}
-              <div
+              {/* Step Pill / Button */}
+              <button
+                type="button"
+                onClick={() => isAccessible && onSelectStep && onSelectStep(step.id)}
+                disabled={!isAccessible}
                 style={{
                   display: 'flex',
-                  flexDirection: 'column',
                   alignItems: 'center',
-                  textAlign: 'center',
-                  flex: 1,
-                  position: 'relative',
-                  zIndex: 2,
+                  gap: '0.5rem',
+                  background: 'transparent',
+                  border: 'none',
+                  padding: '0.25rem 0.5rem',
+                  cursor: isAccessible && onSelectStep ? 'pointer' : 'default',
+                  borderRadius: 'var(--radius-md)',
+                  opacity: !complete && !isCurrentActive ? 0.45 : 1,
+                  transition: 'all 0.15s ease',
+                  flexShrink: 0,
                 }}
               >
                 <div
                   style={{
-                    width: '38px',
-                    height: '38px',
+                    width: '26px',
+                    height: '26px',
                     borderRadius: '50%',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
+                    fontSize: '0.75rem',
+                    fontWeight: 600,
                     background: complete
+                      ? 'var(--success-bg)'
+                      : isCurrentActive
+                      ? 'var(--primary-subtle)'
+                      : 'rgba(30, 41, 59, 0.6)',
+                    border: complete
+                      ? '1px solid var(--success-border)'
+                      : isCurrentActive
+                      ? '1.5px solid var(--primary)'
+                      : '1px solid var(--border-subtle)',
+                    color: complete
                       ? 'var(--success)'
-                      : active
-                      ? 'var(--primary-gradient)'
-                      : 'rgba(30, 41, 59, 0.8)',
-                    border: active
-                      ? '2px solid #60a5fa'
-                      : complete
-                      ? '2px solid #34d399'
-                      : '1px solid rgba(255, 255, 255, 0.1)',
-                    boxShadow: active
-                      ? '0 0 16px rgba(59, 130, 246, 0.5)'
-                      : complete
-                      ? '0 0 10px rgba(16, 185, 129, 0.3)'
-                      : 'none',
-                    transition: 'all 0.3s ease',
-                    color: complete || active ? '#ffffff' : 'var(--text-muted)',
+                      : isCurrentActive
+                      ? 'var(--primary-light)'
+                      : 'var(--text-muted)',
+                    transition: 'all 0.2s ease',
                   }}
                 >
-                  <Icon size={18} />
+                  {complete ? <Check size={14} /> : idx + 1}
                 </div>
-                <div style={{ marginTop: '0.5rem' }}>
+
+                <div style={{ textAlign: 'left' }}>
                   <div
                     style={{
                       fontSize: '0.8125rem',
-                      fontWeight: active || complete ? 700 : 500,
-                      color: active
-                        ? 'var(--primary-light)'
-                        : complete
+                      fontWeight: isCurrentActive ? 700 : complete ? 600 : 500,
+                      color: isCurrentActive
                         ? 'var(--text-primary)'
+                        : complete
+                        ? 'var(--text-secondary)'
                         : 'var(--text-muted)',
+                      letterSpacing: '-0.01em',
                     }}
                   >
                     {step.label}
                   </div>
-                  <div
-                    style={{
-                      fontSize: '0.6875rem',
-                      color: 'var(--text-muted)',
-                      marginTop: '0.125rem',
-                    }}
-                  >
-                    {step.subLabel}
-                  </div>
                 </div>
-              </div>
+              </button>
 
-              {/* Connecting line */}
-              {idx < STEPS.length - 1 && (
+              {/* Quiet subtle connector */}
+              {idx < JOURNEY_STEPS.length - 1 && (
                 <div
                   style={{
                     flex: 1,
-                    height: '2px',
+                    height: '1px',
                     background: complete
-                      ? 'rgba(16, 185, 129, 0.5)'
-                      : active
-                      ? 'rgba(59, 130, 246, 0.4)'
-                      : 'rgba(255, 255, 255, 0.08)',
-                    margin: '0 -0.5rem 1.75rem -0.5rem',
-                    transition: 'background 0.3s ease',
-                    zIndex: 1,
+                      ? 'var(--success-border)'
+                      : isCurrentActive
+                      ? 'rgba(59, 130, 246, 0.3)'
+                      : 'var(--border-subtle)',
+                    margin: '0 0.5rem',
+                    minWidth: '16px',
+                    transition: 'background 0.2s ease',
                   }}
                 />
               )}

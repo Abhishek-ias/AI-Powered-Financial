@@ -3,11 +3,6 @@ import {
   FileText,
   ChevronDown,
   ChevronUp,
-  AlertTriangle,
-  CheckCircle2,
-  AlertCircle,
-  ShieldAlert,
-  Info,
 } from 'lucide-react';
 import { EvidenceItem } from '../../types';
 import { ConfidenceBadge } from '../common/ConfidenceBadge';
@@ -21,19 +16,18 @@ export interface EvidenceCardProps {
 export const EvidenceCard: React.FC<EvidenceCardProps> = ({ evidence, documentName }) => {
   const [showSource, setShowSource] = useState<boolean>(false);
 
-  // Status mapping
   let statusBadgeVariant: 'green' | 'amber' | 'red' | 'blue' | 'gray' = 'green';
-  let statusLabel = 'Valid Evidence';
-  let isContradicted = evidence.status === 'CONTRADICTED';
-  let isPolicyFlagged = evidence.status === 'POLICY_CONDITION_FLAGGED';
-  let isLowConfidence = evidence.status === 'LOW_CONFIDENCE';
+  let statusLabel = 'Verified';
+  const isContradicted = evidence.status === 'CONTRADICTED';
+  const isPolicyFlagged = evidence.status === 'POLICY_CONDITION_FLAGGED';
+  const isLowConfidence = evidence.status === 'LOW_CONFIDENCE';
 
   if (isContradicted) {
-    statusBadgeVariant = 'red';
-    statusLabel = 'Contradicted';
+    statusBadgeVariant = 'amber';
+    statusLabel = 'Needs Review';
   } else if (isPolicyFlagged) {
     statusBadgeVariant = 'amber';
-    statusLabel = 'Exceeds Policy Limit';
+    statusLabel = 'Exceeds Cap';
   } else if (isLowConfidence) {
     statusBadgeVariant = 'amber';
     statusLabel = 'Low Confidence';
@@ -42,13 +36,13 @@ export const EvidenceCard: React.FC<EvidenceCardProps> = ({ evidence, documentNa
     statusLabel = 'Verified';
   }
 
-  // Format field name for humans (e.g. room_rent_per_day -> Room Rent Per Day)
+  // Format field name for humans (e.g. room_rent_per_day -> ROOM RENT)
   const formattedField = evidence.fieldName
     .split('_')
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
+    .join(' ')
+    .toUpperCase();
 
-  // Format value (e.g. add currency symbol if unit is INR or field contains bill/rent)
+  // Format display value
   let displayValue = evidence.normalizedValue || evidence.value;
   const isCurrency =
     evidence.unit === 'INR' ||
@@ -70,26 +64,19 @@ export const EvidenceCard: React.FC<EvidenceCardProps> = ({ evidence, documentNa
   return (
     <div
       style={{
-        background: isContradicted
-          ? 'linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(15, 23, 42, 0.6) 100%)'
-          : isPolicyFlagged
-          ? 'linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(15, 23, 42, 0.6) 100%)'
-          : 'rgba(30, 41, 59, 0.6)',
-        border: isContradicted
-          ? '1px solid rgba(239, 68, 68, 0.4)'
-          : isPolicyFlagged
-          ? '1px solid rgba(245, 158, 11, 0.4)'
+        background: 'var(--surface-sunken)',
+        border: isPolicyFlagged || isContradicted
+          ? '1px solid var(--warning-border)'
           : '1px solid var(--border-subtle)',
         borderRadius: 'var(--radius-md)',
         padding: '1rem',
         display: 'flex',
         flexDirection: 'column',
         gap: '0.625rem',
-        transition: 'all 0.2s ease',
       }}
     >
       {/* Header: Field Name & Status */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.5rem', flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.5rem' }}>
         <div>
           <span
             style={{
@@ -100,37 +87,25 @@ export const EvidenceCard: React.FC<EvidenceCardProps> = ({ evidence, documentNa
               color: 'var(--text-muted)',
             }}
           >
-            FIELD
+            {formattedField}
           </span>
-          <h4
+          <div
             style={{
-              fontSize: '0.9375rem',
-              fontWeight: 600,
+              fontSize: '1.25rem',
+              fontWeight: 700,
               color: 'var(--text-primary)',
               marginTop: '0.125rem',
+              fontFamily: isCurrency ? 'var(--font-mono)' : 'inherit',
             }}
           >
-            {formattedField}
-          </h4>
+            {displayValue}
+          </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-          <ConfidenceBadge confidence={evidence.confidence} size="sm" />
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.25rem' }}>
           <Badge variant={statusBadgeVariant}>{statusLabel}</Badge>
+          <ConfidenceBadge confidence={evidence.confidence} size="sm" />
         </div>
-      </div>
-
-      {/* Primary Value */}
-      <div
-        style={{
-          fontSize: '1.25rem',
-          fontWeight: 700,
-          color: isContradicted ? '#fca5a5' : isPolicyFlagged ? '#fde047' : '#ffffff',
-          fontFamily: isCurrency ? 'var(--font-mono)' : 'inherit',
-          padding: '0.25rem 0',
-        }}
-      >
-        {displayValue}
       </div>
 
       {/* Provenance: Document Source & Page */}
@@ -141,29 +116,25 @@ export const EvidenceCard: React.FC<EvidenceCardProps> = ({ evidence, documentNa
           alignItems: 'center',
           fontSize: '0.75rem',
           color: 'var(--text-secondary)',
-          background: 'rgba(15, 23, 42, 0.45)',
+          background: 'var(--surface-card)',
           padding: '0.375rem 0.625rem',
           borderRadius: 'var(--radius-sm)',
-          border: '1px solid rgba(255, 255, 255, 0.04)',
+          border: '1px solid var(--border-subtle)',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
-          <FileText size={13} color="#60a5fa" />
-          <span>
-            Source: <strong style={{ color: 'var(--text-primary)' }}>{sourceLabel}</strong>
-          </span>
+          <FileText size={12} color="var(--primary-light)" />
+          <span>{sourceLabel}</span>
         </div>
 
         {evidence.sourcePage && (
-          <span style={{ color: 'var(--text-muted)' }}>
-            Page {evidence.sourcePage}
-          </span>
+          <span style={{ color: 'var(--text-muted)' }}>Page {evidence.sourcePage}</span>
         )}
       </div>
 
-      {/* Source Text Drawer */}
+      {/* Expandable OCR Snippet */}
       {evidence.sourceText && (
-        <div style={{ marginTop: '0.125rem' }}>
+        <div>
           <button
             type="button"
             onClick={() => setShowSource(!showSource)}
@@ -179,7 +150,7 @@ export const EvidenceCard: React.FC<EvidenceCardProps> = ({ evidence, documentNa
               gap: '0.25rem',
             }}
           >
-            <span>{showSource ? 'Hide OCR source snippet' : 'View extracted snippet'}</span>
+            <span>{showSource ? 'Hide source text' : 'View source snippet'}</span>
             {showSource ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
           </button>
 
@@ -187,8 +158,8 @@ export const EvidenceCard: React.FC<EvidenceCardProps> = ({ evidence, documentNa
             <div
               style={{
                 marginTop: '0.375rem',
-                background: 'rgba(15, 23, 42, 0.75)',
-                border: '1px solid rgba(255, 255, 255, 0.06)',
+                background: 'var(--surface-card)',
+                border: '1px solid var(--border-subtle)',
                 borderRadius: 'var(--radius-sm)',
                 padding: '0.5rem 0.75rem',
                 fontSize: '0.75rem',
