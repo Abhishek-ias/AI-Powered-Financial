@@ -2,6 +2,7 @@
 
 ## Startup
 
+### 1. Backend Service (Frozen)
 ```bash
 # 1. Install dependencies
 npm install
@@ -14,7 +15,16 @@ npx tsx scripts/seed.ts
 
 # 4. Start backend
 npm run dev
-# OR: npx tsx src/server.ts
+# Running on http://localhost:3000
+```
+
+### 2. Frontend Application (ClaimSahay UI)
+```bash
+# In /frontend directory:
+cd frontend
+npm install
+npm run dev -- --host 127.0.0.1 --port 5173
+# Running on http://127.0.0.1:5173
 ```
 
 ## Verify
@@ -25,6 +35,9 @@ curl http://localhost:3000/health
 
 # Readiness (shows all provider statuses)
 curl http://localhost:3000/ready
+
+# Frontend dev server check
+curl http://127.0.0.1:5173
 ```
 
 ## ClaimSahay Demo Journey
@@ -109,6 +122,51 @@ curl -X POST http://localhost:3000/api/journeys/{id}/escalate \
   -H "Content-Type: application/json" \
   -H "X-User-Id: user-customer-001"
 ```
+
+---
+
+## ClaimSahay Interactive Browser Demo Walkthrough
+
+Navigate to **`http://127.0.0.1:5173`** in your browser.
+
+1. **Goal Entry & Intent Understanding**:
+   - Click the prompt chip `"Query / Rejection"` or type your query.
+   - Click **Start ClaimSahay Journey**. The copilot displays detected domain `INSURANCE`, journey type `CLAIM_ASSISTANCE`, and urgency metrics.
+2. **Clarification Questions**:
+   - Click **Fill Demo Answers** to automatically populate required fields (Hospital, Policy Number, Dates, etc.).
+   - Click **Submit All Answers**.
+3. **Informed Consent**:
+   - Transparent 3-pillar disclosure with granular checkboxes (`DATA_PROCESSING`, `DOCUMENT_ANALYSIS`, `POLICY_VERIFICATION`, `EXTERNAL_SUBMISSION`).
+   - Click **Grant Informed Consent & Proceed**.
+4. **Document Upload & AI Extraction**:
+   - Click **Load Full Synthetic Claim Packet (4 Documents)**.
+   - 4 documents appear with checksums and size: Hospital Bill, Discharge Summary, Claim Form, ID Proof.
+   - Click **Execute Document AI Pipeline**.
+   - OCR runs with extraction timings and prompt-injection sanitization.
+5. **Evidence Provenance & Conflict Surfacing**:
+   - Inspect 23-26 structured evidence cards with field values, page provenance, and confidence badges.
+   - Calm, non-accusatory contradiction warning: Diagnosis mismatch between Discharge Summary (`Acute Appendicitis`) and Hospital Bill (`Appendectomy`).
+   - Policy condition alert: Room rent (`₹7,500/day`) exceeding policy cap (`₹5,000/day`).
+6. **Policy Citation & Grounded Explanation**:
+   - Click **Examine Policy Citations & Grounded Reasoning**.
+   - Pinned policy schedule: `POL-HEALTH-2024-001`, `Pinned: 2024-v1`, `Section: Room Rent`, `Page 12`, verbatim quote.
+   - Sub-limit calculation table: ₹7,500 vs ₹5,000 = ₹2,500/day excess × 5 days = **₹12,500** out-of-pocket.
+   - Grounded AI explanation with 1-click clipboard copy.
+   - Test **Cosmetic / Uncovered Procedure** to observe the **RAG No-Source Guardrail** (`UNCERTAIN / HUMAN REVIEW REQUIRED`).
+7. **Consequential Review & Approval Gate**:
+   - Click **7. Review & Submit**.
+   - Review side-by-side **FACT / EVIDENCE** (deterministic facts) vs **AI POLICY EXPLANATION**.
+   - Review Action Summary (Action, Why, Evidence, Source).
+   - Click **Review & Confirm**. State transitions to `USER_CONFIRMED` and generates approval with payload hash.
+   - Click **Confirm and Continue** (with prominent Sandbox / Demo notice). State transitions through workflow to `INSTITUTION_REVIEW`.
+   - Message: *"Your case has been submitted for review."*
+8. **Audit Timeline & Human Escalation**:
+   - Click **8. Audit Timeline** to view 20+ immutable chronological events with timestamps and actor badges.
+   - Click **Talk to Specialist** in header or timeline to open **Human Escalation Modal**.
+   - Shows *Why escalation is needed*, *What information will be shared* (15-field context packet), and *Current unresolved issue*.
+   - Click **Escalate to Human Specialist** → Support Case ID generated, status `OPEN`, journey state transitions to `HUMAN_REVIEW`.
+
+---
 
 ## Automated Test Suites
 
