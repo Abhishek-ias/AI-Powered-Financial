@@ -7,6 +7,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import { requestIdMiddleware } from './middleware/requestId';
 import { errorHandler, notFoundHandler } from './middleware/errors';
+import { rateLimiter } from './middleware/rateLimiter';
 import { getProviderStatus, getFeatureFlags } from './config/env';
 import apiRoutes from './routes/api';
 import prisma from './config/database';
@@ -27,6 +28,9 @@ export function createApp() {
 
   // ---- Logging (structured, no secrets) ----
   app.use(morgan(':method :url :status :response-time ms'));
+
+  // ---- Rate Limiting ----
+  app.use('/api', rateLimiter(60 * 1000, 200)); // 200 req/min per user
 
   // ---- Health ----
   app.get('/health', (_req, res) => {

@@ -970,4 +970,156 @@ router.post('/journeys/:id/explain', async (req: Request, res: Response, next: N
   } catch (err) { next(err); }
 });
 
+// ============================================================
+// CHAT — Conversational endpoint
+// ============================================================
+router.post('/journeys/:id/chat', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { message } = z.object({ message: z.string() }).parse(req.body);
+    const userId = (req as any).userId;
+    const requestId = (req as any).requestId;
+    const journey = await getJourney(p(req.params.id), userId);
+
+    // Detect intent from message
+    const intent = detectIntent(message);
+
+    // Get current context
+    const nextActions = await determineNextActions(p(req.params.id));
+    const evidence = await getEvidence(p(req.params.id));
+
+    // Generate contextual LLM response
+    const context = `Journey: ${journey.domain}/${journey.journeyType}, Status: ${journey.status}, Evidence items: ${evidence.length}, Actions needed: ${nextActions.length}`;
+    const response = await llm.chat(
+      `You are a financial copilot. Current context: ${context}. Guide the user based on their journey status.`,
+      message
+    );
+
+    // Log the interaction
+    await createAuditEvent({
+      journeyId: p(req.params.id),
+      eventType: 'chat_message',
+      actorType: 'USER',
+      actorId: userId,
+      requestId,
+      metadata: { message: message.slice(0, 200) } as Record<string, unknown>,
+    });
+
+    successResponse(res, {
+      reply: response.content,
+      intent: { domain: intent.domain, journeyType: intent.journeyType, confidence: intent.confidence },
+      nextActions,
+      journeyStatus: journey.status,
+      providerMode: 'MOCK',
+    });
+  } catch (err) { next(err); }
+});
+
+// ============================================================
+// RULES — Deterministic rule checking endpoints
+// ============================================================
+import { insuranceRules, lendingRules, fintechRules } from '../rules';
+
+router.post('/rules/insurance/room-rent', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const schema = z.object({ dailyRent: z.number(), policyLimit: z.number(), days: z.number().int() });
+    const body = schema.parse(req.body);
+    const result = insuranceRules.checkRoomRentLimit(body.dailyRent, body.policyLimit, body.days);
+    successResponse(res, { result });
+  } catch (err) { next(err); }
+});
+
+router.post('/rules/insurance/claim-amount', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const schema = z.object({ amount: z.number(), sumInsured: z.number() });
+    const body = schema.parse(req.body);
+    const result = insuranceRules.validateClaimAmount(body.amount, body.sumInsured);
+    successResponse(res, { result });
+  } catch (err) { next(err); }
+});
+
+router.post('/rules/insurance/copay', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const schema = z.object({ amount: z.number(), coPayPercent: z.number(), age: z.number().int() });
+    const body = schema.parse(req.body);
+    const result = insuranceRules.calculateCoPay(body.amount, body.coPayPercent, body.age);
+    successResponse(res, { result });
+  } catch (err) { next(err); }
+});
+
+router.post('/rules/lending/income-validation', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const schema = z.object({
+      salarySlipIncome: z.number(), bankStatementIncome: z.number(), tolerancePercent: z.number().optional(),
+    });
+    const body = schema.parse(req.body);
+    const result = lendingRules.validateIncome(body.salarySlipIncome, body.bankStatementIncome, body.tolerancePercent);
+    successResponse(res, { result });
+  } catch (err) { next(err); }
+});
+
+router.post('/rules/lending/max-loan', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const schema = z.object({
+      monthlyIncome: z.number(), maxDTI: z.number().optional(), existingEMI: z.number().optional(),
+      tenureMonths: z.number().optional(), annualRate: z.number().optional(),
+    });
+    const body = schema.parse(req.body);
+    const maxLoan = lendingRules.getMaxLoanAmount(
+      body.monthlyIncome, body.maxDTI, body.existingEMI, body.tenureMonths, body.annualRate
+    );
+    successResponse(res, {
+      maxLoanAmount: maxLoan,
+      assumptions: ['Based on DTI ratio and declared income', 'Subject to credit score and lender policies'],
+    });
+  } catch (err) { next(err); }
+});
+
+router.post('/rules/lending/credit-readiness', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const schema = z.object({
+      monthlyIncome: z.number(), existingEMI: z.number(), requestedAmount: z.number(),
+      employmentType: z.string(), hasITR: z.boolean(), hasBankStatement: z.boolean(),
+    });
+    const body = schema.parse(req.body);
+    const result = lendingRules.assessCreditReadiness(body);
+    successResponse(res, { result });
+  } catch (err) { next(err); }
+});
+
+router.post('/rules/fintech/classify-issue', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const schema = z.object({
+      status: z.string(), debitConfirmed: z.boolean(), creditConfirmed: z.boolean(),
+    });
+    const body = schema.parse(req.body);
+    const classification = fintechRules.classifyTransactionIssue(body.status, body.debitConfirmed, body.creditConfirmed);
+    const resolution = fintechRules.estimateResolutionTime(classification.issueType);
+    successResponse(res, { classification, resolution });
+  } catch (err) { next(err); }
+});
+
+// ============================================================
+// KNOWLEDGE — Policy search
+// ============================================================
+import { MockKnowledgeProvider } from '../integrations/mock/knowledge';
+const knowledge = new MockKnowledgeProvider();
+
+router.post('/knowledge/search', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { query } = z.object({ query: z.string() }).parse(req.body);
+    const results = await knowledge.search(query);
+    successResponse(res, { results, providerMode: 'MOCK' });
+  } catch (err) { next(err); }
+});
+
+router.post('/knowledge/policy-search', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const schema = z.object({ policyId: z.string(), version: z.string(), query: z.string() });
+    const body = schema.parse(req.body);
+    const results = await knowledge.searchPolicy(body.policyId, body.version, body.query);
+    successResponse(res, { results, providerMode: 'MOCK' });
+  } catch (err) { next(err); }
+});
+
 export default router;
+

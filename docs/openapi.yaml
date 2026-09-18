@@ -1,0 +1,651 @@
+openapi: 3.0.3
+info:
+  title: AI Financial Journey Copilot — ClaimSahay API
+  description: |
+    Backend API for the AI Financial Journey Copilot.
+    Team NOVA — Supports Insurance, Lending, and Fintech domains.
+    
+    **Authentication**: Send `X-User-Id` and `X-User-Role` headers.
+    
+    **Safety**: All data is SYNTHETIC. Mock providers are labeled as MOCK.
+  version: 1.0.0
+  contact:
+    name: Team NOVA
+
+servers:
+  - url: http://localhost:3000
+    description: Local development
+
+paths:
+  /health:
+    get:
+      summary: Health check
+      tags: [System]
+      responses:
+        '200':
+          description: Server health status
+
+  /ready:
+    get:
+      summary: Readiness check with provider statuses
+      tags: [System]
+      responses:
+        '200':
+          description: Provider readiness status
+
+  /api/journeys:
+    post:
+      summary: Create a new journey
+      tags: [Journeys]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  description: Natural language message to detect intent
+                  example: "My hospital claim was rejected"
+                domain:
+                  type: string
+                  enum: [INSURANCE, LENDING, FINTECH]
+                journeyType:
+                  type: string
+                goal:
+                  type: string
+                language:
+                  type: string
+                  default: en
+      responses:
+        '201':
+          description: Journey created with questions generated
+    get:
+      summary: List user journeys
+      tags: [Journeys]
+      responses:
+        '200':
+          description: List of journeys
+
+  /api/journeys/{id}:
+    get:
+      summary: Get journey with all related data
+      tags: [Journeys]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Journey details with next actions
+
+  /api/journeys/{id}/intent:
+    post:
+      summary: Detect intent from message
+      tags: [Intent]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [message]
+              properties:
+                message:
+                  type: string
+      responses:
+        '200':
+          description: Intent detection result
+
+  /api/journeys/{id}/questions:
+    get:
+      summary: Get journey questions
+      tags: [Questions]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of questions
+
+  /api/journeys/{id}/questions/{questionId}/answer:
+    post:
+      summary: Answer a question
+      tags: [Questions]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: questionId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [answer]
+              properties:
+                answer:
+                  type: string
+      responses:
+        '200':
+          description: Question answered
+
+  /api/journeys/{id}/consent:
+    post:
+      summary: Grant consent
+      tags: [Consent]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [purposes]
+              properties:
+                purposes:
+                  type: array
+                  items:
+                    type: string
+                  example: [DATA_PROCESSING, DOCUMENT_ANALYSIS, EXTERNAL_SUBMISSION]
+      responses:
+        '200':
+          description: Consent granted
+
+  /api/journeys/{id}/documents:
+    post:
+      summary: Upload document
+      tags: [Documents]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                documentType:
+                  type: string
+                  enum: [HOSPITAL_BILL, DISCHARGE_SUMMARY, CLAIM_FORM, AADHAAR, PAN, SALARY_SLIP, BANK_STATEMENT]
+      responses:
+        '201':
+          description: Document uploaded
+    get:
+      summary: Get journey documents
+      tags: [Documents]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of documents
+
+  /api/journeys/{id}/process-documents:
+    post:
+      summary: Process documents through Document AI pipeline
+      tags: [Documents]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Processing results with validation and next actions
+
+  /api/journeys/{id}/evidence:
+    get:
+      summary: Get extracted evidence
+      tags: [Evidence]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Evidence items with provenance
+
+  /api/journeys/{id}/validation:
+    get:
+      summary: Get validation results
+      tags: [Validation]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Validation results
+
+  /api/journeys/{id}/reconcile:
+    post:
+      summary: Reconcile policy vs evidence vs insurer query
+      tags: [Reconciliation]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [queryType, queryText, policyId, policyVersion]
+              properties:
+                queryType:
+                  type: string
+                queryText:
+                  type: string
+                policyId:
+                  type: string
+                policyVersion:
+                  type: string
+                claimId:
+                  type: string
+      responses:
+        '200':
+          description: Reconciliation result with citations
+
+  /api/journeys/{id}/next-actions:
+    get:
+      summary: Get deterministic next best actions
+      tags: [Actions]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Prioritized list of next actions
+
+  /api/journeys/{id}/confirm:
+    post:
+      summary: Confirm journey information
+      tags: [Actions]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Confirmation with approval request
+
+  /api/journeys/{id}/approve:
+    post:
+      summary: Approve or reject consequential action
+      tags: [Actions]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [approvalId, approved]
+              properties:
+                approvalId:
+                  type: string
+                approved:
+                  type: boolean
+      responses:
+        '200':
+          description: Action processed
+
+  /api/journeys/{id}/escalate:
+    post:
+      summary: Escalate to human support
+      tags: [Escalation]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Support case with context packet
+
+  /api/journeys/{id}/chat:
+    post:
+      summary: Conversational chat within journey
+      tags: [Chat]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [message]
+              properties:
+                message:
+                  type: string
+      responses:
+        '200':
+          description: Chat reply with intent and next actions
+
+  /api/journeys/{id}/explain:
+    post:
+      summary: Get LLM explanation for a query
+      tags: [Chat]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [query]
+              properties:
+                query:
+                  type: string
+      responses:
+        '200':
+          description: Explanation with disclaimer
+
+  /api/journeys/{id}/timeline:
+    get:
+      summary: Get journey timeline
+      tags: [Observability]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Chronological timeline events
+
+  /api/journeys/{id}/audit:
+    get:
+      summary: Get audit events
+      tags: [Observability]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Audit trail
+
+  /api/insurance/claims:
+    post:
+      summary: Create insurance claim
+      tags: [Insurance]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [journeyId, policyNumber, claimType]
+              properties:
+                journeyId:
+                  type: string
+                policyNumber:
+                  type: string
+                claimType:
+                  type: string
+                amount:
+                  type: number
+                description:
+                  type: string
+      responses:
+        '201':
+          description: Claim created with synthetic insurer query
+
+  /api/lending/calculate-emi:
+    post:
+      summary: Calculate EMI (deterministic)
+      tags: [Lending]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [principal, annualRate, tenureMonths]
+              properties:
+                principal:
+                  type: number
+                  example: 1000000
+                annualRate:
+                  type: number
+                  example: 9.5
+                tenureMonths:
+                  type: integer
+                  example: 60
+      responses:
+        '200':
+          description: EMI calculation with assumptions
+
+  /api/lending/affordability:
+    post:
+      summary: Check loan affordability
+      tags: [Lending]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [monthlyIncome, existingEMI, requestedEMI]
+              properties:
+                monthlyIncome:
+                  type: number
+                existingEMI:
+                  type: number
+                requestedEMI:
+                  type: number
+      responses:
+        '200':
+          description: Affordability assessment
+
+  /api/lending/scenarios:
+    post:
+      summary: Generate EMI scenarios for different tenures
+      tags: [Lending]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [principal, annualRate, tenures]
+              properties:
+                principal:
+                  type: number
+                annualRate:
+                  type: number
+                tenures:
+                  type: array
+                  items:
+                    type: integer
+      responses:
+        '200':
+          description: Multiple EMI scenarios
+
+  /api/fintech/transactions/{ref}:
+    get:
+      summary: Lookup transaction
+      tags: [Fintech]
+      parameters:
+        - name: ref
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Transaction details
+
+  /api/rules/insurance/room-rent:
+    post:
+      summary: Check room rent against policy limit
+      tags: [Rules]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [dailyRent, policyLimit, days]
+              properties:
+                dailyRent:
+                  type: number
+                policyLimit:
+                  type: number
+                days:
+                  type: integer
+      responses:
+        '200':
+          description: Room rent check result
+
+  /api/rules/lending/income-validation:
+    post:
+      summary: Validate income consistency
+      tags: [Rules]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [salarySlipIncome, bankStatementIncome]
+              properties:
+                salarySlipIncome:
+                  type: number
+                bankStatementIncome:
+                  type: number
+                tolerancePercent:
+                  type: number
+      responses:
+        '200':
+          description: Income validation result
+
+  /api/rules/fintech/classify-issue:
+    post:
+      summary: Classify transaction issue
+      tags: [Rules]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status, debitConfirmed, creditConfirmed]
+              properties:
+                status:
+                  type: string
+                debitConfirmed:
+                  type: boolean
+                creditConfirmed:
+                  type: boolean
+      responses:
+        '200':
+          description: Issue classification with resolution estimate
+
+  /api/knowledge/search:
+    post:
+      summary: Search policy knowledge base
+      tags: [Knowledge]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [query]
+              properties:
+                query:
+                  type: string
+      responses:
+        '200':
+          description: Knowledge search results
+
+  /api/knowledge/policy-search:
+    post:
+      summary: Search specific policy version (pinned)
+      tags: [Knowledge]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [policyId, version, query]
+              properties:
+                policyId:
+                  type: string
+                version:
+                  type: string
+                query:
+                  type: string
+      responses:
+        '200':
+          description: Pinned policy search results
