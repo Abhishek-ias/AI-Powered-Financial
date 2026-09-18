@@ -221,11 +221,15 @@ export interface WorkflowProvider {
 export interface WorkflowTriggerResult {
   executionId: string;
   status: string;
+  providerMode?: string;
+  safetyNote?: string;
 }
 
 export interface WorkflowStatus {
   executionId: string;
   status: string;
+  providerMode?: string;
+  safetyNote?: string;
   result?: Record<string, unknown>;
   error?: string;
 }

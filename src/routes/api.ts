@@ -43,6 +43,12 @@ import { mockInsurer, mockLender, mockFintech } from '../integrations/mock/finan
 
 import prisma from '../config/database';
 import { Domain, JourneyType, JourneyStatus } from '../types';
+import {
+  sanitizeDocumentFields,
+  sanitizeUntrustedDocumentText,
+  buildSecurePrompt,
+  createDefensiveSystemPrompt,
+} from '../utils/sanitizer';
 
 const router = Router();
 const documentAI = new MockDocumentAIProvider();
@@ -330,8 +336,25 @@ router.post('/journeys/:id/process-documents', async (req: Request, res: Respons
       // Process with Document AI
       const extraction = await documentAI.analyzeDocument(buffer, doc.mimeType, doc.documentType);
 
-      // Save fields
-      await createDocumentFields(doc.id, extraction.fields);
+      // Apply Prompt Injection Sanitization Barrier to extracted fields (treat as untrusted DATA)
+      const { sanitizedFields, hasInjections, injectionCount } = sanitizeDocumentFields(extraction.fields);
+
+      if (hasInjections) {
+        await createAuditEvent({
+          journeyId: p(req.params.id),
+          eventType: 'security_alert',
+          actorType: 'SYSTEM',
+          requestId,
+          metadata: {
+            alertType: 'PROMPT_INJECTION_DEFUSED',
+            documentId: doc.id,
+            injectionCount,
+          },
+        });
+      }
+
+      // Save sanitized fields
+      await createDocumentFields(doc.id, sanitizedFields);
 
       // Update document status with timing
       await updateDocumentStatus(doc.id, 'PROCESSED', {
@@ -340,8 +363,8 @@ router.post('/journeys/:id/process-documents', async (req: Request, res: Respons
         totalProcessingMs: extraction.totalProcessingMs,
       });
 
-      // Create evidence items from extracted fields
-      const evidenceItems = extraction.fields
+      // Create evidence items from sanitized extracted fields
+      const evidenceItems = sanitizedFields
         .filter(f => f.confidence >= 0.5)
         .map(f => ({
           factType: doc.documentType,
@@ -956,10 +979,18 @@ router.post('/journeys/:id/explain', async (req: Request, res: Response, next: N
     const userId = (req as any).userId;
     await getJourney(p(req.params.id), userId);
 
-    const response = await llm.chat(
-      'You are a helpful financial copilot. Explain based on evidence and policy terms only. Never fabricate information.',
-      query
-    );
+    const evidence = await getEvidence(p(req.params.id));
+    const { systemPrompt, userMessage } = buildSecurePrompt({
+      baseSystemPrompt: 'You are a helpful financial copilot. Explain based on evidence and policy terms only. Never fabricate information.',
+      untrustedData: evidence.slice(0, 10).map(e => ({
+        label: e.fieldName,
+        content: `${e.value}${e.sourceText ? ` (from ${e.sourceText})` : ''}`,
+        page: e.sourcePage || undefined,
+      })),
+      userInstruction: query,
+    });
+
+    const response = await llm.chat(systemPrompt, userMessage);
 
     successResponse(res, {
       explanation: response.content,
@@ -987,12 +1018,13 @@ router.post('/journeys/:id/chat', async (req: Request, res: Response, next: Next
     const nextActions = await determineNextActions(p(req.params.id));
     const evidence = await getEvidence(p(req.params.id));
 
-    // Generate contextual LLM response
+    // Generate contextual LLM response with prompt barrier
+    const sanitizedUserMsg = sanitizeUntrustedDocumentText(message).sanitizedText;
     const context = `Journey: ${journey.domain}/${journey.journeyType}, Status: ${journey.status}, Evidence items: ${evidence.length}, Actions needed: ${nextActions.length}`;
-    const response = await llm.chat(
-      `You are a financial copilot. Current context: ${context}. Guide the user based on their journey status.`,
-      message
+    const defensiveSystemPrompt = createDefensiveSystemPrompt(
+      `You are a financial copilot. Current context: ${context}. Guide the user based on their journey status.`
     );
+    const response = await llm.chat(defensiveSystemPrompt, sanitizedUserMsg);
 
     // Log the interaction
     await createAuditEvent({
@@ -1121,5 +1153,19 @@ router.post('/knowledge/policy-search', async (req: Request, res: Response, next
   } catch (err) { next(err); }
 });
 
+// ============================================================
+// ADMIN — Role-based protected endpoints
+// ============================================================
+router.get('/admin/audit', requireRole('ADMIN'), async (_req: Request, res: Response, next: NextFunction) => {
+  try {
+    const events = await prisma.auditEvent.findMany({
+      take: 50,
+      orderBy: { createdAt: 'desc' },
+    });
+    successResponse(res, { events, count: events.length });
+  } catch (err) { next(err); }
+});
+
 export default router;
+
 

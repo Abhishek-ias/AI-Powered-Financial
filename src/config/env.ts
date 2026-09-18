@@ -108,30 +108,52 @@ if (!parsed.success) {
 export const env = parsed.data;
 
 export function getProviderStatus() {
+  const isSqlite = env.DATABASE_URL.startsWith('file:');
   return {
     postgres: {
       status: env.DATABASE_URL ? 'CONFIGURED' : 'MISSING',
-      mode: env.DATABASE_URL.startsWith('file:') ? 'SQLITE' : 'POSTGRESQL',
+      mode: isSqlite ? 'SQLITE' : 'POSTGRESQL',
+      isLive: !isSqlite,
     },
     azureOpenAI: {
       status: env.ENABLE_AZURE_OPENAI && env.AZURE_OPENAI_API_KEY ? 'READY' : 'MOCK',
       mode: env.ENABLE_AZURE_OPENAI ? 'LIVE' : 'MOCK',
+      isLive: Boolean(env.ENABLE_AZURE_OPENAI && env.AZURE_OPENAI_API_KEY),
     },
     documentIntelligence: {
       status: env.ENABLE_AZURE_DOCUMENT_INTELLIGENCE && env.AZURE_DOCUMENT_INTELLIGENCE_API_KEY ? 'READY' : 'MOCK',
       mode: env.USE_MOCK_DOCUMENT_AI ? 'MOCK' : 'LIVE',
+      isLive: !env.USE_MOCK_DOCUMENT_AI,
     },
     azureSearch: {
       status: env.ENABLE_AZURE_SEARCH && env.AZURE_SEARCH_API_KEY ? 'READY' : 'MOCK',
       mode: env.USE_MOCK_SEARCH ? 'MOCK' : 'LIVE',
+      isLive: !env.USE_MOCK_SEARCH,
     },
     cognee: {
       status: env.ENABLE_COGNEE && env.COGNEE_API_KEY ? 'READY' : 'MOCK',
       mode: env.USE_MOCK_MEMORY ? 'MOCK' : 'LIVE',
+      isLive: !env.USE_MOCK_MEMORY,
     },
     n8n: {
       status: env.ENABLE_N8N && env.N8N_API_KEY ? 'READY' : 'MOCK',
       mode: env.USE_MOCK_WORKFLOW ? 'MOCK' : 'LIVE',
+      isLive: !env.USE_MOCK_WORKFLOW,
+    },
+    mockInsurer: {
+      status: 'READY',
+      mode: 'MOCK',
+      isLive: false,
+    },
+    mockLender: {
+      status: 'READY',
+      mode: 'MOCK',
+      isLive: false,
+    },
+    mockFintech: {
+      status: 'READY',
+      mode: 'MOCK',
+      isLive: false,
     },
   };
 }

@@ -6,6 +6,7 @@ import { createAuditEvent } from '../audit/service';
 import { createTimelineEvent } from '../timeline/service';
 import { MockKnowledgeProvider } from '../../integrations/mock/knowledge';
 import { MockLLMProvider } from '../../integrations/mock/llm';
+import { buildSecurePrompt } from '../../utils/sanitizer';
 
 const knowledgeProvider = new MockKnowledgeProvider();
 const llmProvider = new MockLLMProvider();
@@ -65,9 +66,21 @@ export async function reconcile(input: ReconciliationInput, requestId?: string) 
     }
   }
 
-  // 5. Generate explanation
-  const explanationPrompt = `Explain the reconciliation between insurer query "${input.queryText}" and policy clause "${matchedClause?.content || 'not found'}" with evidence.`;
-  const explanation = await llmProvider.chat('You are a financial copilot.', explanationPrompt);
+  // 5. Generate explanation through Prompt Injection Barrier
+  const { systemPrompt, userMessage } = buildSecurePrompt({
+    baseSystemPrompt: 'You are a financial copilot. Explain the reconciliation between policy terms and evidence factually. Never fabricate.',
+    untrustedData: [
+      { label: 'Insurer Query', content: input.queryText },
+      { label: 'Policy Clause', content: matchedClause?.content || 'No matching clause found' },
+      ...evidence.map(e => ({
+        label: `Evidence: ${e.fieldName}`,
+        content: `${e.value} (source: ${e.sourceText || 'N/A'})`,
+        page: e.sourcePage || undefined,
+      })),
+    ],
+    userInstruction: `Explain the reconciliation between the insurer query and policy clause with supporting evidence.`,
+  });
+  const explanation = await llmProvider.chat(systemPrompt, userMessage);
 
   // 6. Determine next action
   let nextAction = 'REVIEW_POLICY';

@@ -57,16 +57,37 @@ export function createApp() {
       dbStatus = 'UNAVAILABLE';
     }
 
+    const liveProviders: string[] = [];
+    const mockProviders: string[] = [];
+
+    for (const [key, val] of Object.entries(providers)) {
+      if (val.isLive) {
+        liveProviders.push(key);
+      } else {
+        mockProviders.push(key);
+      }
+    }
+
     res.json({
       status: dbStatus === 'READY' ? 'ready' : 'degraded',
       timestamp: new Date().toISOString(),
+      providerSummary: {
+        totalProviders: Object.keys(providers).length,
+        liveCount: liveProviders.length,
+        mockCount: mockProviders.length,
+        liveProviders,
+        mockProviders,
+      },
       providers: {
-        database: { status: dbStatus, mode: providers.postgres.mode },
-        azureOpenAI: { status: providers.azureOpenAI.status, mode: providers.azureOpenAI.mode },
-        documentIntelligence: { status: providers.documentIntelligence.status, mode: providers.documentIntelligence.mode },
-        azureSearch: { status: providers.azureSearch.status, mode: providers.azureSearch.mode },
-        cognee: { status: providers.cognee.status, mode: providers.cognee.mode },
-        n8n: { status: providers.n8n.status, mode: providers.n8n.mode },
+        database: { status: dbStatus, mode: providers.postgres.mode, isLive: providers.postgres.isLive },
+        azureOpenAI: { status: providers.azureOpenAI.status, mode: providers.azureOpenAI.mode, isLive: providers.azureOpenAI.isLive },
+        documentIntelligence: { status: providers.documentIntelligence.status, mode: providers.documentIntelligence.mode, isLive: providers.documentIntelligence.isLive },
+        azureSearch: { status: providers.azureSearch.status, mode: providers.azureSearch.mode, isLive: providers.azureSearch.isLive },
+        cognee: { status: providers.cognee.status, mode: providers.cognee.mode, isLive: providers.cognee.isLive },
+        n8n: { status: providers.n8n.status, mode: providers.n8n.mode, isLive: providers.n8n.isLive },
+        mockInsurer: { status: providers.mockInsurer.status, mode: providers.mockInsurer.mode, isLive: false },
+        mockLender: { status: providers.mockLender.status, mode: providers.mockLender.mode, isLive: false },
+        mockFintech: { status: providers.mockFintech.status, mode: providers.mockFintech.mode, isLive: false },
       },
       featureFlags: flags,
     });
