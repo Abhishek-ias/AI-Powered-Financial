@@ -65,14 +65,14 @@ export const Header: React.FC<HeaderProps> = ({
           <span style={{ fontWeight: 700, fontSize: '1.0625rem', letterSpacing: '-0.02em', color: '#0F172A' }}>
             ClaimSahay
           </span>
-          <span style={{ fontSize: '0.75rem', color: '#64748B', borderLeft: '1px solid #E2E8F0', paddingLeft: '0.5rem' }}>
+          <span className="header-brand-subtitle" style={{ fontSize: '0.75rem', color: '#64748B', borderLeft: '1px solid #E2E8F0', paddingLeft: '0.5rem' }}>
             AI Financial Journey Copilot
           </span>
         </div>
       </div>
 
       {/* Center Status Indicators */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+      <div className="header-status-group" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
         <Badge variant={backendOnline ? 'green' : 'red'}>
           <Server size={11} />
           <span>{backendOnline ? 'Backend Connected' : 'Backend Disconnected'}</span>

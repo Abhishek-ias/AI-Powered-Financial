@@ -121,7 +121,7 @@ export function App() {
         </div>
 
         {/* Current Active Persona Indicator */}
-        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+        <div className="nav-bar-session" style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
           <span>Session:</span>
           <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{currentUser.userId}</span>
         </div>

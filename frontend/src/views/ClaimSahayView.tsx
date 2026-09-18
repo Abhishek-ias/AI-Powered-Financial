@@ -497,17 +497,19 @@ export const ClaimSahayView: React.FC<ClaimSahayViewProps> = ({
         />
       )}
 
-      {/* 9. PROGRESS: Visual Milestone Stepper */}
-      <JourneyStepper
-        status={currentStatus}
-        allQuestionsAnswered={allRequiredDone}
-        consentGranted={isConsentGranted}
-        currentStepId={viewStep}
-        onSelectStep={(stepId) => setViewStep(stepId)}
-      />
+      {/* 9. PROGRESS: Visual Milestone Stepper (Active during journey) */}
+      {journey && (
+        <JourneyStepper
+          status={currentStatus}
+          allQuestionsAnswered={allRequiredDone}
+          consentGranted={isConsentGranted}
+          currentStepId={viewStep}
+          onSelectStep={(stepId) => setViewStep(stepId)}
+        />
+      )}
 
-      {/* 47. RESPONSIVE CLAIMSAHAY LAYOUT: Master-Detail 2-Column Grid */}
-      <div className="workspace-grid">
+      {/* 47. RESPONSIVE CLAIMSAHAY LAYOUT: Master-Detail Grid */}
+      <div className={journey ? 'workspace-grid' : 'workspace-single'}>
         {/* Left Column: Primary Workspace */}
         <div className="workspace-main">
           {/* 2. INSURANCE HERO SECTION (Shown on Insurance Landing) */}
