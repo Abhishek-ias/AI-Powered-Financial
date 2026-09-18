@@ -1,283 +1,928 @@
 # AI Financial Journey Copilot
 
-> **One conversation. Every financial goal.**
+> **One conversation. Every financial goal. A simpler, faster, more human financial journey.**
 
-**Team NOVA** | ClaimSahay | Insurance · Lending · Fintech
+AI Financial Journey Copilot is an intelligent, explainable and auditable platform that simplifies customer-facing financial journeys across:
 
-[![Backend E2E](https://img.shields.io/badge/Backend%20E2E-18%2F18%20PASS-16A34A)](docs/hackathon/BUILD_STATUS.md)
-[![TypeScript](https://img.shields.io/badge/TypeScript-0%20errors-2563EB)](frontend/)
-[![Frontend Build](https://img.shields.io/badge/Frontend%20Build-PASS-16A34A)](frontend/)
-[![Sandbox Mode](https://img.shields.io/badge/Mode-Sandbox%20%2F%20Mock-D97706)](.env.example)
+- 🛡️ **Insurance**
+- 💰 **Lending**
+- 💳 **Fintech**
 
----
-
-## 1. Overview
-
-AI Financial Journey Copilot is a multi-domain AI-powered financial guidance platform. Users enter a natural-language goal in plain language — "my hospital claim was queried and I don't understand what is missing" — and the system conducts a complete, structured workflow: asking relevant questions, processing documents, validating evidence against policy rules, resolving insurer queries with cited references, and guiding the user to a confirmed, safe resolution.
-
-The same conversational copilot interface extends across three financial domains:
-
-| Domain | Product | Core Workflow |
-|---|---|---|
-| 🏥 Insurance | ClaimSahay | Claim filing → document OCR → policy check → reconciliation → submission |
-| 💰 Lending | Lending Copilot | EMI calculation → DTI affordability → authoritative guidance |
-| 📱 Fintech | Dispute Copilot | UPI failure detection → NPCI classification → bank dispute ticket |
+Instead of forcing customers to understand complex forms, policies, documents, and workflows on their own, the platform guides them through the journey using AI, document intelligence, policy-aware reasoning, deterministic validation, next-best-action recommendations, explicit approval gates, and human escalation.
 
 ---
 
-## 2. Problem
+## 🚀 Overview
 
-Financial customers face three critical problems:
+Financial journeys are often fragmented and difficult to navigate.
 
-1. **Insurance complexity**: Claim rejections and queries arrive as dense insurer letters. Customers don't know which document is missing, which policy clause applies, or what to do next.
-2. **Lending opacity**: EMI estimates vary across banks. Customers can't verify affordability independently or understand DTI (debt-to-income) calculations.
-3. **Payment disputes**: Failed-but-debited UPI transactions leave customers stranded without knowing reversal timelines or how to raise a dispute.
+A customer may need to:
 
-In all three cases, customers either give up or make uninformed decisions.
+- understand a policy or financial product
+- answer lengthy questions
+- collect multiple documents
+- understand complex terms
+- resolve conflicting information
+- determine what action to take next
+- contact customer support
+- repeatedly provide the same information
 
----
+The **AI Financial Journey Copilot** turns these fragmented interactions into a guided end-to-end journey.
 
-## 3. Solution
+### Core principle
 
-> **AI Understands → Rules Validate → Human Approves → Audit Records**
+```text
+AI Understands
+      ↓
+Rules Validate
+      ↓
+AI Explains
+      ↓
+Next Best Action
+      ↓
+Customer Confirms
+      ↓
+Human Approves
+      ↓
+Action Executes
+      ↓
+Audit Records
 
-An AI copilot that:
+The system is designed so that AI assists the customer without becoming an uncontrolled decision maker.
 
-- **Understands intent** from natural language using structured LLM classification
-- **Asks only relevant questions** dynamically generated per domain and goal
-- **Processes documents** with AI-extracted structured evidence fields (26 fields per claim)
-- **Validates evidence** against deterministic policy rules with explainable conflict flags
-- **Reconciles disputes** with policy citations (exact clause, page number, version)
-- **Guides next actions** with backend-authoritative next best actions
-- **Safety gates** consequential decisions behind explicit confirmation and approval
-- **Escalates to humans** with a 15-field structured context packet for specialist review
+🎯 Problem Statement
 
----
+Financial-service journeys often suffer from:
 
-## 4. Insurance — ClaimSahay
+complicated forms
+fragmented information
+document-heavy processes
+difficult policy language
+unclear rejection or query reasons
+repeated customer interactions
+lack of transparency
+weak continuity across the journey
+unnecessary human escalation
+unclear next steps
 
-The flagship deep journey covering the complete hospital claim lifecycle:
+Customers need more than a chatbot.
 
-**Goal Entry → Intent Classification → Dynamic Questions → Consent → Document Upload → OCR Processing → Evidence Extraction → Validation → Policy Reconciliation → Conflict Resolution → Next Best Action → Confirmation → Approval → Submission → Timeline → Human Escalation**
+They need a system that can understand their goal, gather the right information, validate evidence, explain decisions, recommend actions, and maintain context throughout the journey.
 
-Key capabilities:
-- Room-rent sub-limit detection and patient-payable calculation
-- Diagnosis contradiction flagging (cross-document OCR comparison)
-- Policy clause citations with page numbers (RAG-based)
-- Insurer query response generation
-- 15-field escalation context packet for human specialists
+💡 Our Solution
 
----
+The AI Financial Journey Copilot provides a reusable journey layer for financial services.
 
-## 5. Lending Copilot
+A customer starts with a natural-language goal.
 
-Standard reducing-balance EMI computation with RBI FOIR-compliant affordability checking.
+The system then:
 
-- Formula: `EMI = P × R × (1+R)^N / ((1+R)^N - 1)`
-- DTI threshold: 50% (RBI-aligned FOIR)
-- Result: "Affordability Criteria Met" or "Exceeds Recommended DTI" — never "Loan Approved"
+Understands the customer's intent
+Asks only relevant questions
+Captures user consent
+Accepts supporting documents
+Extracts structured evidence
+Validates evidence using deterministic rules
+Retrieves and cites relevant policy information
+Detects contradictions and conflicts
+Explains complex financial conditions in simple language
+Recommends the next best action
+Requires customer confirmation for consequential actions
+Applies explicit approval gates
+Executes the available workflow
+Tracks the entire journey
+Maintains an auditable timeline
+Escalates to a human specialist when needed
+🧩 Three Financial Domains
+1. 🛡️ Insurance — ClaimSahay
 
----
+ClaimSahay is our deepest implementation of the Financial Journey Copilot.
 
-## 6. Fintech Dispute Copilot
+It helps customers navigate an insurance-claim journey from initial intent through submission and tracking.
 
-NPCI-aligned UPI transaction dispute triage:
+ClaimSahay Journey
+Understand
+    ↓
+Check
+    ↓
+Explain
+    ↓
+Fix
+    ↓
+Submit
+    ↓
+Recover / Track
+ClaimSahay capabilities
+Natural-language claim initiation
+Dynamic question generation
+Granular customer consent
+Document upload
+Document intelligence / OCR
+Evidence extraction
+Policy-aware validation
+Policy condition checking
+Conflict detection
+Reconciliation
+Exact policy citation
+Explainable AI guidance
+Next Best Action
+Customer confirmation
+Explicit approval gate
+Sandbox claim submission
+Status tracking
+Audit timeline
+Human escalation
+Example
 
-- Classifies: FAILED_BUT_DEBITED, TIMEOUT, MERCHANT_CREDIT_FAILURE
-- Auto-reversal timeline: T+1 or T+2 business days
-- Generates bank dispute ticket with immutable reference
-- Compliant with NPCI Circular dispute resolution directives
+A customer submits a hospitalization claim.
 
----
+The uploaded documents indicate:
 
-## 7. Architecture
+Room Rent: ₹7,500/day
 
-```
-Browser (React 18 + TypeScript + Vite)
-    │
-    │ HTTP REST
-    ▼
-Express.js API (Node.js + TypeScript)  →  SQLite / PostgreSQL (Prisma ORM)
-    │
-    ├── Journey State Machine (FSM)
-    ├── Rules Engine (Policy / DTI / NPCI)
-    └── Integrations (Azure OpenAI, Document AI, Azure Search — all Mock in sandbox)
-```
+while the applicable policy condition contains:
 
-See [Architecture Details →](docs/architecture/README.md)
+Room Rent Limit: ₹5,000/day
 
----
+The system does not simply return:
 
-## 8. Technology Stack
+"Claim Rejected"
 
-| Layer | Technology |
-|---|---|
-| Frontend | React 18, TypeScript, Vite, Lucide Icons |
-| Styling | Vanilla CSS (custom design system — no Tailwind) |
-| Backend | Node.js, Express.js, TypeScript |
-| Database | SQLite (dev/sandbox) / PostgreSQL (production) |
-| ORM | Prisma |
-| AI (mock) | Azure OpenAI GPT-4o |
-| Document AI (mock) | Azure Document Intelligence |
-| Vector Search (mock) | Azure Cognitive Search |
-| Memory (mock) | Cognee |
-| Workflow (mock) | n8n |
+Instead, it:
 
----
+identifies the mismatch
+surfaces the relevant evidence
+cites the policy condition
+explains the possible implication
+recommends the next action
+keeps the customer in control
+records the decision path
 
-## 9. Repository Structure
+This creates a much more transparent financial journey.
 
-```
-/
-├── README.md                          # This file
+💰 2. Lending Copilot
+
+The same journey architecture is extended to lending.
+
+The Lending Copilot can help customers understand borrowing scenarios through deterministic financial calculations and affordability checks.
+
+Current capabilities
+Loan/financing input capture
+EMI calculation
+Affordability evaluation
+DTI-based assessment
+Clear result communication
+Guided next steps
+Important design principle
+
+The frontend does not invent lending decisions.
+
+For example, the interface avoids misleading statements such as:
+
+Loan Approved
+
+unless such a state is explicitly returned by the backend.
+
+Instead, authoritative states can include:
+
+Affordability Criteria Met
+Exceeds Recommended DTI
+Additional Information Required
+Review in Progress
+
+This keeps the customer-facing journey aligned with backend-authoritative results.
+
+💳 3. Fintech Dispute Copilot
+
+The Fintech journey focuses on payment and transaction-dispute workflows.
+
+Current capabilities
+Payment dispute initiation
+Transaction context capture
+Deterministic dispute triage
+Reversal timeline calculation
+Customer-friendly explanation
+Dispute ticket generation
+Journey/status tracking
+
+The objective is to reduce the complexity customers experience when a payment fails, is reversed, or requires investigation.
+
+🧠 Core Product Capabilities
+1. Cross-Domain Financial Journeys
+
+A common journey architecture can support:
+
+Insurance
+Lending
+Fintech
+
+without forcing every domain to implement a completely separate customer experience.
+
+2. Goal-Based Interaction
+
+Instead of presenting a long form immediately, the customer starts with a goal.
+
+Example:
+
+"I was hospitalized and want to know whether my expenses are covered."
+
+The system determines what information is relevant to the journey.
+
+3. Dynamic Questioning
+
+The system collects information progressively.
+
+Instead of asking every possible question:
+
+Question
+↓
+Answer
+↓
+Determine next relevant question
+↓
+Continue
+
+This reduces unnecessary friction.
+
+4. Document Intelligence
+
+Customer documents can contain unstructured information.
+
+The platform uses document processing to extract useful evidence.
+
+Example:
+
+Document
+    ↓
+Extraction
+    ↓
+Structured Evidence
+    ↓
+Validation
+
+This helps transform documents into actionable journey context.
+
+5. Policy-Aware RAG
+
+For insurance journeys, the system can retrieve relevant policy content and present grounded explanations.
+
+Important information is surfaced together with source/citation context.
+
+The system is designed to avoid presenting unsupported policy claims as facts.
+
+6. Conflict Detection
+
+The platform can identify conflicting information across sources.
+
+Example:
+
+Document A:
+Acute Appendicitis
+
+Document B:
+Acute Gastritis
+
+Instead of silently choosing one value, the system surfaces the contradiction for review.
+
+7. Explainable AI
+
+The user should be able to understand:
+
+What was found?
+Why does it matter?
+What policy/rule applies?
+What should I do next?
+
+The goal is to make complex financial processes understandable rather than opaque.
+
+8. Next Best Action Engine
+
+At important points in the journey, the system identifies the next useful action.
+
+Examples:
+
+Upload missing document
+Review a policy conflict
+Confirm extracted information
+Provide additional evidence
+Request human assistance
+Proceed with submission
+9. Financial Journey Passport
+
+The platform is designed around reusable journey context.
+
+This creates a foundation for a customer to continue across financial journeys without repeatedly rebuilding their context from zero.
+
+Conceptually:
+
+Customer
+   ↓
+Journey Context
+   ↓
+Insurance
+Lending
+Fintech
+10. Human-in-the-Loop
+
+AI should not silently perform every consequential action.
+
+The system supports:
+
+AI Assistance
+     ↓
+Customer Confirmation
+     ↓
+Approval
+     ↓
+Action
+
+When automated handling is insufficient, the journey can be escalated to a human specialist with structured context.
+
+11. Auditability
+
+Important journey events are recorded chronologically.
+
+Example:
+
+Goal Created
+Questionnaire Completed
+Consent Recorded
+Document Uploaded
+Evidence Extracted
+Policy Conflict Detected
+Reconciliation Performed
+Next Action Generated
+Customer Confirmed
+Approval Recorded
+Submission Initiated
+Submission Completed
+Status Updated
+Human Escalation
+
+This makes the journey easier to trace and review.
+
+🏗️ System Architecture
+                    ┌───────────────────────┐
+                    │       Customer        │
+                    └───────────┬───────────┘
+                                │
+                                ▼
+                    ┌───────────────────────┐
+                    │ React + TypeScript    │
+                    │     Frontend          │
+                    └───────────┬───────────┘
+                                │
+                                ▼
+                    ┌───────────────────────┐
+                    │     REST API Layer    │
+                    └───────────┬───────────┘
+                                │
+                                ▼
+                    ┌───────────────────────┐
+                    │ Node.js + Express     │
+                    │       Backend         │
+                    └───────────┬───────────┘
+                                │
+              ┌─────────────────┼─────────────────┐
+              │                 │                 │
+              ▼                 ▼                 ▼
+      ┌──────────────┐  ┌──────────────┐  ┌──────────────┐
+      │ AI Reasoning │  │ Document     │  │ RAG / Search │
+      │              │  │ Intelligence │  │              │
+      └──────────────┘  └──────────────┘  └──────────────┘
+              │                 │                 │
+              └─────────────────┼─────────────────┘
+                                │
+                                ▼
+                    ┌───────────────────────┐
+                    │ Rules + Workflows     │
+                    │ + Orchestration       │
+                    └───────────┬───────────┘
+                                │
+                  ┌─────────────┼──────────────┐
+                  │             │              │
+                  ▼             ▼              ▼
+          ┌────────────┐ ┌────────────┐ ┌────────────┐
+          │ Insurance  │ │  Lending   │ │  Fintech   │
+          └────────────┘ └────────────┘ └────────────┘
+
+                                │
+                                ▼
+                    ┌───────────────────────┐
+                    │ Database / Storage    │
+                    └───────────────────────┘
+🛠️ Technology Stack
+Frontend
+React 18
+TypeScript
+Vite
+HTML5
+CSS
+Responsive component-based UI
+Backend
+Node.js
+Express.js
+TypeScript
+REST APIs
+Prisma ORM
+Database
+PostgreSQL — intended production database
+SQLite — current local/demo fallback
+AI & Intelligence
+Azure OpenAI
+Azure AI Document Intelligence
+Azure AI Search
+Cognee
+Workflow & Automation
+n8n
+Storage
+Azure Blob Storage
+Integrations
+
+Sandbox/Mock integrations for:
+
+Insurance workflows
+Lending workflows
+Fintech/payment workflows
+🔐 Security & Safety
+
+Security and controlled automation are core design principles.
+
+Authentication & Authorization
+
+The platform includes:
+
+Authentication
+Role-based access control
+Customer/admin role separation
+Prompt-Injection Protection
+
+User-provided and document-derived content is handled with sanitization and validation barriers so that untrusted content cannot directly control critical business actions.
+
+Deterministic Decisions
+
+Critical workflow decisions are not delegated purely to generative AI.
+
+The architecture separates:
+
+AI Reasoning
+      +
+Deterministic Rules
+      +
+Explicit Approval
+Approval Controls
+
+Consequential actions require explicit customer confirmation and approval before execution.
+
+Audit Trail
+
+Important workflow transitions and actions are recorded.
+
+Secrets
+
+Frontend code should only expose non-sensitive configuration such as:
+
+VITE_API_BASE_URL=http://localhost:3000
+
+Sensitive credentials must remain server-side.
+
+🌐 Frontend ↔ Backend
+
+The frontend communicates with the backend through REST APIs.
+
+Typical development setup:
+
+Frontend
+http://127.0.0.1:5173
+
+Backend
+http://localhost:3000
+
+Example:
+
+React UI
+   ↓
+REST API
+   ↓
+Express Backend
+   ↓
+Business Logic / Rules
+   ↓
+Database / Integrations
+   ↓
+Response
+   ↓
+React UI Update
+📁 Repository Structure
+AI-Powered-Fonancial/
+│
+├── frontend/
+│   ├── public/
+│   │   ├── images/
+│   │   └── icons/
+│   │
+│   ├── src/
+│   │   ├── app/
+│   │   ├── api/
+│   │   ├── components/
+│   │   │   ├── ui/
+│   │   │   └── layout/
+│   │   ├── features/
+│   │   │   ├── claimsahay/
+│   │   │   ├── lending/
+│   │   │   ├── fintech/
+│   │   │   ├── journeys/
+│   │   │   └── support/
+│   │   ├── hooks/
+│   │   ├── layouts/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   ├── styles/
+│   │   ├── types/
+│   │   ├── utils/
+│   │   └── constants/
+│   │
+│   ├── .env.example
+│   ├── package.json
+│   └── README.md
+│
+├── backend/
+│   ├── src/
+│   │   ├── config/
+│   │   ├── routes/
+│   │   ├── controllers/
+│   │   ├── services/
+│   │   ├── middleware/
+│   │   ├── models/
+│   │   ├── repositories/
+│   │   ├── rules/
+│   │   ├── workflows/
+│   │   ├── integrations/
+│   │   ├── utils/
+│   │   └── types/
+│   │
+│   ├── tests/
+│   │   ├── unit/
+│   │   ├── integration/
+│   │   └── e2e/
+│   │
+│   ├── .env.example
+│   ├── package.json
+│   └── README.md
+│
 ├── docs/
-│   ├── architecture/README.md         # Full system architecture
-│   ├── api/openapi.yaml               # OpenAPI 3.0 contract
-│   ├── demo/DEMO_FLOW.md              # Judge demonstration script
-│   ├── hackathon/                     # Build status, audit reports
-│   └── decisions/ARCHITECTURE_DECISIONS.md
+│   ├── architecture/
+│   ├── api/
+│   ├── demo/
+│   ├── hackathon/
+│   └── decisions/
 │
-├── frontend/                          # React 18 + TypeScript SPA
-│   └── src/
-│       ├── pages/                     # Composed top-level page views
-│       ├── features/
-│       │   ├── claimsahay/            # Insurance journey (15 components)
-│       │   ├── lending/               # EMI + Affordability
-│       │   ├── fintech/               # UPI Dispute Triage
-│       │   ├── journeys/              # Audit log
-│       │   └── support/               # Human Specialist Desk
-│       ├── components/
-│       │   ├── ui/                    # Shared primitive components
-│       │   └── layout/                # Header, Footer
-│       ├── api/                       # HTTP client layer
-│       └── types/                     # Shared TypeScript models
+├── scripts/
 │
-├── src/                               # Backend Express.js source
-│   ├── modules/                       # Domain business logic
-│   ├── rules/                         # Policy + DTI + NPCI rules
-│   ├── state-machine/                 # Journey FSM
-│   └── integrations/                  # External provider wrappers
-│
-├── prisma/schema.prisma               # Database schema
-├── scripts/                           # e2e-test.ts, seed.ts
-└── tests/                             # Backend tests
-```
+├── .gitignore
+└── README.md
+▶️ Getting Started
+Prerequisites
 
----
+Install:
 
-## 10. Running Locally
+Node.js 18+
+npm
+Git
 
-### Prerequisites
-- Node.js 18+
-- npm 9+
+Depending on your environment, PostgreSQL/Docker may also be required for production-style infrastructure.
 
-### Backend
-
-```bash
-# Install dependencies
+⚙️ Backend Setup
+cd backend
 npm install
 
-# Setup database
-npx prisma db push
-npx tsx scripts/seed.ts
+Create a local environment file:
 
-# Start backend
+cp .env.example .env
+
+Configure the required environment variables.
+
+Start the backend:
+
 npm run dev
-# → http://localhost:3000
-```
 
-### Frontend
+Expected development endpoint:
 
-```bash
+http://localhost:3000
+🎨 Frontend Setup
+
+Open another terminal:
+
 cd frontend
 npm install
-npm run dev
-# → http://localhost:5173
-```
 
-### Environment
+Create:
 
-The root `.env` contains all configuration (copy from `.env.example`):
+frontend/.env
 
-```env
+with:
+
 VITE_API_BASE_URL=http://localhost:3000
-DATABASE_URL=file:./dev.db
-MOCK_AI=true
-MOCK_DOCUMENT_AI=true
-# ... all providers default to MOCK in sandbox mode
-```
 
-### Verify Backend
+Start the frontend:
 
-```bash
-npx tsx scripts/e2e-test.ts
-# Expected: 18/18 ClaimSahay steps + Lending + Fintech → ALL TESTS PASSED
-```
+npm run dev
 
----
+Open:
 
-## 11. Demo Flow
+http://127.0.0.1:5173
+🧪 Testing
 
-See the complete step-by-step judge demonstration script: [docs/demo/DEMO_FLOW.md](docs/demo/DEMO_FLOW.md)
+The project includes unit/integration/E2E verification where applicable.
 
-**Quick path:**
-1. Open http://localhost:5173
-2. Enter goal → ClaimSahay journey → Answer questions → Upload docs → View evidence → Policy check → Confirm → Approve → Timeline → Escalate
-3. Switch to Lending → Calculate EMI → Check affordability
-4. Switch to Fintech → Lookup UPI failure → Raise dispute
+Frontend checks
+npm run build
+TypeScript
 
----
+Run the project's configured TypeScript validation command.
 
-## 12. Security
+Backend tests
+npm test
+End-to-End
 
-- **No real PII**: All data is synthetic in sandbox mode
-- **No credentials in frontend**: Only `VITE_API_BASE_URL` in frontend `.env`
-- **Consequential gates**: Confirmation required before every financial action
-- **Sandbox disclaimer**: "This is a MOCK submission. No real financial action has been taken." on every submission
-- **Audit trail**: 37+ immutable timestamped events per journey
-- **RBAC**: Customer / Claims Specialist / Admin persona switcher
-- **No LLM decisions**: AI explains only; all financial outcomes from deterministic rules
+The ClaimSahay journey has been verified across:
 
----
+Goal
+→ Questions
+→ Consent
+→ Documents
+→ Evidence
+→ Policy Validation
+→ Reconciliation
+→ Next Best Action
+→ Confirmation
+→ Approval
+→ Submission
+→ Timeline
+→ Human Escalation
 
-## 13. Sandbox & Mock Integrations
+Current verified ClaimSahay E2E coverage:
 
-All external provider integrations run in mock mode during this hackathon submission. Deterministic responses are configured in `/src/integrations/` and controlled via `.env` feature flags.
+18 / 18 checkpoints passed
+🧭 Demo Flow
+Insurance — ClaimSahay
 
-| Integration | Mock Behavior |
-|---|---|
-| Azure OpenAI | Returns structured intent classification and explanations |
-| Azure Document Intelligence | Returns realistic OCR extraction with 26 fields per document |
-| Azure Cognitive Search | Returns policy citations with clause + page number |
-| Mock Insurer API | Accepts claim submissions, returns `SUBMITTED` status |
-| Mock Lender API | Accepts loan applications, returns `SUBMITTED` status |
-| Mock Fintech / NPCI | Returns transaction status, accepts dispute registration |
+Recommended demonstration:
 
-The production path replaces all mock flags with real API credentials in environment variables — zero code changes required.
+Home
+ ↓
+Insurance
+ ↓
+Start a Claim
+ ↓
+Enter Customer Goal
+ ↓
+Dynamic Questions
+ ↓
+Consent
+ ↓
+Document Upload
+ ↓
+Evidence Extraction
+ ↓
+Policy Validation
+ ↓
+Conflict Detection
+ ↓
+Policy Citation
+ ↓
+Reconciliation
+ ↓
+Next Best Action
+ ↓
+Customer Confirmation
+ ↓
+Approval
+ ↓
+Sandbox Submission
+ ↓
+Status
+ ↓
+Audit Timeline
+ ↓
+Human Escalation
+Lending
+Lending
+ ↓
+Enter financial inputs
+ ↓
+Calculate EMI
+ ↓
+Evaluate affordability
+ ↓
+DTI assessment
+ ↓
+Explain result
+ ↓
+Next action
+Fintech
+Fintech
+ ↓
+Payment dispute
+ ↓
+Transaction verification
+ ↓
+Dispute triage
+ ↓
+Reversal timeline
+ ↓
+Ticket generation
+ ↓
+Status tracking
+🧪 Example ClaimSahay Scenario
 
----
+A synthetic customer submits a hospitalization claim.
 
-## 14. Future Scope
+Customer goal
 
-- **Live Azure OpenAI integration**: Replace mock LLM with GPT-4o for adaptive question generation and richer explanations
-- **Real Document Intelligence**: Connect Azure Document Intelligence for actual PDF/image OCR
-- **Multi-language support**: Hindi, Tamil, Marathi (backend already accepts `language` field)
-- **Real insurer API integration**: PolicyBazaar, Digit, Star Health API adapters
-- **Mobile-first PWA**: Offline document capture and progressive form submission
-- **WhatsApp / IVR interface**: Regional language financial guidance over messaging channels
-- **Cross-domain journeys**: E.g., insurance claim denial → lending product recommendation
-- **Regulatory reporting**: Pre-built export for IRDAI, RBI, NPCI compliance audit requirements
+"I was hospitalized and want to know whether my medical expenses are covered and file a claim."
 
----
+Example evidence
+Hospitalization:
+10 Sep 2026 – 13 Sep 2026
 
-## E2E Test
+Diagnosis:
+Acute Appendicitis
 
-```bash
-npx tsx scripts/e2e-test.ts
-```
+Room Rent:
+₹7,500/day
 
-Expected output: `🎉 ============= ClaimSahay E2E Test PASSED =============` + Lending + Fintech all pass.
+Total Bill:
+₹96,500
+Example policy condition
+Room Rent Limit:
+₹5,000/day
 
----
+The system detects the policy conflict, explains the relevant condition, and recommends the appropriate next action rather than silently rejecting or approving the claim.
 
-**Team NOVA** — Built for the AI Financial Journey Copilot Hackathon
+🧠 Why This Is More Than a Chatbot
+
+A conventional chatbot may:
+
+Question
+ ↓
+Answer
+
+The Financial Journey Copilot provides:
+
+Goal Understanding
+       ↓
+Context Collection
+       ↓
+Document Intelligence
+       ↓
+Evidence Validation
+       ↓
+Policy / Rule Evaluation
+       ↓
+Explanation
+       ↓
+Next Best Action
+       ↓
+Customer Confirmation
+       ↓
+Approval
+       ↓
+Action
+       ↓
+Tracking
+       ↓
+Human Escalation
+       ↓
+Audit
+
+This transforms AI from a conversational interface into a journey orchestration layer.
+
+🏦 Cross-Domain Design
+
+The platform is intentionally designed as a reusable foundation.
+
+                AI Financial Journey Copilot
+                           │
+            ┌──────────────┼──────────────┐
+            │              │              │
+            ▼              ▼              ▼
+        Insurance       Lending        Fintech
+            │              │              │
+        Claims            EMI          Disputes
+        Policies          DTI          Payments
+        Evidence          Affordability Reversals
+
+Each domain can have:
+
+different rules
+different documents
+different workflows
+different institution integrations
+
+while sharing:
+
+journey context
+user interaction
+explanation
+auditability
+approval controls
+human escalation
+🔄 Current Integration Model
+
+For the hackathon/demo environment, some external institutional systems are represented through Sandbox/Mock integrations.
+
+This allows the product journey to be demonstrated end-to-end without claiming direct production connectivity to external insurers, lenders or financial institutions.
+
+Where applicable, the UI explicitly identifies simulation/sandbox states.
+
+📊 Current Validation
+
+The project has been verified for:
+
+Area	Status
+Frontend Build	✅ PASS
+TypeScript	✅ PASS
+Frontend ↔ Backend	✅ PASS
+ClaimSahay E2E	✅ 18/18
+Lending	✅ PASS
+Fintech	✅ PASS
+Responsive UI	✅ PASS
+Browser Console	✅ PASS
+Security Check	✅ PASS
+Backend Integrity	✅ Preserved
+🌱 Future Scope
+
+Potential extensions include:
+
+production institutional API integrations
+broader insurance products
+additional lending journeys
+more fintech workflows
+richer financial Journey Passport capabilities
+multilingual and voice-first journeys
+proactive financial recommendations
+additional document types
+larger policy and financial knowledge bases
+deeper workflow automation
+enterprise-scale observability and monitoring
+📌 Design Principles
+
+The project follows these principles:
+
+1. AI assists, not blindly decides
+
+Generative AI is used where language understanding and explanation add value.
+
+2. Rules remain authoritative
+
+Critical financial validation is handled using deterministic logic where appropriate.
+
+3. The customer remains in control
+
+Consequential actions require explicit user confirmation and approval.
+
+4. Every important action is traceable
+
+The journey maintains an audit trail.
+
+5. Human support remains available
+
+Automation should escalate when confidence or evidence is insufficient.
+
+6. Transparency over black-box decisions
+
+Users should understand what was found, what rule/policy applies, and what they can do next.
+
+👥 Team
+
+Team: NOVA
+
+Project: AI Financial Journey Copilot
+
+Primary implementation areas:
+
+AI-powered journey orchestration
+Insurance claims assistance
+Lending affordability guidance
+Fintech dispute workflows
+Explainable AI
+Document intelligence
+RAG / policy grounding
+Approval and audit workflows
+Human-in-the-loop support
+🏁 Hackathon Positioning
+
+The platform addresses the core objective of making financial journeys:
+
+Simpler
+
+Reduce forms, fragmentation and unnecessary complexity.
+
+Faster
+
+Automate document understanding, validation and workflow progression.
+
+More Human
+
+Explain financial decisions clearly, preserve customer control, and provide human escalation when needed.
