@@ -110,12 +110,19 @@ curl -X POST http://localhost:3000/api/journeys/{id}/escalate \
   -H "X-User-Id: user-customer-001"
 ```
 
-## Automated E2E Test
+## Automated Test Suites
 
 ```bash
+# 1. ClaimSahay + Lending + Fintech End-to-End Test (18 steps)
 npx tsx scripts/e2e-test.ts
+
+# 2. Final Hardening Suite (Auth, Conflicts, RAG, Idempotency, Prompt Injection - 29 assertions)
+npx tsx scripts/final-hardening-test.ts
+
+# 3. Jest Unit Test Suite (State Machine, Calculations, Rules, Sanitizer - 44 tests)
+npm test
+# OR: npx jest
 ```
-Runs complete ClaimSahay + Lending + Fintech tests automatically.
 
 ## Lending Demo
 
