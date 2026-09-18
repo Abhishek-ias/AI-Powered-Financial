@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Shield, Home, DollarSign, CreditCard, History, LifeBuoy } from 'lucide-react';
-import { Header } from './components/common/Header';
-import { Footer } from './components/common/Footer';
-import { HomeView } from './views/HomeView';
-import { ClaimSahayView } from './views/ClaimSahayView';
-import { LendingView } from './views/LendingView';
-import { FintechView } from './views/FintechView';
-import { JourneysListView } from './views/JourneysListView';
-import { SupportView } from './views/SupportView';
+import { Header, Footer } from './components/layout';
+import {
+  HomePage,
+  ClaimSahayPage,
+  LendingPage,
+  FintechPage,
+  JourneysPage,
+  SupportPage,
+} from './pages';
 import { api, getActiveUser } from './api/client';
 import { ReadyStatus, UserRole } from './types';
 
@@ -130,22 +131,22 @@ export function App() {
       {/* Main Workspace Area */}
       <main className="app-main">
         {activeTab === 'home' && (
-          <HomeView
+          <HomePage
             onStartJourney={handleStartJourney}
             onNavigateTab={(tab) => setActiveTab(tab as any)}
             readyStatus={readyStatus}
           />
         )}
         {activeTab === 'claimsahay' && (
-          <ClaimSahayView
+          <ClaimSahayPage
             initialGoal={activeGoal}
             onResetGoal={() => setActiveGoal('')}
           />
         )}
-        {activeTab === 'lending' && <LendingView />}
-        {activeTab === 'fintech' && <FintechView />}
+        {activeTab === 'lending' && <LendingPage />}
+        {activeTab === 'fintech' && <FintechPage />}
         {activeTab === 'journeys' && (
-          <JourneysListView
+          <JourneysPage
             onSelectJourney={(j) => {
               if (j.domain === 'INSURANCE') setActiveTab('claimsahay');
               else if (j.domain === 'LENDING') setActiveTab('lending');
@@ -153,7 +154,7 @@ export function App() {
             }}
           />
         )}
-        {activeTab === 'support' && <SupportView />}
+        {activeTab === 'support' && <SupportPage />}
       </main>
 
       {/* Institutional Enterprise Footer */}

@@ -1,0 +1,107 @@
+/* ============================================================
+   Design System Tokens — Variables
+   ============================================================ */
+
+:root {
+  /* Surface Palette — Clean, Trustworthy Light Fintech */
+  --bg-app: #F7F9FC;
+  --bg-surface: #FFFFFF;
+  --bg-surface-elevated: #FFFFFF;
+  --bg-surface-secondary: #F1F5F9;
+  --bg-surface-sunken: #F8FAFC;
+  --bg-surface-subtle: #F1F5F9;
+  --bg-input: #FFFFFF;
+
+  /* Borders & Dividers */
+  --border-subtle: #E2E8F0;
+  --border-medium: #CBD5E1;
+  --border-strong: #94A3B8;
+  --border-focus: #2563EB;
+
+  /* Typography Colors */
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-body: #334155;
+  --text-muted: #64748B;
+  --text-disabled: #94A3B8;
+  --text-inverse: #FFFFFF;
+
+  /* Primary Brand — Professional Fintech Blue */
+  --primary: #2563EB;
+  --primary-hover: #1D4ED8;
+  --primary-active: #1E40AF;
+  --primary-subtle: #EFF6FF;
+  --primary-border: #BFDBFE;
+  --primary-light: #2563EB;
+
+  /* Semantic Status Palette (Strict Customer-Facing Fintech) */
+  --success: #16A34A;
+  --success-bg: #DCFCE7;
+  --success-border: #BBF7D0;
+  --success-text: #166534;
+
+  --warning: #D97706;
+  --warning-bg: #FEF3C7;
+  --warning-border: #FDE68A;
+  --warning-text: #92400E;
+
+  --danger: #DC2626;
+  --danger-bg: #FEE2E2;
+  --danger-border: #FECACA;
+  --danger-text: #991B1B;
+
+  --info: #0EA5E9;
+  --info-bg: #E0F2FE;
+  --info-border: #BAE6FD;
+  --info-text: #075985;
+
+  --neutral-bg: #F1F5F9;
+  --neutral-text: #475569;
+  --neutral-border: #E2E8F0;
+
+  --purple: #7C3AED;
+  --purple-bg: #F3E8FF;
+  --purple-border: #DDD6FE;
+  --purple-text: #6D28D9;
+
+  /* Spacing Scale (Strict 8pt / 4-64) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* Corner Radii (Moderate, Professional Product UI) */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+
+  /* Typography Scale */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-display: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Roboto Mono', monospace;
+
+  /* Minimal Clean Shadows & Depth */
+  --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
+  --shadow-md: 0 2px 4px 0 rgba(15, 23, 42, 0.06), 0 1px 2px -1px rgba(15, 23, 42, 0.04);
+  --shadow-lg: 0 6px 12px -1px rgba(15, 23, 42, 0.07), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
+  --shadow-card: 0 1px 3px rgba(15, 23, 42, 0.04), 0 4px 12px -2px rgba(15, 23, 42, 0.03);
+  --shadow-card-hover: 0 8px 18px -2px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+  --shadow-modal: 0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.05);
+
+  /* Atmospheric Gradients */
+  --bg-gradient-hero: radial-gradient(120% 80% at 50% -5%, rgba(37, 99, 235, 0.07) 0%, rgba(241, 245, 249, 0.6) 45%, rgba(247, 249, 252, 1) 100%);
+  --bg-gradient-subtle: linear-gradient(180deg, rgba(239, 246, 255, 0.6) 0%, rgba(247, 249, 252, 0) 100%);
+
+  /* Layout Standards */
+  --header-height: 56px;
+  --max-content-width: 1200px;
+}
