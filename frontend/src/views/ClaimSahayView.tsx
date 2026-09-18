@@ -470,7 +470,7 @@ export const ClaimSahayView: React.FC<ClaimSahayViewProps> = ({
               className="btn btn-secondary"
               style={{ fontSize: '0.8125rem', padding: '0.375rem 0.75rem', gap: '0.375rem' }}
             >
-              <LifeBuoy size={14} color="var(--primary-light)" />
+              <LifeBuoy size={14} color="var(--primary)" />
               <span>Specialist Help</span>
             </button>
 
@@ -655,7 +655,7 @@ export const ClaimSahayView: React.FC<ClaimSahayViewProps> = ({
                   style={{
                     background: 'transparent',
                     border: 'none',
-                    color: 'var(--primary-light)',
+                    color: 'var(--primary)',
                     fontFamily: 'var(--font-mono)',
                     fontSize: '0.75rem',
                     cursor: 'pointer',
@@ -691,7 +691,7 @@ export const ClaimSahayView: React.FC<ClaimSahayViewProps> = ({
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span style={{ color: 'var(--text-secondary)' }}>Documents processed:</span>
                     <strong style={{ color: 'var(--text-primary)' }}>
-                      {documents.filter((d) => d.status === 'PROCESSED').length} of {documents.length}
+                       {documents.filter((d) => d.status === 'PROCESSED').length} of {documents.length}
                     </strong>
                   </div>
 
@@ -713,10 +713,10 @@ export const ClaimSahayView: React.FC<ClaimSahayViewProps> = ({
             )}
 
             {/* Human Specialist Handoff Tile */}
-            <Card style={{ padding: '1.25rem', background: 'var(--surface-sunken)' }}>
+            <Card style={{ padding: '1.25rem', background: '#F8FAFC', border: '1px solid #E2E8F0' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.375rem' }}>
-                <LifeBuoy size={16} color="var(--primary-light)" />
-                <h5 style={{ fontSize: '0.875rem', fontWeight: 600, margin: 0 }}>Human Review Option</h5>
+                <LifeBuoy size={16} color="var(--primary)" />
+                <h5 style={{ fontSize: '0.875rem', fontWeight: 600, margin: 0, color: '#0F172A' }}>Human Review Option</h5>
               </div>
               <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', lineHeight: 1.4, margin: '0 0 0.75rem' }}>
                 Our senior claims advocate can review your policy deductions with insurer TPA desks.

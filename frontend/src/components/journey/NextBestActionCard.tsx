@@ -1,13 +1,7 @@
 import React from 'react';
 import {
-  Compass,
   ArrowRight,
-  AlertTriangle,
-  FileCheck,
-  Send,
   LifeBuoy,
-  Scale,
-  CheckCircle2,
 } from 'lucide-react';
 import { NextBestAction } from '../../types';
 import { Card } from '../common/Card';
@@ -28,14 +22,13 @@ export const NextBestActionCard: React.FC<NextBestActionCardProps> = ({
     return null;
   }
 
-  // Pick the primary action
   const primaryAction = actions[0];
   const otherActions = actions.slice(1);
 
   const formatActionName = (name: string) => {
     switch (name) {
       case 'CORRECT_FIELD':
-        return 'Review the room-rent evidence';
+        return 'Review room-rent evidence';
       case 'REVIEW_POLICY':
         return 'Examine pinned policy clause';
       case 'RESPOND_TO_INSURER':
@@ -55,19 +48,28 @@ export const NextBestActionCard: React.FC<NextBestActionCardProps> = ({
   const whyText =
     primaryAction.reason ||
     primaryAction.why ||
-    'Recommended by ClaimSahay policy reconciliation engine.';
+    'The available evidence exceeds the selected policy condition.';
 
   return (
-    <Card style={{ padding: '1.25rem', border: '1px solid var(--primary)' }}>
-      {/* 22. NEXT BEST ACTION Dominant Card */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+    <div
+      style={{
+        background: '#FFFFFF',
+        border: '1px solid #BFDBFE',
+        borderTop: '3px solid #2563EB',
+        borderRadius: 'var(--radius-lg)',
+        padding: '1.25rem',
+        boxShadow: 'var(--shadow-md)',
+      }}
+    >
+      {/* 14. NEXT BEST ACTION Dominant Header */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.625rem' }}>
         <span
           style={{
             fontSize: '0.6875rem',
             fontWeight: 700,
             textTransform: 'uppercase',
             letterSpacing: '0.05em',
-            color: 'var(--primary-light)',
+            color: '#2563EB',
           }}
         >
           Next Step
@@ -75,12 +77,12 @@ export const NextBestActionCard: React.FC<NextBestActionCardProps> = ({
         <Badge variant="blue">Recommended</Badge>
       </div>
 
-      <h4 style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.375rem' }}>
+      <h4 style={{ fontSize: '1rem', fontWeight: 700, color: '#0F172A', marginBottom: '0.375rem' }}>
         {formatActionName(primaryAction.action)}
       </h4>
 
-      <p style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', lineHeight: 1.4, marginBottom: '1rem' }}>
-        <strong>Why: </strong>"{whyText}"
+      <p style={{ fontSize: '0.8125rem', color: '#475569', lineHeight: 1.45, marginBottom: '1rem' }}>
+        <strong>Why: </strong>{whyText}
       </p>
 
       {/* Primary and Secondary CTA */}
@@ -110,10 +112,9 @@ export const NextBestActionCard: React.FC<NextBestActionCardProps> = ({
         )}
       </div>
 
-      {/* Other actions if available */}
       {otherActions.length > 0 && (
-        <div style={{ marginTop: '1rem', paddingTop: '0.75rem', borderTop: '1px solid var(--border-subtle)' }}>
-          <span style={{ fontSize: '0.6875rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+        <div style={{ marginTop: '1rem', paddingTop: '0.75rem', borderTop: '1px solid #E2E8F0' }}>
+          <span style={{ fontSize: '0.6875rem', fontWeight: 600, color: '#64748B', textTransform: 'uppercase' }}>
             Alternative Actions:
           </span>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.375rem', marginTop: '0.375rem' }}>
@@ -126,13 +127,14 @@ export const NextBestActionCard: React.FC<NextBestActionCardProps> = ({
                   background: 'transparent',
                   border: 'none',
                   padding: '0.25rem 0',
-                  color: 'var(--primary-light)',
+                  color: '#2563EB',
                   fontSize: '0.75rem',
                   textAlign: 'left',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '0.25rem',
+                  fontWeight: 500,
                 }}
               >
                 <span>• {formatActionName(act.action)}</span>
@@ -141,6 +143,6 @@ export const NextBestActionCard: React.FC<NextBestActionCardProps> = ({
           </div>
         </div>
       )}
-    </Card>
+    </div>
   );
 };

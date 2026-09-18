@@ -108,7 +108,7 @@ export const JourneysListView: React.FC<JourneysListViewProps> = ({ onSelectJour
               style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <div style={{ background: 'rgba(15, 23, 42, 0.8)', padding: '0.75rem', borderRadius: 'var(--radius-md)' }}>
+                <div style={{ background: '#F1F5F9', border: '1px solid #E2E8F0', padding: '0.75rem', borderRadius: 'var(--radius-md)' }}>
                   {getDomainIcon(j.domain)}
                 </div>
                 <div>
@@ -130,7 +130,7 @@ export const JourneysListView: React.FC<JourneysListViewProps> = ({ onSelectJour
                 </div>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#60a5fa', fontSize: '0.875rem', fontWeight: 600 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--primary)', fontSize: '0.875rem', fontWeight: 600 }}>
                 View Journey <ArrowRight size={14} />
               </div>
             </Card>

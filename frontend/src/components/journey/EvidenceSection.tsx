@@ -107,10 +107,11 @@ export const EvidenceSection: React.FC<EvidenceSectionProps> = ({
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          background: 'rgba(15, 23, 42, 0.6)',
+          background: '#FFFFFF',
           padding: '0.75rem 1rem',
           borderRadius: 'var(--radius-md)',
-          border: '1px solid var(--border-subtle)',
+          border: '1px solid #E2E8F0',
+          boxShadow: 'var(--shadow-sm)',
           flexWrap: 'wrap',
           gap: '0.75rem',
         }}
@@ -129,8 +130,8 @@ export const EvidenceSection: React.FC<EvidenceSectionProps> = ({
             placeholder="Search fields (e.g. room rent, diagnosis)..."
             style={{
               width: '100%',
-              background: 'rgba(30, 41, 59, 0.7)',
-              border: '1px solid var(--border-subtle)',
+              background: '#FFFFFF',
+              border: '1px solid #CBD5E1',
               borderRadius: 'var(--radius-sm)',
               color: 'var(--text-primary)',
               padding: '0.375rem 0.75rem 0.375rem 2.25rem',
@@ -150,11 +151,11 @@ export const EvidenceSection: React.FC<EvidenceSectionProps> = ({
               key={st}
               onClick={() => setStatusFilter(st)}
               style={{
-                background: statusFilter === st ? 'rgba(59, 130, 246, 0.25)' : 'rgba(30, 41, 59, 0.5)',
-                border: statusFilter === st ? '1px solid #3b82f6' : '1px solid rgba(255, 255, 255, 0.06)',
+                background: statusFilter === st ? '#EFF6FF' : '#FFFFFF',
+                border: statusFilter === st ? '1px solid #BFDBFE' : '1px solid #E2E8F0',
                 borderRadius: 'var(--radius-sm)',
                 padding: '0.25rem 0.625rem',
-                color: statusFilter === st ? '#ffffff' : 'var(--text-secondary)',
+                color: statusFilter === st ? '#2563EB' : 'var(--text-secondary)',
                 fontSize: '0.75rem',
                 fontWeight: 600,
                 cursor: 'pointer',
@@ -173,8 +174,8 @@ export const EvidenceSection: React.FC<EvidenceSectionProps> = ({
               value={sourceFilter}
               onChange={(e) => setSourceFilter(e.target.value)}
               style={{
-                background: 'rgba(30, 41, 59, 0.8)',
-                border: '1px solid var(--border-subtle)',
+                background: '#FFFFFF',
+                border: '1px solid #CBD5E1',
                 borderRadius: 'var(--radius-sm)',
                 color: 'var(--text-primary)',
                 padding: '0.25rem 0.625rem',

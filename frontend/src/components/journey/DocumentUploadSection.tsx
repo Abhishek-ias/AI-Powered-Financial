@@ -1,11 +1,8 @@
 import React, { useState, useRef } from 'react';
 import {
   UploadCloud,
-  FileCheck,
-  AlertCircle,
-  FileText,
   CheckCircle2,
-  RefreshCw,
+  AlertCircle,
   Sparkles,
   ArrowRight,
   Cpu,
@@ -176,8 +173,8 @@ export const DocumentUploadSection: React.FC<DocumentUploadSectionProps> = ({
       {/* Header & Sample Helper */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
         <div>
-          <h3 style={{ fontSize: '1.25rem', fontWeight: 600 }}>Documents required</h3>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
+          <h3 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#0F172A' }}>Documents required</h3>
+          <p style={{ color: '#475569', fontSize: '0.875rem' }}>
             Provide itemized hospital records for automated OCR and policy verification.
           </p>
         </div>
@@ -189,12 +186,12 @@ export const DocumentUploadSection: React.FC<DocumentUploadSectionProps> = ({
           style={{ fontSize: '0.8125rem', padding: '0.375rem 0.75rem', gap: '0.375rem' }}
           title="Instantly upload synthetic test documents"
         >
-          <Sparkles size={13} color="var(--primary-light)" />
-          <span>{isSynthesizing ? 'Uploading Batch...' : 'Load Sample Claim Packet'}</span>
+          <Sparkles size={13} color="#2563EB" />
+          <span>{isSynthesizing ? 'Uploading...' : 'Load Sample Claim Packet'}</span>
         </button>
       </div>
 
-      {/* Structured Checklist of Requirements */}
+      {/* 14. Structured Checklist of Requirements */}
       <Card style={{ padding: '0.5rem 0' }}>
         {requirements.map((req, idx) => {
           const { status, doc } = getRequirementStatus(req);
@@ -210,7 +207,7 @@ export const DocumentUploadSection: React.FC<DocumentUploadSectionProps> = ({
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 padding: '0.875rem 1.25rem',
-                borderBottom: idx < requirements.length - 1 ? '1px solid var(--border-subtle)' : 'none',
+                borderBottom: idx < requirements.length - 1 ? '1px solid #E2E8F0' : 'none',
                 gap: '1rem',
               }}
             >
@@ -224,32 +221,39 @@ export const DocumentUploadSection: React.FC<DocumentUploadSectionProps> = ({
                     alignItems: 'center',
                     justifyContent: 'center',
                     background: isProcessed
-                      ? 'var(--success-bg)'
+                      ? '#DCFCE7'
                       : isUploaded
-                      ? 'var(--primary-subtle)'
-                      : 'var(--warning-bg)',
+                      ? '#E0F2FE'
+                      : '#FEF3C7',
                     color: isProcessed
-                      ? 'var(--success)'
+                      ? '#166534'
                       : isUploaded
-                      ? 'var(--primary-light)'
-                      : 'var(--warning)',
+                      ? '#075985'
+                      : '#92400E',
+                    border: `1px solid ${
+                      isProcessed
+                        ? '#BBF7D0'
+                        : isUploaded
+                        ? '#BAE6FD'
+                        : '#FDE68A'
+                    }`,
                     flexShrink: 0,
                   }}
                 >
                   {isProcessed ? (
-                    <Check size={14} />
+                    <Check size={13} strokeWidth={2.5} />
                   ) : isUploaded ? (
-                    <Check size={14} />
+                    <Check size={13} strokeWidth={2.5} />
                   ) : (
-                    <AlertTriangle size={13} />
+                    <AlertTriangle size={12} />
                   )}
                 </div>
 
                 <div style={{ minWidth: 0 }}>
-                  <div style={{ fontSize: '0.9375rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+                  <div style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#0F172A' }}>
                     {req.label || req.key}
                   </div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                  <div style={{ fontSize: '0.75rem', color: '#64748B' }}>
                     {req.reason || 'Required for claim settlement'}
                   </div>
                 </div>
@@ -279,13 +283,15 @@ export const DocumentUploadSection: React.FC<DocumentUploadSectionProps> = ({
         })}
       </Card>
 
-      {/* Clean Drag/Drop Zone */}
-      <Card
+      {/* 15. Clean Drag/Drop Zone (#F8FAFC) */}
+      <div
         style={{
-          border: dragActive ? '2px dashed var(--primary)' : '1px dashed var(--border-subtle)',
-          background: dragActive ? 'var(--primary-subtle)' : 'var(--surface-sunken)',
+          border: dragActive ? '2px dashed #2563EB' : '1px dashed #CBD5E1',
+          background: dragActive ? '#EFF6FF' : '#F8FAFC',
+          borderRadius: 'var(--radius-lg)',
           padding: '1.75rem 1.25rem',
           textAlign: 'center',
+          boxShadow: 'var(--shadow-sm)',
         }}
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
@@ -302,11 +308,11 @@ export const DocumentUploadSection: React.FC<DocumentUploadSectionProps> = ({
 
         <UploadCloud
           size={32}
-          color={dragActive ? 'var(--primary-light)' : 'var(--text-muted)'}
+          color={dragActive ? '#2563EB' : '#64748B'}
           style={{ margin: '0 auto 0.5rem' }}
         />
 
-        <div style={{ fontSize: '0.9375rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+        <div style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#0F172A' }}>
           Drop your document here, or{' '}
           <button
             type="button"
@@ -314,7 +320,7 @@ export const DocumentUploadSection: React.FC<DocumentUploadSectionProps> = ({
             style={{
               background: 'transparent',
               border: 'none',
-              color: 'var(--primary-light)',
+              color: '#2563EB',
               fontWeight: 600,
               cursor: 'pointer',
               textDecoration: 'underline',
@@ -326,22 +332,21 @@ export const DocumentUploadSection: React.FC<DocumentUploadSectionProps> = ({
           </button>
         </div>
 
-        <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
+        <p style={{ fontSize: '0.75rem', color: '#64748B', marginTop: '0.25rem' }}>
           Accepted formats: PDF, JPG, PNG • Max size: 20MB
         </p>
 
-        {/* Selected target category picker */}
         <div style={{ marginTop: '0.875rem', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8125rem' }}>
-          <span style={{ color: 'var(--text-secondary)' }}>Uploading as:</span>
+          <span style={{ color: '#475569' }}>Uploading as:</span>
           <select
             value={selectedType}
             onChange={(e) => setSelectedType(e.target.value)}
             disabled={isUploading || isProcessing}
             style={{
-              background: 'var(--surface-card)',
-              border: '1px solid var(--border-subtle)',
+              background: '#FFFFFF',
+              border: '1px solid #CBD5E1',
               borderRadius: 'var(--radius-sm)',
-              color: 'var(--text-primary)',
+              color: '#0F172A',
               padding: '0.25rem 0.5rem',
               fontSize: '0.8125rem',
               outline: 'none',
@@ -357,39 +362,39 @@ export const DocumentUploadSection: React.FC<DocumentUploadSectionProps> = ({
         </div>
 
         {clientError && (
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.375rem', color: 'var(--danger)', fontSize: '0.8125rem', marginTop: '0.75rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.375rem', color: '#DC2626', fontSize: '0.8125rem', marginTop: '0.75rem' }}>
             <AlertCircle size={14} />
             <span>{clientError}</span>
           </div>
         )}
 
         {uploadSuccessMsg && (
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.375rem', color: 'var(--success)', fontSize: '0.8125rem', marginTop: '0.75rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.375rem', color: '#16A34A', fontSize: '0.8125rem', marginTop: '0.75rem' }}>
             <CheckCircle2 size={14} />
             <span>{uploadSuccessMsg}</span>
           </div>
         )}
 
         {isUploading && (
-          <div style={{ marginTop: '0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', fontSize: '0.8125rem', color: 'var(--primary-light)' }}>
-            <div className="spinner" style={{ width: '13px', height: '13px', borderTopColor: 'var(--primary)' }} />
-            <span>Uploading...</span>
+          <div style={{ marginTop: '0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', fontSize: '0.8125rem', color: '#2563EB' }}>
+            <div className="spinner" style={{ width: '13px', height: '13px', borderTopColor: '#2563EB' }} />
+            <span>Uploading document...</span>
           </div>
         )}
-      </Card>
+      </div>
 
-      {/* Processing Sequence Indicator */}
+      {/* 16. Processing Sequence Indicator */}
       {isProcessing && (
         <Card style={{ padding: '1rem 1.25rem' }}>
-          <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
+          <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#0F172A', marginBottom: '0.5rem' }}>
             Document Processing Pipeline:
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.375rem', fontSize: '0.8125rem', color: 'var(--text-secondary)' }}>
-            <div style={{ color: 'var(--success)' }}>✓ Uploaded files secured</div>
-            <div style={{ color: 'var(--primary-light)', fontWeight: 600 }}>● Analyzing document structure & OCR...</div>
-            <div style={{ color: 'var(--text-muted)' }}>○ Extracting itemized hospital charges</div>
-            <div style={{ color: 'var(--text-muted)' }}>○ Checking cross-document consistency</div>
-            <div style={{ color: 'var(--text-muted)' }}>○ Preparing evidence items</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.375rem', fontSize: '0.8125rem', color: '#475569' }}>
+            <div style={{ color: '#16A34A', fontWeight: 500 }}>✓ Uploaded files secured</div>
+            <div style={{ color: '#2563EB', fontWeight: 600 }}>● Analyzing document structure & OCR...</div>
+            <div style={{ color: '#64748B' }}>○ Extracting itemized hospital charges</div>
+            <div style={{ color: '#64748B' }}>○ Checking cross-document consistency</div>
+            <div style={{ color: '#64748B' }}>○ Preparing evidence items</div>
           </div>
         </Card>
       )}
@@ -398,7 +403,7 @@ export const DocumentUploadSection: React.FC<DocumentUploadSectionProps> = ({
       {documents.length > 0 && (
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-            <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
+            <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#475569' }}>
               Uploaded Files ({documents.length})
             </div>
 

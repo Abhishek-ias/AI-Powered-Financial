@@ -59,34 +59,34 @@ export const SupportView: React.FC = () => {
             Instead, it generates a structured 15-field context packet:
           </p>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.8125rem' }}>
-            <div style={{ background: 'rgba(15, 23, 42, 0.6)', padding: '0.5rem 0.75rem', borderRadius: 'var(--radius-sm)' }}>
+            <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '0.5rem 0.75rem', borderRadius: 'var(--radius-sm)', color: 'var(--text-body)' }}>
               ✓ Customer Goal & Language
             </div>
-            <div style={{ background: 'rgba(15, 23, 42, 0.6)', padding: '0.5rem 0.75rem', borderRadius: 'var(--radius-sm)' }}>
+            <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '0.5rem 0.75rem', borderRadius: 'var(--radius-sm)', color: 'var(--text-body)' }}>
               ✓ Questions & Answers
             </div>
-            <div style={{ background: 'rgba(15, 23, 42, 0.6)', padding: '0.5rem 0.75rem', borderRadius: 'var(--radius-sm)' }}>
+            <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '0.5rem 0.75rem', borderRadius: 'var(--radius-sm)', color: 'var(--text-body)' }}>
               ✓ Granted Consent Scope
             </div>
-            <div style={{ background: 'rgba(15, 23, 42, 0.6)', padding: '0.5rem 0.75rem', borderRadius: 'var(--radius-sm)' }}>
+            <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '0.5rem 0.75rem', borderRadius: 'var(--radius-sm)', color: 'var(--text-body)' }}>
               ✓ Uploaded Documents
             </div>
-            <div style={{ background: 'rgba(15, 23, 42, 0.6)', padding: '0.5rem 0.75rem', borderRadius: 'var(--radius-sm)' }}>
+            <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '0.5rem 0.75rem', borderRadius: 'var(--radius-sm)', color: 'var(--text-body)' }}>
               ✓ Extracted Evidence
             </div>
-            <div style={{ background: 'rgba(15, 23, 42, 0.6)', padding: '0.5rem 0.75rem', borderRadius: 'var(--radius-sm)' }}>
+            <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '0.5rem 0.75rem', borderRadius: 'var(--radius-sm)', color: 'var(--text-body)' }}>
               ✓ Validation Conflicts
             </div>
-            <div style={{ background: 'rgba(15, 23, 42, 0.6)', padding: '0.5rem 0.75rem', borderRadius: 'var(--radius-sm)' }}>
+            <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '0.5rem 0.75rem', borderRadius: 'var(--radius-sm)', color: 'var(--text-body)' }}>
               ✓ Policy Reconciliations
             </div>
-            <div style={{ background: 'rgba(15, 23, 42, 0.6)', padding: '0.5rem 0.75rem', borderRadius: 'var(--radius-sm)' }}>
+            <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '0.5rem 0.75rem', borderRadius: 'var(--radius-sm)', color: 'var(--text-body)' }}>
               ✓ Insurer Queries
             </div>
           </div>
-          <div style={{ marginTop: '1.25rem', background: 'var(--purple-bg)', padding: '0.875rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--purple-border)', fontSize: '0.8125rem' }}>
-            <strong style={{ color: '#c4b5fd' }}>Handoff Guarantee:</strong>
-            <p style={{ color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
+          <div style={{ marginTop: '1.25rem', background: '#EFF6FF', padding: '0.875rem', borderRadius: 'var(--radius-md)', border: '1px solid #BFDBFE', fontSize: '0.8125rem' }}>
+            <strong style={{ color: '#1E40AF' }}>Handoff Guarantee:</strong>
+            <p style={{ color: '#1E3A8A', marginTop: '0.25rem' }}>
               Human claims specialists receive pre-compiled dossier cards rather than unparsed, noisy chat transcripts.
             </p>
           </div>
@@ -97,7 +97,7 @@ export const SupportView: React.FC = () => {
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
               <h3 style={{ fontSize: '1.125rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <Lock size={18} color="#f59e0b" />
+                <Lock size={18} color="#D97706" />
                 Compliance Audit Trail (Admin Only)
               </h3>
               <button
@@ -114,11 +114,11 @@ export const SupportView: React.FC = () => {
               <LoadingState message="Verifying role permissions & fetching audit..." />
             ) : error ? (
               <div style={{ background: 'var(--danger-bg)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--danger-border)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#fca5a5', fontWeight: 600 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--danger-text)', fontWeight: 600 }}>
                   <ShieldAlert size={18} />
                   RBAC Enforcement Active
                 </div>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.8125rem', marginTop: '0.5rem' }}>
+                <p style={{ color: 'var(--danger-text)', fontSize: '0.8125rem', marginTop: '0.5rem' }}>
                   {error}
                 </p>
                 <p style={{ color: 'var(--text-muted)', fontSize: '0.75rem', marginTop: '0.5rem' }}>
@@ -131,7 +131,8 @@ export const SupportView: React.FC = () => {
                   <div
                     key={idx}
                     style={{
-                      background: 'rgba(15, 23, 42, 0.6)',
+                      background: '#F8FAFC',
+                      border: '1px solid #E2E8F0',
                       padding: '0.5rem 0.75rem',
                       borderRadius: 'var(--radius-sm)',
                       fontSize: '0.75rem',

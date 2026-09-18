@@ -23,19 +23,19 @@ export const ErrorBanner: React.FC<ErrorBannerProps> = ({
       ? 'var(--danger-bg)'
       : severity === 'warning'
       ? 'var(--warning-bg)'
-      : 'rgba(59, 130, 246, 0.12)';
+      : 'var(--info-bg)';
   const border =
     severity === 'error'
       ? 'var(--danger-border)'
       : severity === 'warning'
       ? 'var(--warning-border)'
-      : 'rgba(59, 130, 246, 0.3)';
+      : 'var(--info-border)';
   const color =
     severity === 'error'
-      ? '#fca5a5'
+      ? 'var(--danger-text)'
       : severity === 'warning'
-      ? '#fcd34d'
-      : '#93c5fd';
+      ? 'var(--warning-text)'
+      : 'var(--info-text)';
 
   return (
     <div

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
   HelpCircle,
-  CheckCircle2,
   AlertCircle,
   ArrowRight,
   ArrowLeft,
@@ -28,10 +27,7 @@ export const DynamicQuestionnaire: React.FC<DynamicQuestionnaireProps> = ({
   onAllCompleted,
   isSubmittingAnswer,
 }) => {
-  // Sort questions deterministically by order
   const sortedQuestions = [...questions].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-
-  // Find first unanswered question
   const initialIndex = sortedQuestions.findIndex((q) => q.status === 'PENDING');
   const [currentIndex, setCurrentIndex] = useState<number>(initialIndex >= 0 ? initialIndex : 0);
   const [currentInput, setCurrentInput] = useState<string>('');
@@ -50,7 +46,7 @@ export const DynamicQuestionnaire: React.FC<DynamicQuestionnaireProps> = ({
   if (!currentQ || sortedQuestions.length === 0) {
     return (
       <Card style={{ textAlign: 'center', padding: '2rem' }}>
-        <p style={{ color: 'var(--text-muted)' }}>No questions found for this journey.</p>
+        <p style={{ color: '#64748B' }}>No questions found for this journey.</p>
       </Card>
     );
   }
@@ -62,7 +58,6 @@ export const DynamicQuestionnaire: React.FC<DynamicQuestionnaireProps> = ({
   ).length;
   const allRequiredDone = answeredRequiredCount === requiredCount;
 
-  // Safe parse options for SELECT questions
   let parsedOptions: string[] = [];
   if (currentQ.options) {
     if (Array.isArray(currentQ.options)) {
@@ -131,9 +126,8 @@ export const DynamicQuestionnaire: React.FC<DynamicQuestionnaireProps> = ({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-      {/* Active Question Focus Card */}
+      {/* 12. Active Question Focus Card (#FFFFFF) */}
       <Card style={{ padding: '1.75rem' }}>
-        {/* Header: Progress Counter & Demo Helper */}
         <div
           style={{
             display: 'flex',
@@ -145,13 +139,7 @@ export const DynamicQuestionnaire: React.FC<DynamicQuestionnaireProps> = ({
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <span
-              style={{
-                fontSize: '0.8125rem',
-                fontWeight: 600,
-                color: 'var(--text-secondary)',
-              }}
-            >
+            <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#475569' }}>
               Question {currentIndex + 1} of {sortedQuestions.length}
             </span>
             {(currentQ.required ?? currentQ.isRequired ?? true) ? (
@@ -169,52 +157,51 @@ export const DynamicQuestionnaire: React.FC<DynamicQuestionnaireProps> = ({
             onClick={handleQuickFillDemo}
             disabled={isSubmittingAnswer || isFillingDemo}
             className="btn btn-secondary"
-            style={{ fontSize: '0.75rem', padding: '0.375rem 0.75rem', gap: '0.375rem' }}
+            style={{ fontSize: '0.75rem', padding: '0.35rem 0.65rem', gap: '0.375rem' }}
             title="Pre-populate answers for seamless testing"
           >
-            <Sparkles size={13} color="var(--primary-light)" />
+            <Sparkles size={13} color="#2563EB" />
             <span>{isFillingDemo ? 'Filling...' : 'Auto-fill Demo Answers'}</span>
           </button>
         </div>
 
-        {/* Question Text */}
+        {/* Question Text (#0F172A) */}
         <h3
           style={{
             fontSize: '1.25rem',
             fontWeight: 600,
             lineHeight: 1.4,
             marginBottom: '0.75rem',
-            color: 'var(--text-primary)',
+            color: '#0F172A',
           }}
         >
           {currentQ.text || currentQ.questionText}
         </h3>
 
-        {/* Clear Explainability / Reason */}
+        {/* Informational Panel (#EFF6FF, border #BFDBFE) */}
         <div
           style={{
             display: 'flex',
             alignItems: 'flex-start',
             gap: '0.5rem',
-            background: 'var(--primary-subtle)',
-            borderLeft: '3px solid var(--primary)',
+            background: '#EFF6FF',
+            borderLeft: '3px solid #2563EB',
             padding: '0.625rem 0.875rem',
             borderRadius: '0 var(--radius-sm) var(--radius-sm) 0',
             marginBottom: '1.5rem',
             fontSize: '0.8125rem',
-            color: 'var(--text-secondary)',
+            color: '#1E40AF',
           }}
         >
-          <HelpCircle size={15} color="var(--primary-light)" style={{ flexShrink: 0, marginTop: '2px' }} />
+          <HelpCircle size={15} color="#2563EB" style={{ flexShrink: 0, marginTop: '2px' }} />
           <div>
-            <strong style={{ color: 'var(--text-primary)', marginRight: '0.375rem' }}>Why we ask this:</strong>
+            <strong style={{ color: '#1E3A8A', marginRight: '0.375rem' }}>Why we ask this:</strong>
             {reasonText}
           </div>
         </div>
 
-        {/* Input area */}
+        {/* Input Area */}
         <div style={{ marginBottom: '1.75rem' }}>
-          {/* SELECT */}
           {questionType === 'SELECT' && (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.625rem' }}>
               {parsedOptions.map((opt, idx) => {
@@ -236,23 +223,23 @@ export const DynamicQuestionnaire: React.FC<DynamicQuestionnaireProps> = ({
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
-                      background: isSelected ? 'var(--primary-subtle)' : 'var(--surface-sunken)',
-                      border: isSelected ? '1px solid var(--primary)' : '1px solid var(--border-subtle)',
-                      color: isSelected ? 'var(--text-primary)' : 'var(--text-secondary)',
+                      background: isSelected ? '#EFF6FF' : '#FFFFFF',
+                      border: isSelected ? '1px solid #2563EB' : '1px solid #CBD5E1',
+                      color: isSelected ? '#1E40AF' : '#334155',
                       fontSize: '0.875rem',
                       fontWeight: isSelected ? 600 : 400,
                       transition: 'all 0.15s ease',
+                      boxShadow: 'var(--shadow-sm)',
                     }}
                   >
                     <span>{opt}</span>
-                    {isSelected && <Check size={16} color="var(--primary-light)" />}
+                    {isSelected && <Check size={16} color="#2563EB" />}
                   </button>
                 );
               })}
             </div>
           )}
 
-          {/* BOOLEAN */}
           {questionType === 'BOOLEAN' && (
             <div style={{ display: 'flex', gap: '0.75rem', maxWidth: '320px' }}>
               {['Yes', 'No'].map((val) => {
@@ -276,7 +263,6 @@ export const DynamicQuestionnaire: React.FC<DynamicQuestionnaireProps> = ({
             </div>
           )}
 
-          {/* DATE */}
           {questionType === 'DATE' && (
             <div style={{ maxWidth: '280px' }}>
               <input
@@ -289,14 +275,13 @@ export const DynamicQuestionnaire: React.FC<DynamicQuestionnaireProps> = ({
             </div>
           )}
 
-          {/* NUMBER */}
           {questionType === 'NUMBER' && (
             <div style={{ display: 'flex', alignItems: 'center', maxWidth: '280px', position: 'relative' }}>
               <span
                 style={{
                   position: 'absolute',
                   left: '0.875rem',
-                  color: 'var(--text-muted)',
+                  color: '#64748B',
                   fontWeight: 600,
                   fontSize: '0.9375rem',
                 }}
@@ -315,7 +300,6 @@ export const DynamicQuestionnaire: React.FC<DynamicQuestionnaireProps> = ({
             </div>
           )}
 
-          {/* TEXT */}
           {questionType === 'TEXT' && (
             <div>
               <input
@@ -342,7 +326,7 @@ export const DynamicQuestionnaire: React.FC<DynamicQuestionnaireProps> = ({
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.5rem',
-                color: 'var(--danger)',
+                color: '#DC2626',
                 fontSize: '0.8125rem',
                 marginTop: '0.5rem',
               }}
@@ -392,14 +376,15 @@ export const DynamicQuestionnaire: React.FC<DynamicQuestionnaireProps> = ({
       {answeredCount > 0 && (
         <div
           style={{
-            background: 'var(--surface-sunken)',
-            border: '1px solid var(--border-subtle)',
-            borderRadius: 'var(--radius-md)',
+            background: '#FFFFFF',
+            border: '1px solid #E2E8F0',
+            borderRadius: 'var(--radius-lg)',
             padding: '1rem 1.25rem',
+            boxShadow: 'var(--shadow-sm)',
           }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-            <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
+            <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#475569' }}>
               Completed Answers ({answeredCount} of {sortedQuestions.length})
             </span>
             {allRequiredDone && (
@@ -425,10 +410,10 @@ export const DynamicQuestionnaire: React.FC<DynamicQuestionnaireProps> = ({
                     if (idx >= 0) setCurrentIndex(idx);
                   }}
                   style={{
-                    background: 'var(--surface-card)',
+                    background: '#F8FAFC',
                     padding: '0.625rem 0.875rem',
                     borderRadius: 'var(--radius-sm)',
-                    border: '1px solid var(--border-subtle)',
+                    border: '1px solid #E2E8F0',
                     cursor: 'pointer',
                     display: 'flex',
                     flexDirection: 'column',
@@ -436,12 +421,12 @@ export const DynamicQuestionnaire: React.FC<DynamicQuestionnaireProps> = ({
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                    <span style={{ fontSize: '0.75rem', color: '#64748B' }}>
                       {q.text || q.questionText}
                     </span>
-                    <Check size={12} color="var(--success)" />
+                    <Check size={12} color="#16A34A" />
                   </div>
-                  <strong style={{ fontSize: '0.875rem', color: 'var(--text-primary)' }}>
+                  <strong style={{ fontSize: '0.875rem', color: '#0F172A' }}>
                     {q.answer}
                   </strong>
                 </div>

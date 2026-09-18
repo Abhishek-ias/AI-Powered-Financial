@@ -135,14 +135,14 @@ export const FintechView: React.FC = () => {
                 </div>
 
                 {classification && (
-                  <div style={{ background: 'var(--primary-subtle)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--primary)' }}>
+                  <div style={{ background: '#EFF6FF', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid #BFDBFE' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
-                      <Clock size={15} color="var(--primary-light)" />
-                      <strong style={{ color: 'var(--text-primary)', fontSize: '0.875rem' }}>
+                      <Clock size={15} color="var(--primary)" />
+                      <strong style={{ color: '#0F172A', fontSize: '0.875rem' }}>
                         What Happened: {classification.classification?.issueType?.replace(/_/g, ' ') || 'FAILED BUT DEBITED'}
                       </strong>
                     </div>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.8125rem', margin: '0 0 0.75rem' }}>
+                    <p style={{ color: '#334155', fontSize: '0.8125rem', margin: '0 0 0.75rem' }}>
                       Auto-reversal cycle: <strong>{classification.resolution?.estimatedDays || 2} business days</strong> via {classification.resolution?.standardResolution || 'NPCI dispute resolution'}.
                     </p>
 
@@ -157,8 +157,8 @@ export const FintechView: React.FC = () => {
                         <ArrowRight size={13} />
                       </button>
                     ) : (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', color: 'var(--success)', fontSize: '0.8125rem' }}>
-                        <CheckCircle2 size={15} />
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', color: '#166534', fontSize: '0.8125rem', fontWeight: 500 }}>
+                        <CheckCircle2 size={15} color="#16A34A" />
                         <span>Dispute Ticket #DISP-8921 recorded with banking gateway</span>
                       </div>
                     )}

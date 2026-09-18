@@ -166,10 +166,11 @@ export const JourneyStepper: React.FC<JourneyStepperProps> = ({
   return (
     <div
       style={{
-        background: 'var(--surface-card)',
-        border: '1px solid var(--border-subtle)',
+        background: '#FFFFFF',
+        border: '1px solid #E2E8F0',
         borderRadius: 'var(--radius-lg)',
         padding: '0.875rem 1.25rem',
+        boxShadow: 'var(--shadow-sm)',
         overflowX: 'auto',
       }}
     >
@@ -189,9 +190,15 @@ export const JourneyStepper: React.FC<JourneyStepperProps> = ({
             : !complete && step.isActive(status, allQuestionsAnswered, consentGranted);
           const isAccessible = complete || isCurrentActive || Boolean(onSelectStep);
 
+          // 15. Semantic Stepper Colors
+          const circleBg = complete ? '#DCFCE7' : isCurrentActive ? '#2563EB' : '#F1F5F9';
+          const circleBorder = complete ? '#BBF7D0' : isCurrentActive ? '#2563EB' : '#CBD5E1';
+          const circleColor = complete ? '#166534' : isCurrentActive ? '#FFFFFF' : '#64748B';
+          const textColor = complete ? '#166534' : isCurrentActive ? '#1D4ED8' : '#64748B';
+
           return (
             <React.Fragment key={step.id}>
-              {/* Step Pill / Button */}
+              {/* Step Pill Button */}
               <button
                 type="button"
                 onClick={() => isAccessible && onSelectStep && onSelectStep(step.id)}
@@ -200,45 +207,33 @@ export const JourneyStepper: React.FC<JourneyStepperProps> = ({
                   display: 'flex',
                   alignItems: 'center',
                   gap: '0.5rem',
-                  background: 'transparent',
-                  border: 'none',
-                  padding: '0.25rem 0.5rem',
+                  background: isCurrentActive ? '#EFF6FF' : 'transparent',
+                  border: isCurrentActive ? '1px solid #BFDBFE' : '1px solid transparent',
+                  padding: '0.375rem 0.625rem',
                   cursor: isAccessible && onSelectStep ? 'pointer' : 'default',
                   borderRadius: 'var(--radius-md)',
-                  opacity: !complete && !isCurrentActive ? 0.45 : 1,
+                  opacity: !complete && !isCurrentActive ? 0.65 : 1,
                   transition: 'all 0.15s ease',
                   flexShrink: 0,
                 }}
               >
                 <div
                   style={{
-                    width: '26px',
-                    height: '26px',
+                    width: '24px',
+                    height: '24px',
                     borderRadius: '50%',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     fontSize: '0.75rem',
                     fontWeight: 600,
-                    background: complete
-                      ? 'var(--success-bg)'
-                      : isCurrentActive
-                      ? 'var(--primary-subtle)'
-                      : 'rgba(30, 41, 59, 0.6)',
-                    border: complete
-                      ? '1px solid var(--success-border)'
-                      : isCurrentActive
-                      ? '1.5px solid var(--primary)'
-                      : '1px solid var(--border-subtle)',
-                    color: complete
-                      ? 'var(--success)'
-                      : isCurrentActive
-                      ? 'var(--primary-light)'
-                      : 'var(--text-muted)',
-                    transition: 'all 0.2s ease',
+                    background: circleBg,
+                    border: `1px solid ${circleBorder}`,
+                    color: circleColor,
+                    transition: 'all 0.15s ease',
                   }}
                 >
-                  {complete ? <Check size={14} /> : idx + 1}
+                  {complete ? <Check size={13} strokeWidth={2.5} /> : idx + 1}
                 </div>
 
                 <div style={{ textAlign: 'left' }}>
@@ -246,12 +241,7 @@ export const JourneyStepper: React.FC<JourneyStepperProps> = ({
                     style={{
                       fontSize: '0.8125rem',
                       fontWeight: isCurrentActive ? 700 : complete ? 600 : 500,
-                      color: isCurrentActive
-                        ? 'var(--text-primary)'
-                        : complete
-                        ? 'var(--text-secondary)'
-                        : 'var(--text-muted)',
-                      letterSpacing: '-0.01em',
+                      color: textColor,
                     }}
                   >
                     {step.label}
@@ -259,17 +249,13 @@ export const JourneyStepper: React.FC<JourneyStepperProps> = ({
                 </div>
               </button>
 
-              {/* Quiet subtle connector */}
+              {/* Connector line */}
               {idx < JOURNEY_STEPS.length - 1 && (
                 <div
                   style={{
                     flex: 1,
-                    height: '1px',
-                    background: complete
-                      ? 'var(--success-border)'
-                      : isCurrentActive
-                      ? 'rgba(59, 130, 246, 0.3)'
-                      : 'var(--border-subtle)',
+                    height: '2px',
+                    background: complete ? '#BBF7D0' : '#E2E8F0',
                     margin: '0 0.5rem',
                     minWidth: '16px',
                     transition: 'background 0.2s ease',

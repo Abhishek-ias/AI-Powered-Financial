@@ -55,20 +55,20 @@ export const TimelineView: React.FC<TimelineViewProps> = ({
   const getActorDetails = (actorType: string) => {
     switch (actorType) {
       case 'USER':
-        return { icon: User, color: 'var(--primary-light)', badge: 'Customer' };
-      case 'SYSTEM':
-        return { icon: Cpu, color: 'var(--success)', badge: 'System' };
+        return { icon: User, color: '#2563EB', badge: 'Customer' };
       case 'AI':
-        return { icon: Activity, color: '#c084fc', badge: 'Copilot AI' };
+        return { icon: Activity, color: '#16A34A', badge: 'Copilot AI' };
+      case 'SYSTEM':
+        return { icon: Cpu, color: '#475569', badge: 'System' };
       case 'WORKFLOW':
-        return { icon: Shield, color: 'var(--warning)', badge: 'Workflow' };
+        return { icon: Shield, color: '#475569', badge: 'Workflow' };
       default:
-        return { icon: Clock, color: 'var(--text-muted)', badge: actorType };
+        return { icon: Clock, color: '#64748B', badge: actorType };
     }
   };
 
   return (
-    <Card style={{ padding: '1.5rem' }}>
+    <Card style={{ padding: '1.5rem', background: '#FFFFFF', border: '1px solid #E2E8F0' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
         <div>
           <h4 style={{ fontSize: '1.125rem', fontWeight: 600, color: 'var(--text-primary)' }}>
@@ -97,7 +97,7 @@ export const TimelineView: React.FC<TimelineViewProps> = ({
             border: '1px solid var(--danger-border)',
             borderRadius: 'var(--radius-sm)',
             padding: '0.75rem 1rem',
-            color: 'var(--danger)',
+            color: 'var(--danger-text)',
             fontSize: '0.8125rem',
             marginBottom: '1rem',
           }}
@@ -121,7 +121,7 @@ export const TimelineView: React.FC<TimelineViewProps> = ({
             bottom: '8px',
             left: '6px',
             width: '1px',
-            background: 'var(--border-subtle)',
+            background: '#E2E8F0',
           }}
         />
 
@@ -144,7 +144,7 @@ export const TimelineView: React.FC<TimelineViewProps> = ({
                     width: '13px',
                     height: '13px',
                     borderRadius: '50%',
-                    background: 'var(--surface-card)',
+                    background: '#FFFFFF',
                     border: `2px solid ${color}`,
                     zIndex: 1,
                   }}
@@ -152,8 +152,8 @@ export const TimelineView: React.FC<TimelineViewProps> = ({
 
                 <div
                   style={{
-                    background: 'var(--surface-sunken)',
-                    border: '1px solid var(--border-subtle)',
+                    background: '#F8FAFC',
+                    border: '1px solid #E2E8F0',
                     borderRadius: 'var(--radius-sm)',
                     padding: '0.625rem 0.875rem',
                   }}
@@ -168,7 +168,8 @@ export const TimelineView: React.FC<TimelineViewProps> = ({
                           fontSize: '0.6875rem',
                           padding: '0.1rem 0.35rem',
                           borderRadius: 'var(--radius-sm)',
-                          background: 'var(--surface-card)',
+                          background: '#FFFFFF',
+                          border: '1px solid #E2E8F0',
                           color: color,
                           fontWeight: 600,
                         }}

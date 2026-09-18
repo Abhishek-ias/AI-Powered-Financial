@@ -63,15 +63,15 @@ export const GoalEntryCard: React.FC<GoalEntryCardProps> = ({
               fontWeight: 700,
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
-              color: 'var(--primary-light)',
+              color: '#2563EB',
             }}
           >
             Start Your Journey
           </span>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 600, marginTop: '0.25rem' }}>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#0F172A', marginTop: '0.25rem' }}>
             Tell us what you want to accomplish
           </h2>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginTop: '0.25rem' }}>
+          <p style={{ color: '#475569', fontSize: '0.875rem', marginTop: '0.25rem' }}>
             Describe your insurance query, hospital deduction, or reimbursement issue.
           </p>
         </div>
@@ -91,7 +91,7 @@ export const GoalEntryCard: React.FC<GoalEntryCardProps> = ({
 
           {!disabled && (
             <div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.5rem', fontWeight: 600 }}>
+              <div style={{ fontSize: '0.75rem', color: '#64748B', marginBottom: '0.5rem', fontWeight: 600 }}>
                 Suggested goals:
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '0.5rem' }}>
@@ -103,18 +103,18 @@ export const GoalEntryCard: React.FC<GoalEntryCardProps> = ({
                     disabled={isSubmitting}
                     style={{
                       textAlign: 'left',
-                      background: goal === prompt.text ? 'var(--primary-subtle)' : 'var(--surface-sunken)',
-                      border: goal === prompt.text ? '1px solid var(--primary)' : '1px solid var(--border-subtle)',
+                      background: goal === prompt.text ? '#EFF6FF' : '#F8FAFC',
+                      border: goal === prompt.text ? '1px solid #2563EB' : '1px solid #E2E8F0',
                       borderRadius: 'var(--radius-sm)',
                       padding: '0.625rem 0.75rem',
                       cursor: 'pointer',
                       transition: 'all 0.15s ease',
                     }}
                   >
-                    <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.125rem' }}>
+                    <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#0F172A', marginBottom: '0.125rem' }}>
                       {prompt.title}
                     </div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <div style={{ fontSize: '0.75rem', color: '#64748B', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {prompt.text}
                     </div>
                   </button>
@@ -153,8 +153,8 @@ export const GoalEntryCard: React.FC<GoalEntryCardProps> = ({
         <Card style={{ padding: '1.25rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem', flexWrap: 'wrap', gap: '0.5rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <ShieldCheck size={16} color="var(--success)" />
-              <span style={{ fontSize: '0.8125rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)' }}>
+              <ShieldCheck size={16} color="#16A34A" />
+              <span style={{ fontSize: '0.8125rem', fontWeight: 700, textTransform: 'uppercase', color: '#64748B' }}>
                 You Want Help With
               </span>
             </div>
@@ -164,16 +164,16 @@ export const GoalEntryCard: React.FC<GoalEntryCardProps> = ({
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.75rem' }}>
-            <div style={{ background: 'var(--surface-sunken)', padding: '0.625rem 0.75rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)' }}>
-              <div style={{ fontSize: '0.6875rem', color: 'var(--text-muted)' }}>Domain:</div>
-              <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-primary)', marginTop: '0.125rem' }}>
+            <div style={{ background: '#F8FAFC', padding: '0.625rem 0.75rem', borderRadius: 'var(--radius-sm)', border: '1px solid #E2E8F0' }}>
+              <div style={{ fontSize: '0.6875rem', color: '#64748B' }}>Domain:</div>
+              <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#0F172A', marginTop: '0.125rem' }}>
                 {intentResult.domain || 'Insurance claim assistance'}
               </div>
             </div>
 
-            <div style={{ background: 'var(--surface-sunken)', padding: '0.625rem 0.75rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)' }}>
-              <div style={{ fontSize: '0.6875rem', color: 'var(--text-muted)' }}>Goal:</div>
-              <div style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--text-primary)', marginTop: '0.125rem' }}>
+            <div style={{ background: '#F8FAFC', padding: '0.625rem 0.75rem', borderRadius: 'var(--radius-sm)', border: '1px solid #E2E8F0' }}>
+              <div style={{ fontSize: '0.6875rem', color: '#64748B' }}>Goal:</div>
+              <div style={{ fontSize: '0.875rem', fontWeight: 500, color: '#0F172A', marginTop: '0.125rem' }}>
                 {intentResult.goal || goal}
               </div>
             </div>

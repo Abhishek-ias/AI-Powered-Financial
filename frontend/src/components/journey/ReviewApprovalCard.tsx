@@ -133,33 +133,33 @@ export const ReviewApprovalCard: React.FC<ReviewApprovalCardProps> = ({
     return (
       <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
         <Card
-          glow
           style={{
-            background: 'linear-gradient(135deg, rgba(6, 78, 59, 0.4) 0%, rgba(15, 23, 42, 0.95) 100%)',
-            border: '1px solid rgba(52, 211, 153, 0.4)',
+            background: '#FFFFFF',
+            border: '1px solid #E2E8F0',
+            boxShadow: 'var(--shadow-sm)',
             padding: '2rem',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem', marginBottom: '1.5rem' }}>
             <div
               style={{
-                width: '48px',
-                height: '48px',
+                width: '44px',
+                height: '44px',
                 borderRadius: '50%',
-                background: 'rgba(52, 211, 153, 0.2)',
-                border: '1px solid #34d399',
+                background: '#DCFCE7',
+                border: '1px solid #BBF7D0',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 flexShrink: 0,
               }}
             >
-              <CheckCircle2 size={26} color="#34d399" />
+              <CheckCircle2 size={24} color="#16A34A" />
             </div>
 
             <div style={{ flex: 1 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', marginBottom: '0.25rem', flexWrap: 'wrap' }}>
-                <h3 style={{ fontSize: '1.375rem', fontWeight: 700, color: '#ffffff' }}>
+                <h3 style={{ fontSize: '1.375rem', fontWeight: 700, color: '#0F172A' }}>
                   Submission Successful
                 </h3>
                 <Badge variant="green">Status: Under Review</Badge>
@@ -168,27 +168,27 @@ export const ReviewApprovalCard: React.FC<ReviewApprovalCardProps> = ({
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '0.25rem',
-                    background: 'rgba(245, 158, 11, 0.15)',
-                    border: '1px solid rgba(245, 158, 11, 0.3)',
+                    background: '#FEF3C7',
+                    border: '1px solid #FDE68A',
                     borderRadius: '9999px',
                     padding: '0.2rem 0.6rem',
                     fontSize: '0.6875rem',
                     fontWeight: 600,
-                    color: '#fbbf24',
+                    color: '#92400E',
                   }}
                 >
                   Sandbox / Demo Simulation
                 </span>
               </div>
 
-              <p style={{ fontSize: '1rem', color: '#e2e8f0', lineHeight: 1.5, marginTop: '0.5rem' }}>
+              <p style={{ fontSize: '1rem', color: '#0F172A', lineHeight: 1.5, marginTop: '0.5rem' }}>
                 <strong>Your case has been submitted for review.</strong>
               </p>
-              <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
+              <p style={{ fontSize: '0.875rem', color: '#475569', marginTop: '0.25rem' }}>
                 {submissionResult?.message ||
                   'The claim dispute dossier and structured evidence have been securely submitted to the insurer adjudication engine.'}
               </p>
-              <p style={{ fontSize: '0.8125rem', color: '#94a3b8', fontStyle: 'italic', marginTop: '0.5rem' }}>
+              <p style={{ fontSize: '0.8125rem', color: '#64748B', fontStyle: 'italic', marginTop: '0.5rem' }}>
                 {submissionResult?.safetyNote ||
                   'Safety Note: This is a MOCK submission. No real financial action has been taken.'}
               </p>
@@ -201,37 +201,37 @@ export const ReviewApprovalCard: React.FC<ReviewApprovalCardProps> = ({
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
               gap: '1rem',
-              background: 'rgba(15, 23, 42, 0.6)',
+              background: '#F8FAFC',
               padding: '1.25rem',
               borderRadius: 'var(--radius-md)',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
+              border: '1px solid #E2E8F0',
               marginBottom: '1.5rem',
             }}
           >
             <div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Journey ID:</div>
-              <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#ffffff', fontFamily: 'monospace', marginTop: '0.125rem' }}>
+              <div style={{ fontSize: '0.75rem', color: '#64748B' }}>Journey ID:</div>
+              <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#0F172A', fontFamily: 'monospace', marginTop: '0.125rem' }}>
                 {journey.id.slice(0, 16)}...
               </div>
             </div>
 
             <div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Backend State:</div>
-              <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#34d399', marginTop: '0.125rem' }}>
+              <div style={{ fontSize: '0.75rem', color: '#64748B' }}>Backend State:</div>
+              <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#166534', marginTop: '0.125rem' }}>
                 {journey.status === 'USER_CONFIRMED' ? 'INSTITUTION_REVIEW' : journey.status}
               </div>
             </div>
 
             <div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Workflow Execution:</div>
-              <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#93c5fd', fontFamily: 'monospace', marginTop: '0.125rem' }}>
+              <div style={{ fontSize: '0.75rem', color: '#64748B' }}>Workflow Execution:</div>
+              <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#2563EB', fontFamily: 'monospace', marginTop: '0.125rem' }}>
                 {submissionResult?.workflow?.executionId || 'exec-mock-active'}
               </div>
             </div>
 
             <div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Next Step:</div>
-              <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-primary)', marginTop: '0.125rem' }}>
+              <div style={{ fontSize: '0.75rem', color: '#64748B' }}>Next Step:</div>
+              <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#0F172A', marginTop: '0.125rem' }}>
                 Awaiting Insurer Adjudication Response
               </div>
             </div>
@@ -239,7 +239,7 @@ export const ReviewApprovalCard: React.FC<ReviewApprovalCardProps> = ({
 
           {/* Navigation CTA */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-            <div style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
+            <div style={{ fontSize: '0.8125rem', color: '#64748B' }}>
               Audit logged • Deterministic verification complete
             </div>
 
@@ -279,12 +279,12 @@ export const ReviewApprovalCard: React.FC<ReviewApprovalCardProps> = ({
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
-            <FileCheck size={16} color="#60a5fa" />
-            <span style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--primary-light)' }}>
+            <FileCheck size={16} color="var(--primary)" />
+            <span style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--primary)' }}>
               Stage 7 • Comprehensive Case Review & Consequential Approval
             </span>
           </div>
-          <h3 style={{ fontSize: '1.25rem', fontWeight: 600 }}>
+          <h3 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#0F172A' }}>
             Claim Dossier Review & Consequential Approval Gate
           </h3>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginTop: '0.25rem' }}>
@@ -300,11 +300,11 @@ export const ReviewApprovalCard: React.FC<ReviewApprovalCardProps> = ({
       {error && (
         <div
           style={{
-            background: 'rgba(239, 68, 68, 0.15)',
-            border: '1px solid rgba(239, 68, 68, 0.4)',
+            background: 'var(--danger-bg)',
+            border: '1px solid var(--danger-border)',
             borderRadius: 'var(--radius-sm)',
             padding: '1rem',
-            color: '#fca5a5',
+            color: 'var(--danger-text)',
             fontSize: '0.875rem',
           }}
         >
@@ -316,43 +316,44 @@ export const ReviewApprovalCard: React.FC<ReviewApprovalCardProps> = ({
       {/* 1. REVIEW SCREEN: Customer Goal & Case Metadata */}
       <Card
         style={{
-          background: 'rgba(15, 23, 42, 0.75)',
-          border: '1px solid var(--border-subtle)',
+          background: '#FFFFFF',
+          border: '1px solid #E2E8F0',
+          boxShadow: 'var(--shadow-sm)',
           padding: '1.5rem',
         }}
       >
         <div style={{ fontSize: '0.75rem', textTransform: 'uppercase', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '0.5rem' }}>
           Customer Goal & Journey Profile
         </div>
-        <div style={{ fontSize: '1.0625rem', fontWeight: 600, color: '#ffffff', marginBottom: '1rem' }}>
+        <div style={{ fontSize: '1.0625rem', fontWeight: 600, color: '#0F172A', marginBottom: '1rem' }}>
           "{journey.goal || 'Hospital reimbursement dispute and room rent sub-limit reconciliation.'}"
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.75rem' }}>
-          <div style={{ background: 'rgba(30, 41, 59, 0.4)', padding: '0.75rem', borderRadius: 'var(--radius-sm)' }}>
+          <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '0.75rem', borderRadius: 'var(--radius-sm)' }}>
             <div style={{ fontSize: '0.6875rem', color: 'var(--text-muted)' }}>Domain:</div>
-            <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-primary)', marginTop: '0.125rem' }}>
+            <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#0F172A', marginTop: '0.125rem' }}>
               {journey.domain} ({journey.journeyType})
             </div>
           </div>
 
-          <div style={{ background: 'rgba(30, 41, 59, 0.4)', padding: '0.75rem', borderRadius: 'var(--radius-sm)' }}>
+          <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '0.75rem', borderRadius: 'var(--radius-sm)' }}>
             <div style={{ fontSize: '0.6875rem', color: 'var(--text-muted)' }}>Active Status:</div>
-            <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#fbbf24', marginTop: '0.125rem' }}>
+            <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#92400E', marginTop: '0.125rem' }}>
               {journey.status}
             </div>
           </div>
 
-          <div style={{ background: 'rgba(30, 41, 59, 0.4)', padding: '0.75rem', borderRadius: 'var(--radius-sm)' }}>
+          <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '0.75rem', borderRadius: 'var(--radius-sm)' }}>
             <div style={{ fontSize: '0.6875rem', color: 'var(--text-muted)' }}>Policy Schedule:</div>
-            <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#93c5fd', marginTop: '0.125rem' }}>
+            <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#2563EB', marginTop: '0.125rem' }}>
               POL-HEALTH-2024-001 (v2024-v1)
             </div>
           </div>
 
-          <div style={{ background: 'rgba(30, 41, 59, 0.4)', padding: '0.75rem', borderRadius: 'var(--radius-sm)' }}>
+          <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '0.75rem', borderRadius: 'var(--radius-sm)' }}>
             <div style={{ fontSize: '0.6875rem', color: 'var(--text-muted)' }}>Documents Uploaded:</div>
-            <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#34d399', marginTop: '0.125rem' }}>
+            <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#166534', marginTop: '0.125rem' }}>
               {documents.length} Files ({documents.filter((d) => d.status === 'PROCESSED').length} Processed)
             </div>
           </div>
@@ -364,15 +365,16 @@ export const ReviewApprovalCard: React.FC<ReviewApprovalCardProps> = ({
         {/* Left: Deterministic Facts & Evidence */}
         <Card
           style={{
-            background: 'rgba(15, 23, 42, 0.75)',
-            border: '1px solid rgba(59, 130, 246, 0.3)',
+            background: '#FFFFFF',
+            border: '1px solid #E2E8F0',
+            boxShadow: 'var(--shadow-sm)',
             padding: '1.5rem',
           }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Scale size={16} color="#60a5fa" />
-              <strong style={{ fontSize: '0.9375rem', color: '#ffffff' }}>
+              <Scale size={16} color="var(--primary)" />
+              <strong style={{ fontSize: '0.9375rem', color: '#0F172A' }}>
                 FACT / EVIDENCE
               </strong>
             </div>
@@ -388,33 +390,34 @@ export const ReviewApprovalCard: React.FC<ReviewApprovalCardProps> = ({
                   justifyContent: 'space-between',
                   alignItems: 'center',
                   padding: '0.5rem 0.75rem',
-                  background: 'rgba(30, 41, 59, 0.5)',
+                  background: '#F8FAFC',
+                  border: '1px solid #E2E8F0',
                   borderRadius: 'var(--radius-sm)',
                   fontSize: '0.8125rem',
                 }}
               >
                 <span style={{ color: 'var(--text-secondary)' }}>{field.label}:</span>
-                <strong style={{ color: '#ffffff' }}>{getEvidenceValue(field.key)}</strong>
+                <strong style={{ color: '#0F172A' }}>{getEvidenceValue(field.key)}</strong>
               </div>
             ))}
           </div>
 
-          {/* Unresolved Issues Flagging */}
+          {/* Unresolved Issues Flagging (Section 11 Conflict UI: Soft amber container) */}
           {blockingIssues.length > 0 && (
             <div
               style={{
                 marginTop: '1rem',
                 padding: '0.75rem',
-                background: 'rgba(239, 68, 68, 0.1)',
-                border: '1px solid rgba(239, 68, 68, 0.3)',
+                background: '#FFF7ED',
+                border: '1px solid #FED7AA',
                 borderRadius: 'var(--radius-sm)',
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', color: '#fca5a5', fontSize: '0.75rem', fontWeight: 600, marginBottom: '0.25rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', color: '#9A3412', fontSize: '0.75rem', fontWeight: 600, marginBottom: '0.25rem' }}>
                 <AlertTriangle size={13} />
                 <span>Detected Validation Discrepancy:</span>
               </div>
-              <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', margin: 0 }}>
+              <p style={{ fontSize: '0.75rem', color: '#7C2D12', margin: 0 }}>
                 {blockingIssues[0].details || 'Diagnosis mismatch between Hospital Bill and Discharge Summary.'}
               </p>
             </div>
@@ -424,15 +427,16 @@ export const ReviewApprovalCard: React.FC<ReviewApprovalCardProps> = ({
         {/* Right: AI Explanation & Policy Reconciler */}
         <Card
           style={{
-            background: 'rgba(15, 23, 42, 0.75)',
-            border: '1px solid rgba(139, 92, 246, 0.3)',
+            background: '#FFFFFF',
+            border: '1px solid #E2E8F0',
+            boxShadow: 'var(--shadow-sm)',
             padding: '1.5rem',
           }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Sparkles size={16} color="#c084fc" />
-              <strong style={{ fontSize: '0.9375rem', color: '#ffffff' }}>
+              <Sparkles size={16} color="#7C3AED" />
+              <strong style={{ fontSize: '0.9375rem', color: '#0F172A' }}>
                 AI POLICY EXPLANATION
               </strong>
             </div>
@@ -442,11 +446,12 @@ export const ReviewApprovalCard: React.FC<ReviewApprovalCardProps> = ({
           <div
             style={{
               padding: '0.875rem 1rem',
-              background: 'rgba(30, 41, 59, 0.4)',
+              background: '#F8FAFC',
+              border: '1px solid #E2E8F0',
               borderRadius: 'var(--radius-sm)',
               fontSize: '0.875rem',
               lineHeight: 1.5,
-              color: 'var(--text-primary)',
+              color: 'var(--text-body)',
               minHeight: '120px',
             }}
           >
@@ -462,14 +467,14 @@ export const ReviewApprovalCard: React.FC<ReviewApprovalCardProps> = ({
               alignItems: 'center',
               fontSize: '0.75rem',
               color: 'var(--text-muted)',
-              borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+              borderTop: '1px solid #E2E8F0',
               paddingTop: '0.75rem',
             }}
           >
             <div>
-              Citation: <strong>Section: Room Rent (Page 12)</strong>
+              Citation: <strong style={{ color: '#0F172A' }}>Section: Room Rent (Page 12)</strong>
             </div>
-            <div style={{ color: '#34d399', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+            <div style={{ color: '#166534', display: 'flex', alignItems: 'center', gap: '0.25rem', fontWeight: 500 }}>
               <Shield size={12} />
               <span>Prompt Barrier Active</span>
             </div>
@@ -480,8 +485,9 @@ export const ReviewApprovalCard: React.FC<ReviewApprovalCardProps> = ({
       {/* 3. ACTION SUMMARY BEFORE SUBMISSION */}
       <Card
         style={{
-          background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.85) 100%)',
-          border: '1px solid var(--border-subtle)',
+          background: '#FFFFFF',
+          border: '1px solid #E2E8F0',
+          boxShadow: 'var(--shadow-sm)',
           padding: '1.5rem',
         }}
       >
@@ -490,30 +496,30 @@ export const ReviewApprovalCard: React.FC<ReviewApprovalCardProps> = ({
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem', marginBottom: '1.25rem' }}>
-          <div style={{ background: 'rgba(15, 23, 42, 0.5)', padding: '0.875rem', borderRadius: 'var(--radius-sm)' }}>
+          <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '0.875rem', borderRadius: 'var(--radius-sm)' }}>
             <div style={{ fontSize: '0.6875rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>ACTION:</div>
-            <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#ffffff', marginTop: '0.25rem' }}>
+            <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#0F172A', marginTop: '0.25rem' }}>
               Submit Claim Assistance & Rebuttal Packet
             </div>
           </div>
 
-          <div style={{ background: 'rgba(15, 23, 42, 0.5)', padding: '0.875rem', borderRadius: 'var(--radius-sm)' }}>
+          <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '0.875rem', borderRadius: 'var(--radius-sm)' }}>
             <div style={{ fontSize: '0.6875rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>WHY:</div>
             <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
               Evidence cross-validation & policy clause reconciliation completed.
             </div>
           </div>
 
-          <div style={{ background: 'rgba(15, 23, 42, 0.5)', padding: '0.875rem', borderRadius: 'var(--radius-sm)' }}>
+          <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '0.875rem', borderRadius: 'var(--radius-sm)' }}>
             <div style={{ fontSize: '0.6875rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>EVIDENCE:</div>
-            <div style={{ fontSize: '0.875rem', color: '#93c5fd', marginTop: '0.25rem' }}>
+            <div style={{ fontSize: '0.875rem', color: '#2563EB', fontWeight: 500, marginTop: '0.25rem' }}>
               {documents.length} verified documents ({evidence.length} extracted facts)
             </div>
           </div>
 
-          <div style={{ background: 'rgba(15, 23, 42, 0.5)', padding: '0.875rem', borderRadius: 'var(--radius-sm)' }}>
+          <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '0.875rem', borderRadius: 'var(--radius-sm)' }}>
             <div style={{ fontSize: '0.6875rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>SOURCE:</div>
-            <div style={{ fontSize: '0.875rem', color: '#a7f3d0', marginTop: '0.25rem' }}>
+            <div style={{ fontSize: '0.875rem', color: '#0F172A', marginTop: '0.25rem' }}>
               SafeGuard Policy POL-HEALTH-2024-001 (v2024-v1)
             </div>
           </div>
@@ -522,8 +528,8 @@ export const ReviewApprovalCard: React.FC<ReviewApprovalCardProps> = ({
         {/* 4. TWO-STEP CONFIRMATION & APPROVAL GATE */}
         <div
           style={{
-            background: 'rgba(15, 23, 42, 0.8)',
-            border: '1px solid rgba(96, 165, 250, 0.3)',
+            background: '#F8FAFC',
+            border: '1px solid #E2E8F0',
             borderRadius: 'var(--radius-md)',
             padding: '1.25rem',
           }}
@@ -532,8 +538,8 @@ export const ReviewApprovalCard: React.FC<ReviewApprovalCardProps> = ({
           {!isConfirmed && (
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                <Lock size={16} color="#60a5fa" />
-                <h4 style={{ fontSize: '1rem', fontWeight: 600, color: '#ffffff' }}>
+                <Lock size={16} color="var(--primary)" />
+                <h4 style={{ fontSize: '1rem', fontWeight: 600, color: '#0F172A' }}>
                   Consequential Confirmation Required
                 </h4>
               </div>
@@ -543,8 +549,8 @@ export const ReviewApprovalCard: React.FC<ReviewApprovalCardProps> = ({
               </p>
 
               {loadingStep && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', color: '#93c5fd', fontSize: '0.8125rem' }}>
-                  <div className="spinner" style={{ width: '14px', height: '14px', borderTopColor: '#93c5fd' }} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', color: '#2563EB', fontSize: '0.8125rem' }}>
+                  <div className="spinner" style={{ width: '14px', height: '14px', borderTopColor: '#2563EB' }} />
                   <span>{loadingStep}</span>
                 </div>
               )}
@@ -590,8 +596,8 @@ export const ReviewApprovalCard: React.FC<ReviewApprovalCardProps> = ({
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
-                    <CheckCircle2 size={18} color="#34d399" />
-                    <h4 style={{ fontSize: '1.0625rem', fontWeight: 600, color: '#ffffff' }}>
+                    <CheckCircle2 size={18} color="#16A34A" />
+                    <h4 style={{ fontSize: '1.0625rem', fontWeight: 600, color: '#0F172A' }}>
                       Approval Request Created
                     </h4>
                   </div>
@@ -603,11 +609,11 @@ export const ReviewApprovalCard: React.FC<ReviewApprovalCardProps> = ({
                 <Badge variant="blue">Status: PENDING_APPROVAL</Badge>
               </div>
 
-              {/* Approval Metadata Record */}
+              {/* Approval Metadata Record (Section 18: Important values large, payload hash small secondary metadata) */}
               <div
                 style={{
-                  background: 'rgba(30, 41, 59, 0.6)',
-                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  background: '#FFFFFF',
+                  border: '1px solid #E2E8F0',
                   borderRadius: 'var(--radius-sm)',
                   padding: '1rem',
                   marginBottom: '1rem',
@@ -619,43 +625,43 @@ export const ReviewApprovalCard: React.FC<ReviewApprovalCardProps> = ({
               >
                 <div>
                   <span style={{ color: 'var(--text-muted)' }}>Action:</span>
-                  <div style={{ fontWeight: 600, color: '#ffffff', marginTop: '0.125rem' }}>
+                  <div style={{ fontWeight: 600, color: '#0F172A', marginTop: '0.125rem' }}>
                     {approval?.action || 'SUBMIT_CLAIM'}
                   </div>
                 </div>
 
                 <div>
                   <span style={{ color: 'var(--text-muted)' }}>Approval ID:</span>
-                  <div style={{ fontWeight: 600, color: '#93c5fd', fontFamily: 'monospace', marginTop: '0.125rem' }}>
+                  <div style={{ fontWeight: 600, color: '#2563EB', fontFamily: 'monospace', marginTop: '0.125rem' }}>
                     {approval?.id?.slice(0, 14) || 'appr-generated'}...
                   </div>
                 </div>
 
                 <div>
                   <span style={{ color: 'var(--text-muted)' }}>Payload Hash:</span>
-                  <div style={{ fontWeight: 600, color: '#fde047', fontFamily: 'monospace', marginTop: '0.125rem' }}>
+                  <div style={{ fontWeight: 400, color: 'var(--text-muted)', fontFamily: 'monospace', fontSize: '0.75rem', marginTop: '0.125rem' }}>
                     {approval?.payloadHash?.slice(0, 16) || '5daf884b3c35...'}...
                   </div>
                 </div>
 
                 <div>
                   <span style={{ color: 'var(--text-muted)' }}>Environment:</span>
-                  <div style={{ fontWeight: 600, color: '#fbbf24', marginTop: '0.125rem' }}>
+                  <div style={{ fontWeight: 600, color: '#92400E', marginTop: '0.125rem' }}>
                     Sandbox / Demo
                   </div>
                 </div>
               </div>
 
               {loadingStep && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', color: '#93c5fd', fontSize: '0.8125rem' }}>
-                  <div className="spinner" style={{ width: '14px', height: '14px', borderTopColor: '#93c5fd' }} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', color: '#2563EB', fontSize: '0.8125rem' }}>
+                  <div className="spinner" style={{ width: '14px', height: '14px', borderTopColor: '#2563EB' }} />
                   <span>{loadingStep}</span>
                 </div>
               )}
 
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
                 <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                  ⚠️ Dispatches case to insurer workflow in simulated sandbox mode.
+                  Dispatches case to insurer workflow in simulated sandbox mode.
                 </span>
 
                 <button
@@ -669,8 +675,6 @@ export const ReviewApprovalCard: React.FC<ReviewApprovalCardProps> = ({
                     gap: '0.5rem',
                     minWidth: '220px',
                     justifyContent: 'center',
-                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                    borderColor: '#10b981',
                   }}
                 >
                   {isApproving ? (

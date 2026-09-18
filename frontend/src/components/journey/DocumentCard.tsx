@@ -28,7 +28,7 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({ document, onRetry })
     StatusIcon = CheckCircle2;
     statusText = 'Processed';
   } else if (status === 'PROCESSING') {
-    statusBadgeVariant = 'amber';
+    statusBadgeVariant = 'blue';
     StatusIcon = Cpu;
     statusText = 'Processing';
   } else if (status === 'UPLOADED') {
@@ -56,13 +56,14 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({ document, onRetry })
   return (
     <div
       style={{
-        background: 'var(--surface-sunken)',
-        border: '1px solid var(--border-subtle)',
+        background: '#FFFFFF',
+        border: '1px solid #E2E8F0',
         borderRadius: 'var(--radius-md)',
         padding: '0.875rem 1rem',
         display: 'flex',
         flexDirection: 'column',
         gap: '0.5rem',
+        boxShadow: 'var(--shadow-sm)',
       }}
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.75rem' }}>
@@ -72,14 +73,14 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({ document, onRetry })
               width: '32px',
               height: '32px',
               borderRadius: 'var(--radius-sm)',
-              background: 'var(--primary-subtle)',
+              background: '#EFF6FF',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               flexShrink: 0,
             }}
           >
-            <FileText size={16} color="var(--primary-light)" />
+            <FileText size={16} color="#2563EB" />
           </div>
 
           <div style={{ minWidth: 0 }}>
@@ -87,7 +88,7 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({ document, onRetry })
               style={{
                 fontSize: '0.875rem',
                 fontWeight: 600,
-                color: 'var(--text-primary)',
+                color: '#0F172A',
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
@@ -96,7 +97,7 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({ document, onRetry })
             >
               {document.originalName}
             </div>
-            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+            <div style={{ fontSize: '0.75rem', color: '#64748B' }}>
               {document.documentType} • {formattedSize}
             </div>
           </div>
@@ -114,13 +115,13 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({ document, onRetry })
           justifyContent: 'space-between',
           alignItems: 'center',
           fontSize: '0.75rem',
-          color: 'var(--text-muted)',
+          color: '#64748B',
           paddingTop: '0.375rem',
-          borderTop: '1px solid var(--border-subtle)',
+          borderTop: '1px solid #F1F5F9',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
-          <Layers size={13} color="var(--text-muted)" />
+          <Layers size={13} color="#94A3B8" />
           <span>
             {fieldsCount > 0 ? `${fieldsCount} fields extracted` : status === 'PROCESSED' ? 'Extraction complete' : 'Awaiting OCR pipeline'}
           </span>

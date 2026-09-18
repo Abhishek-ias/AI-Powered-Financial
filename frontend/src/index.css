@@ -1,58 +1,71 @@
 /* ============================================================
-   AI Financial Journey Copilot — Institutional Design System
-   Team NOVA • Professional Modern Fintech Design Language
+   AI Financial Journey Copilot — Professional Fintech Design System
+   Team NOVA • Clean Light Theme (Modern Banking / Fintech SaaS)
    ============================================================ */
 
 :root {
-  /* Surface Palette — Clean, Restrained Slate (No Over-Saturated Neon) */
-  --bg-app: #090d16;
-  --bg-surface: #0f172a;
-  --bg-surface-elevated: #1e293b;
-  --bg-surface-muted: #162032;
-  --bg-surface-subtle: rgba(255, 255, 255, 0.03);
-  --bg-input: #0b1120;
+  /* Surface Palette — Clean, Trustworthy Light Fintech */
+  --bg-app: #F7F9FC;
+  --bg-surface: #FFFFFF;
+  --bg-surface-elevated: #FFFFFF;
+  --bg-surface-secondary: #F1F5F9;
+  --bg-surface-sunken: #F8FAFC;
+  --bg-surface-subtle: #F1F5F9;
+  --bg-input: #FFFFFF;
 
   /* Borders & Dividers */
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-medium: rgba(255, 255, 255, 0.14);
-  --border-strong: rgba(255, 255, 255, 0.22);
-  --border-focus: #3b82f6;
+  --border-subtle: #E2E8F0;
+  --border-medium: #CBD5E1;
+  --border-strong: #94A3B8;
+  --border-focus: #2563EB;
 
   /* Typography Colors */
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
-  --text-inverse: #090d16;
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-body: #334155;
+  --text-muted: #64748B;
+  --text-disabled: #94A3B8;
+  --text-inverse: #FFFFFF;
 
-  /* Brand Accents — Trustworthy Financial Blue */
-  --primary: #2563eb;
-  --primary-hover: #1d4ed8;
-  --primary-active: #1e40af;
-  --primary-subtle: rgba(37, 99, 235, 0.12);
-  --primary-border: rgba(37, 99, 235, 0.3);
+  /* Primary Brand — Professional Fintech Blue */
+  --primary: #2563EB;
+  --primary-hover: #1D4ED8;
+  --primary-active: #1E40AF;
+  --primary-subtle: #EFF6FF;
+  --primary-border: #BFDBFE;
+  --primary-light: #2563EB;
 
-  /* Semantic Status Palette (Restrained, Institutional) */
-  --success: #10b981;
-  --success-bg: rgba(16, 185, 129, 0.1);
-  --success-border: rgba(16, 185, 129, 0.25);
-  --success-text: #34d399;
+  /* Semantic Status Palette (Strict Customer-Facing Fintech) */
+  --success: #16A34A;
+  --success-bg: #DCFCE7;
+  --success-border: #BBF7D0;
+  --success-text: #166534;
 
-  --warning: #f59e0b;
-  --warning-bg: rgba(245, 158, 11, 0.1);
-  --warning-border: rgba(245, 158, 11, 0.25);
-  --warning-text: #fbbf24;
+  --warning: #D97706;
+  --warning-bg: #FEF3C7;
+  --warning-border: #FDE68A;
+  --warning-text: #92400E;
 
-  --danger: #ef4444;
-  --danger-bg: rgba(239, 68, 68, 0.1);
-  --danger-border: rgba(239, 68, 68, 0.25);
-  --danger-text: #f87171;
+  --danger: #DC2626;
+  --danger-bg: #FEE2E2;
+  --danger-border: #FECACA;
+  --danger-text: #991B1B;
 
-  --purple: #8b5cf6;
-  --purple-bg: rgba(139, 92, 246, 0.1);
-  --purple-border: rgba(139, 92, 246, 0.25);
-  --purple-text: #c084fc;
+  --info: #0EA5E9;
+  --info-bg: #E0F2FE;
+  --info-border: #BAE6FD;
+  --info-text: #075985;
 
-  /* Spacing Scale (Strict 4/8/12/16/24/32/48) */
+  --neutral-bg: #F1F5F9;
+  --neutral-text: #475569;
+  --neutral-border: #E2E8F0;
+
+  --purple: #7C3AED;
+  --purple-bg: #F3E8FF;
+  --purple-border: #DDD6FE;
+  --purple-text: #6D28D9;
+
+  /* Spacing Scale (Strict 8pt / 4-64) */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -62,8 +75,9 @@
   --space-8: 32px;
   --space-10: 40px;
   --space-12: 48px;
+  --space-16: 64px;
 
-  /* Corner Radii (Moderate, Professional) */
+  /* Corner Radii (Moderate, Professional Product UI) */
   --radius-xs: 4px;
   --radius-sm: 6px;
   --radius-md: 8px;
@@ -72,18 +86,19 @@
   --radius-full: 9999px;
 
   /* Typography Scale */
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   --font-display: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Roboto Mono', monospace;
 
-  /* Elevation */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.25);
-  --shadow-md: 0 4px 12px -2px rgba(0, 0, 0, 0.35);
-  --shadow-lg: 0 10px 25px -3px rgba(0, 0, 0, 0.5);
+  /* Minimal Clean Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
+  --shadow-md: 0 1px 3px 0 rgba(15, 23, 42, 0.06), 0 1px 2px -1px rgba(15, 23, 42, 0.04);
+  --shadow-lg: 0 4px 6px -1px rgba(15, 23, 42, 0.07), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
+  --shadow-modal: 0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.05);
 
   /* Layout Standards */
   --header-height: 56px;
-  --max-content-width: 1240px;
+  --max-content-width: 1200px;
 }
 
 *, *::before, *::after {
@@ -95,7 +110,7 @@
 html, body {
   min-height: 100vh;
   background-color: var(--bg-app);
-  color: var(--text-primary);
+  color: var(--text-body);
   font-family: var(--font-sans);
   font-size: 14px;
   line-height: 1.5;
@@ -103,10 +118,7 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ============================================================
-   Typography System
-   ============================================================ */
-
+/* Typography Hierarchy */
 h1, h2, h3, h4, h5, h6 {
   color: var(--text-primary);
   font-weight: 600;
@@ -137,9 +149,13 @@ p {
   color: var(--text-secondary);
 }
 
-.text-caption {
-  font-size: 0.75rem;
-  color: var(--text-muted);
+a {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--primary-hover);
 }
 
 .text-mono {
@@ -150,7 +166,7 @@ p {
    Container & Layout Classes
    ============================================================ */
 
-.app-shell {
+.app-container, .app-shell {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -179,24 +195,29 @@ p {
   }
 }
 
-/* Section Wrapper */
-.surface-card {
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--space-6);
+}
+
+/* Real Product Card UI (White card + soft border + subtle shadow) */
+.card, .surface-card {
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
   padding: var(--space-6);
-  transition: border-color 0.15s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.surface-card-subtle {
-  background: var(--bg-surface-subtle);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  padding: var(--space-4);
+.card-interactive:hover {
+  border-color: var(--border-medium);
+  box-shadow: var(--shadow-md);
 }
 
 /* ============================================================
-   Button System (Single Primary CTA per view)
+   Button System (Single obvious primary CTA per view)
    ============================================================ */
 
 .btn {
@@ -218,15 +239,18 @@ p {
 }
 
 .btn:disabled {
-  opacity: 0.45;
+  opacity: 0.5;
   cursor: not-allowed;
   pointer-events: none;
 }
 
+/* PRIMARY: background #2563EB, text white, hover #1D4ED8 */
 .btn-primary {
   background: var(--primary);
-  color: #ffffff;
+  color: #FFFFFF;
   border-color: var(--primary);
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-primary:hover:not(:disabled) {
@@ -238,39 +262,43 @@ p {
   background: var(--primary-active);
 }
 
+/* SECONDARY: background #FFFFFF, text #334155, border #CBD5E1, hover #F8FAFC */
 .btn-secondary {
-  background: var(--bg-surface-elevated);
-  color: var(--text-primary);
-  border-color: var(--border-medium);
+  background: #FFFFFF;
+  color: #334155;
+  border-color: #CBD5E1;
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background: #334155;
-  border-color: var(--border-strong);
+  background: #F8FAFC;
+  border-color: #94A3B8;
+  color: #0F172A;
 }
 
-.btn-outline {
-  background: transparent;
-  color: var(--text-secondary);
-  border-color: var(--border-medium);
+/* DANGER: background #DC2626, text white */
+.btn-danger {
+  background: var(--danger);
+  color: #FFFFFF;
+  border-color: var(--danger);
 }
 
-.btn-outline:hover:not(:disabled) {
-  color: var(--text-primary);
-  background: var(--bg-surface-subtle);
-  border-color: var(--border-strong);
+.btn-danger:hover:not(:disabled) {
+  background: #B91C1C;
+  border-color: #B91C1C;
 }
 
+/* GHOST: transparent, text #475569, hover #F1F5F9 */
 .btn-ghost {
   background: transparent;
-  color: var(--text-secondary);
+  color: #475569;
   border-color: transparent;
   padding: 0.375rem 0.625rem;
 }
 
 .btn-ghost:hover:not(:disabled) {
-  color: var(--text-primary);
-  background: var(--bg-surface-subtle);
+  background: #F1F5F9;
+  color: #0F172A;
 }
 
 .btn-sm {
@@ -285,7 +313,7 @@ p {
 }
 
 /* ============================================================
-   Badge & Status Pills (Restrained, Semantic)
+   Badge & Status Pills (Semantic Clean Statuses)
    ============================================================ */
 
 .badge {
@@ -293,17 +321,17 @@ p {
   align-items: center;
   gap: var(--space-1);
   font-size: 0.6875rem;
-  font-weight: 500;
-  padding: 0.1875rem 0.5rem;
+  font-weight: 600;
+  padding: 0.2rem 0.55rem;
   border-radius: var(--radius-full);
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
   white-space: nowrap;
 }
 
 .badge-blue {
-  background: var(--primary-subtle);
-  color: #93c5fd;
-  border: 1px solid var(--primary-border);
+  background: var(--info-bg);
+  color: var(--info-text);
+  border: 1px solid var(--info-border);
 }
 
 .badge-green {
@@ -331,19 +359,19 @@ p {
 }
 
 .badge-gray {
-  background: rgba(255, 255, 255, 0.06);
-  color: var(--text-secondary);
-  border: 1px solid var(--border-subtle);
+  background: var(--neutral-bg);
+  color: var(--neutral-text);
+  border: 1px solid var(--neutral-border);
 }
 
 /* ============================================================
-   Inputs & Form Controls
+   Inputs & Form Controls (Clean Financial Form Elements)
    ============================================================ */
 
 .input-text, .textarea, .select {
   width: 100%;
   background: var(--bg-input);
-  border: 1px solid var(--border-medium);
+  border: 1px solid #CBD5E1;
   border-radius: var(--radius-md);
   padding: 0.625rem 0.875rem;
   color: var(--text-primary);
@@ -351,23 +379,30 @@ p {
   font-size: 0.875rem;
   outline: none;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: var(--shadow-sm);
 }
 
 .input-text:focus, .textarea:focus, .select:focus {
-  border-color: var(--border-focus);
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
 
 .input-text::placeholder, .textarea::placeholder {
   color: var(--text-muted);
 }
 
+.input-text:disabled, .textarea:disabled, .select:disabled {
+  background: #F1F5F9;
+  color: var(--text-disabled);
+  cursor: not-allowed;
+}
+
 /* ============================================================
-   Tab Navigation & Progress Stepper
+   Navigation Bar (Clean Fintech Header)
    ============================================================ */
 
 .nav-bar {
-  background: var(--bg-surface);
+  background: #FFFFFF;
   border-bottom: 1px solid var(--border-subtle);
   padding: 0 var(--space-6);
   display: flex;
@@ -388,7 +423,7 @@ p {
   padding: 0.75rem 0.875rem;
   font-size: 0.8125rem;
   font-weight: 500;
-  color: var(--text-secondary);
+  color: #475569;
   background: transparent;
   border: none;
   border-bottom: 2px solid transparent;
@@ -402,7 +437,7 @@ p {
 }
 
 .nav-tab.active {
-  color: #ffffff;
+  color: var(--primary);
   border-bottom-color: var(--primary);
   font-weight: 600;
 }
@@ -412,17 +447,17 @@ p {
    ============================================================ */
 
 .animate-fade-in {
-  animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fadeIn 0.18s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(4px); }
+  from { opacity: 0; transform: translateY(3px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 .spinner {
   display: inline-block;
-  border: 2px solid rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(0, 0, 0, 0.1);
   border-top-color: currentColor;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
@@ -432,7 +467,7 @@ p {
   to { transform: rotate(360deg); }
 }
 
-/* Custom Scrollbars */
+/* Clean Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -443,10 +478,10 @@ p {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.12);
+  background: #CBD5E1;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: #94A3B8;
 }

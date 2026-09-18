@@ -24,7 +24,6 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
     >
       <Loader2
         size={36}
-        className="pulse-glow"
         style={{ color: 'var(--primary)', animation: 'spin 1s linear infinite' }}
       />
       <div>
