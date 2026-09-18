@@ -1,0 +1,543 @@
+// ============================================================
+// Prisma Schema — AI Financial Journey Copilot
+// All data is SYNTHETIC. No real financial/personal data.
+// ============================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ---- Users ----
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String
+  role      String   @default("CUSTOMER") // CUSTOMER, AGENT, ADMIN
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  journeys         Journey[]
+  consents         Consent[]
+  documents        Document[]
+  approvalRequests ApprovalRequest[]
+  supportCases     SupportCase[]
+}
+
+// ---- Journeys ----
+model Journey {
+  id              String   @id @default(uuid())
+  userId          String
+  parentJourneyId String?
+  domain          String   // INSURANCE, LENDING, FINTECH
+  journeyType     String   // CLAIM_ASSISTANCE, LOAN_APPLICATION, etc.
+  goal            String?
+  status          String   @default("CREATED")
+  language        String   @default("en")
+  currentStage    String?
+  consentState    String   @default("PENDING") // PENDING, GRANTED, DENIED
+  metadata        String?  // JSON string for flexible data
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user             User               @relation(fields: [userId], references: [id])
+  parentJourney    Journey?           @relation("ChildJourneys", fields: [parentJourneyId], references: [id])
+  childJourneys    Journey[]          @relation("ChildJourneys")
+  consents         Consent[]
+  documents        Document[]
+  evidenceItems    EvidenceItem[]
+  requirements     Requirement[]
+  validationResults ValidationResult[]
+  questions        Question[]
+  claims           Claim[]
+  reconciliations  Reconciliation[]
+  calculations     Calculation[]
+  offers           Offer[]
+  applications     Application[]
+  transactions     Transaction[]
+  disputes         Dispute[]
+  approvalRequests ApprovalRequest[]
+  timelineEvents   TimelineEvent[]
+  auditEvents      AuditEvent[]
+  workflowRuns     WorkflowRun[]
+
+  @@index([userId])
+  @@index([domain])
+  @@index([status])
+  @@index([parentJourneyId])
+  @@index([createdAt])
+}
+
+// ---- Consent ----
+model Consent {
+  id        String   @id @default(uuid())
+  userId    String
+  journeyId String
+  purpose   String   // DATA_PROCESSING, DOCUMENT_ANALYSIS, etc.
+  scope     String?
+  granted   Boolean  @default(false)
+  expiresAt DateTime?
+  source    String   @default("USER")
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id])
+  journey Journey @relation(fields: [journeyId], references: [id])
+
+  @@index([userId])
+  @@index([journeyId])
+}
+
+// ---- Questions ----
+model Question {
+  id              String   @id @default(uuid())
+  journeyId       String
+  key             String
+  text            String
+  type            String   @default("TEXT") // TEXT, SELECT, NUMBER, DATE, BOOLEAN
+  required        Boolean  @default(true)
+  reason          String?
+  source          String   @default("SYSTEM")
+  status          String   @default("PENDING") // PENDING, ANSWERED, SKIPPED
+  answer          String?
+  validationRules String?  // JSON
+  options         String?  // JSON for SELECT type
+  order           Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  journey Journey @relation(fields: [journeyId], references: [id])
+
+  @@index([journeyId])
+  @@index([status])
+}
+
+// ---- Documents ----
+model Document {
+  id            String   @id @default(uuid())
+  journeyId     String
+  userId        String
+  documentType  String   // AADHAAR, PAN, HOSPITAL_BILL, etc.
+  filename      String
+  originalName  String
+  mimeType      String
+  size          Int
+  storageRef    String
+  checksum      String?
+  status        String   @default("UPLOADED")
+  source        String   @default("USER")
+  processingMs  String?  // JSON: timing breakdown
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  journey  Journey         @relation(fields: [journeyId], references: [id])
+  user     User            @relation(fields: [userId], references: [id])
+  fields   DocumentField[]
+
+  @@index([journeyId])
+  @@index([documentType])
+  @@index([status])
+}
+
+// ---- Document Fields ----
+model DocumentField {
+  id              String  @id @default(uuid())
+  documentId      String
+  fieldName       String
+  value           String
+  normalizedValue String?
+  unit            String?
+  page            Int?
+  confidence      Float
+  sourceText      String?
+  status          String  @default("EXTRACTED")
+
+  document Document @relation(fields: [documentId], references: [id])
+
+  @@index([documentId])
+  @@index([fieldName])
+}
+
+// ---- Evidence ----
+model EvidenceItem {
+  id               String  @id @default(uuid())
+  journeyId        String
+  factType         String
+  fieldName        String
+  value            String
+  normalizedValue  String?
+  unit             String?
+  sourceDocumentId String?
+  sourcePage       Int?
+  sourceText       String?
+  confidence       Float
+  status           String  @default("VALID")
+
+  journey Journey @relation(fields: [journeyId], references: [id])
+
+  @@index([journeyId])
+  @@index([factType])
+  @@index([status])
+}
+
+// ---- Requirements ----
+model Requirement {
+  id          String  @id @default(uuid())
+  journeyId   String
+  key         String
+  label       String
+  domain      String
+  journeyType String
+  required    Boolean @default(true)
+  reason      String?
+  source      String  @default("SYSTEM")
+  priority    String  @default("MEDIUM")
+  status      String  @default("PENDING") // PENDING, MET, MISSING, WAIVED
+
+  journey Journey @relation(fields: [journeyId], references: [id])
+
+  @@index([journeyId])
+  @@index([status])
+}
+
+// ---- Validation Results ----
+model ValidationResult {
+  id          String  @id @default(uuid())
+  journeyId   String
+  fieldName   String
+  status      String  // VALID, MISSING, LOW_CONFIDENCE, CONTRADICTED, etc.
+  expected    String?
+  actual      String?
+  source      String?
+  details     String? // JSON
+  severity    String  @default("INFO") // INFO, WARNING, BLOCKING
+  createdAt   DateTime @default(now())
+
+  journey Journey @relation(fields: [journeyId], references: [id])
+
+  @@index([journeyId])
+  @@index([status])
+}
+
+// ---- Insurance: Policy ----
+model Policy {
+  id            String   @id @default(uuid())
+  policyNumber  String   @unique
+  holderName    String
+  insurerName   String
+  productName   String
+  domain        String   @default("INSURANCE")
+  status        String   @default("ACTIVE")
+  startDate     DateTime
+  endDate       DateTime
+  sumInsured    Float
+  metadata      String?  // JSON
+  createdAt     DateTime @default(now())
+
+  versions PolicyVersion[]
+  claims   Claim[]
+
+  @@index([policyNumber])
+}
+
+model PolicyVersion {
+  id        String   @id @default(uuid())
+  policyId  String
+  version   String
+  effectiveFrom DateTime
+  effectiveTo   DateTime?
+  document  String?  // JSON: policy document content
+  clauses   String?  // JSON array of clauses
+  metadata  String?
+  createdAt DateTime @default(now())
+
+  policy Policy @relation(fields: [policyId], references: [id])
+
+  @@index([policyId])
+  @@index([version])
+}
+
+// ---- Insurance: Claims ----
+model Claim {
+  id            String   @id @default(uuid())
+  journeyId     String
+  policyId      String
+  claimNumber   String?  @unique
+  claimType     String   // HOSPITALIZATION, REIMBURSEMENT, etc.
+  status        String   @default("DRAFT")
+  amount        Float?
+  currency      String   @default("INR")
+  description   String?
+  submittedAt   DateTime?
+  externalRef   String?  // insurer reference
+  metadata      String?  // JSON
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  journey        Journey          @relation(fields: [journeyId], references: [id])
+  policy         Policy           @relation(fields: [policyId], references: [id])
+  insurerQueries InsurerQuery[]
+  reconciliations Reconciliation[]
+
+  @@index([journeyId])
+  @@index([policyId])
+  @@index([claimNumber])
+  @@index([status])
+}
+
+model InsurerQuery {
+  id        String   @id @default(uuid())
+  claimId   String
+  queryType String   // MISSING_DOCUMENT, AMOUNT_DISPUTE, POLICY_EXCLUSION, etc.
+  query     String
+  source    String   @default("INSURER")
+  status    String   @default("OPEN") // OPEN, RESPONDED, RESOLVED
+  response  String?
+  metadata  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  claim Claim @relation(fields: [claimId], references: [id])
+
+  @@index([claimId])
+  @@index([status])
+}
+
+// ---- Reconciliation ----
+model Reconciliation {
+  id              String   @id @default(uuid())
+  journeyId       String
+  claimId         String?
+  type            String   // POLICY_VS_EVIDENCE, EVIDENCE_VS_QUERY, INCOME_VS_STATEMENT
+  matchedClause   String?
+  evidence        String?  // JSON
+  conflict        String?  // JSON
+  explanation     String?
+  nextAction      String?
+  confidence      Float?
+  requiresHuman   Boolean  @default(false)
+  status          String   @default("PENDING")
+  createdAt       DateTime @default(now())
+
+  journey Journey @relation(fields: [journeyId], references: [id])
+  claim   Claim?  @relation(fields: [claimId], references: [id])
+
+  @@index([journeyId])
+  @@index([claimId])
+}
+
+// ---- Lending: Calculations ----
+model Calculation {
+  id          String   @id @default(uuid())
+  journeyId   String
+  type        String   // EMI, AFFORDABILITY, TOTAL_REPAYMENT
+  inputs      String   // JSON
+  result      String   // JSON
+  assumptions String?  // JSON
+  createdAt   DateTime @default(now())
+
+  journey Journey @relation(fields: [journeyId], references: [id])
+
+  @@index([journeyId])
+}
+
+model Offer {
+  id          String   @id @default(uuid())
+  journeyId   String
+  lenderName  String
+  productName String
+  principal   Float
+  rate        Float
+  tenure      Int
+  emi         Float
+  totalRepayment Float
+  fees        Float?
+  status      String   @default("DRAFT")
+  metadata    String?
+  createdAt   DateTime @default(now())
+
+  journey Journey @relation(fields: [journeyId], references: [id])
+
+  @@index([journeyId])
+}
+
+model Application {
+  id           String   @id @default(uuid())
+  journeyId    String
+  domain       String
+  applicationType String
+  status       String   @default("DRAFT")
+  payload      String?  // JSON
+  payloadHash  String?
+  externalRef  String?
+  submittedAt  DateTime?
+  metadata     String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  journey Journey           @relation(fields: [journeyId], references: [id])
+  events  ApplicationEvent[]
+
+  @@index([journeyId])
+  @@index([status])
+  @@index([externalRef])
+}
+
+model ApplicationEvent {
+  id            String   @id @default(uuid())
+  applicationId String
+  eventType     String
+  status        String
+  details       String?
+  source        String   @default("SYSTEM")
+  createdAt     DateTime @default(now())
+
+  application Application @relation(fields: [applicationId], references: [id])
+
+  @@index([applicationId])
+}
+
+// ---- Fintech ----
+model Transaction {
+  id            String   @id @default(uuid())
+  journeyId     String?
+  transactionRef String  @unique
+  type          String   // UPI, NEFT, IMPS, CARD
+  amount        Float
+  currency      String   @default("INR")
+  status        String   // SUCCESS, FAILED, FAILED_BUT_DEBITED, DUPLICATE, CONFLICTED
+  senderAccount String?
+  receiverAccount String?
+  description   String?
+  timestamp     DateTime
+  metadata      String?
+  createdAt     DateTime @default(now())
+
+  journey  Journey? @relation(fields: [journeyId], references: [id])
+  disputes Dispute[]
+
+  @@index([transactionRef])
+  @@index([journeyId])
+}
+
+model Dispute {
+  id            String   @id @default(uuid())
+  journeyId     String
+  transactionId String
+  reason        String
+  status        String   @default("DRAFT") // DRAFT, SUBMITTED, UNDER_REVIEW, RESOLVED, REJECTED
+  evidence      String?  // JSON
+  resolution    String?
+  externalRef   String?
+  submittedAt   DateTime?
+  metadata      String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  journey     Journey     @relation(fields: [journeyId], references: [id])
+  transaction Transaction @relation(fields: [transactionId], references: [id])
+
+  @@index([journeyId])
+  @@index([transactionId])
+}
+
+// ---- Approval ----
+model ApprovalRequest {
+  id            String   @id @default(uuid())
+  journeyId     String
+  userId        String
+  action        String
+  payload       String?  // JSON
+  payloadHash   String?
+  requester     String   @default("SYSTEM")
+  approvalState String   @default("PENDING") // PENDING, APPROVED, REJECTED, EXPIRED
+  idempotencyKey String? @unique
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  journey Journey @relation(fields: [journeyId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+
+  @@index([journeyId])
+  @@index([approvalState])
+  @@index([idempotencyKey])
+}
+
+// ---- Support / Escalation ----
+model SupportCase {
+  id            String   @id @default(uuid())
+  journeyId     String?
+  userId        String
+  issueType     String
+  summary       String
+  contextPacket String?  // JSON: structured escalation packet
+  status        String   @default("OPEN")
+  assignedTo    String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([status])
+}
+
+// ---- Timeline ----
+model TimelineEvent {
+  id        String   @id @default(uuid())
+  journeyId String
+  eventType String
+  title     String
+  details   String?
+  actorType String   @default("SYSTEM")
+  actorId   String?
+  metadata  String?
+  createdAt DateTime @default(now())
+
+  journey Journey @relation(fields: [journeyId], references: [id])
+
+  @@index([journeyId])
+  @@index([createdAt])
+}
+
+// ---- Audit ----
+model AuditEvent {
+  id        String   @id @default(uuid())
+  journeyId String?
+  eventType String
+  actorType String   @default("SYSTEM")
+  actorId   String?
+  requestId String?
+  metadata  String?  // JSON
+  createdAt DateTime @default(now())
+
+  journey Journey? @relation(fields: [journeyId], references: [id])
+
+  @@index([journeyId])
+  @@index([eventType])
+  @@index([createdAt])
+}
+
+// ---- Workflow ----
+model WorkflowRun {
+  id            String   @id @default(uuid())
+  journeyId     String
+  workflowType  String
+  executionId   String?
+  status        String   @default("PENDING") // PENDING, RUNNING, COMPLETED, FAILED
+  input         String?  // JSON
+  output        String?  // JSON
+  error         String?
+  providerMode  String   @default("MOCK")
+  startedAt     DateTime @default(now())
+  completedAt   DateTime?
+
+  journey Journey @relation(fields: [journeyId], references: [id])
+
+  @@index([journeyId])
+  @@index([executionId])
+  @@index([status])
+}
