@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { DollarSign, Calculator, CheckCircle2, AlertTriangle, ArrowRight } from 'lucide-react';
+import { DollarSign, Calculator, CheckCircle2, AlertTriangle, ArrowRight, ShieldCheck, Percent } from 'lucide-react';
 import { Card } from '../components/common/Card';
 import { Badge } from '../components/common/Badge';
 import { lendingApi } from '../api/lending';
@@ -34,15 +34,111 @@ export const LendingView: React.FC = () => {
   };
 
   return (
-    <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-      <div style={{ paddingBottom: '0.5rem', borderBottom: '1px solid var(--border-subtle)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
-          <h1 style={{ fontSize: '1.5rem', fontWeight: 700, margin: 0 }}>Lending Copilot</h1>
-          <Badge variant="blue">Deterministic Math Engine</Badge>
+    <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+      {/* 8. LENDING HERO SECTION */}
+      <div className="hero-container" style={{ padding: '0.5rem 0 1rem' }}>
+        <div className="hero-content">
+          <div className="hero-eyebrow">
+            <Calculator size={13} />
+            <span>Lending Intelligence</span>
+          </div>
+
+          <h1 className="hero-heading" style={{ fontSize: 'clamp(2rem, 3.5vw, 2.75rem)' }}>
+            Understand your<br />
+            borrowing journey.
+          </h1>
+
+          <p className="hero-supporting">
+            A clearer path to financial decisions. Authoritative EMI estimations and debt-to-income affordability thresholds computed strictly via deterministic backend rules.
+          </p>
+
+          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+            <span
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.3rem',
+                padding: '0.25rem 0.65rem',
+                background: '#EFF6FF',
+                border: '1px solid #BFDBFE',
+                borderRadius: '9999px',
+                fontSize: '0.75rem',
+                color: '#2563EB',
+                fontWeight: 600,
+              }}
+            >
+              Formula-Driven
+            </span>
+            <span
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.3rem',
+                padding: '0.25rem 0.65rem',
+                background: '#F1F5F9',
+                border: '1px solid #CBD5E1',
+                borderRadius: '9999px',
+                fontSize: '0.75rem',
+                color: '#475569',
+                fontWeight: 500,
+              }}
+            >
+              Zero Hidden Assumptions
+            </span>
+          </div>
         </div>
-        <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', margin: 0 }}>
-          Authoritative EMI calculation & debt-to-income affordability checks computed strictly via backend business rules.
-        </p>
+
+        <div className="hero-visual-card">
+          <img
+            src="/images/hero-lending.jpg"
+            alt="Lending & Wealth Planning Visual"
+            loading="eager"
+          />
+          <div className="hero-visual-overlay" />
+        </div>
+      </div>
+
+      {/* LENDING TRUST & PRUDENCE STRIP */}
+      <div className="trust-strip">
+        <div className="trust-item">
+          <div className="trust-item-icon">
+            <Calculator size={16} />
+          </div>
+          <div className="trust-item-text">
+            <span className="trust-item-title">Standard Reducing EMI</span>
+            <span className="trust-item-desc">Deterministic monthly math</span>
+          </div>
+        </div>
+
+        <div className="trust-item">
+          <div className="trust-item-icon">
+            <ShieldCheck size={16} />
+          </div>
+          <div className="trust-item-text">
+            <span className="trust-item-title">RBI FOIR Safeguards</span>
+            <span className="trust-item-desc">50% Income obligation ceiling</span>
+          </div>
+        </div>
+
+        <div className="trust-item">
+          <div className="trust-item-icon">
+            <Percent size={16} />
+          </div>
+          <div className="trust-item-text">
+            <span className="trust-item-title">Zero Hidden Fees</span>
+            <span className="trust-item-desc">Transparent amortization model</span>
+          </div>
+        </div>
+
+        <div className="trust-item">
+          <div className="trust-item-icon">
+            <CheckCircle2 size={16} />
+          </div>
+          <div className="trust-item-text">
+            <span className="trust-item-title">Human Specialist Review</span>
+            <span className="trust-item-desc">Advisory support without credit impact</span>
+          </div>
+        </div>
       </div>
 
       <div className="grid-2">

@@ -90,11 +90,17 @@
   --font-display: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', 'Roboto Mono', monospace;
 
-  /* Minimal Clean Shadows */
+  /* Minimal Clean Shadows & Depth */
   --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
-  --shadow-md: 0 1px 3px 0 rgba(15, 23, 42, 0.06), 0 1px 2px -1px rgba(15, 23, 42, 0.04);
-  --shadow-lg: 0 4px 6px -1px rgba(15, 23, 42, 0.07), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
+  --shadow-md: 0 2px 4px 0 rgba(15, 23, 42, 0.06), 0 1px 2px -1px rgba(15, 23, 42, 0.04);
+  --shadow-lg: 0 6px 12px -1px rgba(15, 23, 42, 0.07), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
+  --shadow-card: 0 1px 3px rgba(15, 23, 42, 0.04), 0 4px 12px -2px rgba(15, 23, 42, 0.03);
+  --shadow-card-hover: 0 8px 18px -2px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
   --shadow-modal: 0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.05);
+
+  /* Atmospheric Gradients */
+  --bg-gradient-hero: radial-gradient(120% 80% at 50% -5%, rgba(37, 99, 235, 0.07) 0%, rgba(241, 245, 249, 0.6) 45%, rgba(247, 249, 252, 1) 100%);
+  --bg-gradient-subtle: linear-gradient(180deg, rgba(239, 246, 255, 0.6) 0%, rgba(247, 249, 252, 0) 100%);
 
   /* Layout Standards */
   --header-height: 56px;
@@ -110,6 +116,9 @@
 html, body {
   min-height: 100vh;
   background-color: var(--bg-app);
+  background-image: var(--bg-gradient-hero);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   color: var(--text-body);
   font-family: var(--font-sans);
   font-size: 14px;
@@ -126,8 +135,22 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1 {
-  font-size: 1.75rem;
-  line-height: 1.25;
+  font-size: 1.875rem;
+  line-height: 1.2;
+}
+
+.hero-heading {
+  font-size: clamp(2.25rem, 4vw, 3.25rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.035em;
+  color: var(--text-primary);
+}
+
+.hero-supporting {
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  color: var(--text-secondary);
 }
 
 h2 {
@@ -205,15 +228,25 @@ a:hover {
 .card, .surface-card {
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
+  border-radius: 16px;
+  box-shadow: var(--shadow-card);
   padding: var(--space-6);
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-elevated {
+  border-radius: 20px;
+  box-shadow: var(--shadow-card-hover);
+}
+
+.card-interactive {
+  cursor: pointer;
 }
 
 .card-interactive:hover {
-  border-color: var(--border-medium);
-  box-shadow: var(--shadow-md);
+  border-color: #BFDBFE;
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-2px);
 }
 
 /* ============================================================
@@ -484,4 +517,153 @@ a:hover {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #94A3B8;
+}
+
+/* ============================================================
+   Hero Sections & Financial Visuals
+   ============================================================ */
+
+.hero-container {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 2.5rem;
+  align-items: center;
+  padding: 2.5rem 0 2rem;
+}
+
+@media (max-width: 960px) {
+  .hero-container {
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+    padding: 1.5rem 0 1rem;
+  }
+}
+
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  background: #EFF6FF;
+  border: 1px solid #BFDBFE;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--primary);
+  margin-bottom: 1rem;
+}
+
+.hero-visual-card {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 12px 28px -4px rgba(15, 23, 42, 0.08), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
+  border: 1px solid #E2E8F0;
+  background: #FFFFFF;
+  aspect-ratio: 16 / 10;
+  width: 100%;
+}
+
+.hero-visual-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.hero-visual-card:hover img {
+  transform: scale(1.02);
+}
+
+.hero-visual-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(37, 99, 235, 0.03) 0%, rgba(15, 23, 42, 0.15) 100%);
+  pointer-events: none;
+}
+
+/* Financial Trust Strip */
+.trust-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 14px;
+  padding: 1.125rem 1.5rem;
+  box-shadow: var(--shadow-card);
+  margin-top: 0.5rem;
+  margin-bottom: 2.25rem;
+}
+
+.trust-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.trust-icon-box {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: #EFF6FF;
+  border: 1px solid #BFDBFE;
+  color: #2563EB;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Institutional Footer */
+.app-footer {
+  background: #FFFFFF;
+  border-top: 1px solid var(--border-subtle);
+  margin-top: 5rem;
+  padding: 3.5rem 1.5rem 2rem;
+}
+
+.footer-inner {
+  max-width: var(--max-content-width);
+  margin: 0 auto;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 2.5rem;
+  margin-bottom: 2.5rem;
+}
+
+@media (max-width: 860px) {
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 540px) {
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #E2E8F0;
+  padding-top: 1.5rem;
+  font-size: 0.75rem;
+  color: #64748B;
+  flex-wrap: wrap;
+  gap: 1rem;
 }

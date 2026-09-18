@@ -5,6 +5,9 @@ import {
   Copy,
   Check,
   ArrowRight,
+  Shield,
+  FileCheck,
+  Sparkles,
 } from 'lucide-react';
 import { Card } from '../components/common/Card';
 import { Badge } from '../components/common/Badge';
@@ -507,6 +510,123 @@ export const ClaimSahayView: React.FC<ClaimSahayViewProps> = ({
       <div className="workspace-grid">
         {/* Left Column: Primary Workspace */}
         <div className="workspace-main">
+          {/* 2. INSURANCE HERO SECTION (Shown on Insurance Landing) */}
+          {!journey && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginBottom: '1.5rem' }}>
+              <div className="hero-container" style={{ padding: '0.5rem 0 1rem' }}>
+                <div className="hero-content">
+                  <div className="hero-eyebrow">
+                    <Shield size={13} />
+                    <span>AI Financial Journey Copilot</span>
+                  </div>
+
+                  <h1 className="hero-heading" style={{ fontSize: 'clamp(2rem, 3.5vw, 2.75rem)' }}>
+                    Life happens.<br />
+                    We're here to help.
+                  </h1>
+
+                  <p className="hero-supporting">
+                    File, understand, and track your insurance journey with AI-powered guidance. Reconcile room-rent sub-limits, resolve queries, and prepare authoritative claim appeals.
+                  </p>
+
+                  <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const el = document.querySelector('textarea, input[type="text"]') as HTMLElement;
+                        if (el) el.focus();
+                      }}
+                      className="btn btn-primary"
+                      style={{ padding: '0.625rem 1.25rem', gap: '0.5rem', fontSize: '0.875rem' }}
+                    >
+                      <span>Start a Claim</span>
+                      <ArrowRight size={15} />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (onNavigateToSupport) onNavigateToSupport();
+                      }}
+                      className="btn btn-secondary"
+                      style={{ padding: '0.625rem 1.25rem', fontSize: '0.875rem' }}
+                    >
+                      View My Claims
+                    </button>
+                  </div>
+                </div>
+
+                <div className="hero-visual-card">
+                  <img
+                    src="/images/hero-insurance.jpg"
+                    alt="Health & Insurance Protection Visual"
+                    loading="eager"
+                  />
+                  <div className="hero-visual-overlay" />
+                </div>
+              </div>
+
+              {/* 3. FINANCIAL TRUST STRIP */}
+              <div className="trust-strip" style={{ margin: '0 0 0.5rem' }}>
+                <div className="trust-item">
+                  <div className="trust-icon-box">
+                    <Shield size={16} />
+                  </div>
+                  <div>
+                    <strong style={{ fontSize: '0.8125rem', color: '#0F172A', display: 'block' }}>
+                      Policy-Aware Guidance
+                    </strong>
+                    <span style={{ fontSize: '0.75rem', color: '#64748B' }}>
+                      SafeGuard clause cross-checking
+                    </span>
+                  </div>
+                </div>
+
+                <div className="trust-item">
+                  <div className="trust-icon-box">
+                    <FileCheck size={16} />
+                  </div>
+                  <div>
+                    <strong style={{ fontSize: '0.8125rem', color: '#0F172A', display: 'block' }}>
+                      Secure Document Processing
+                    </strong>
+                    <span style={{ fontSize: '0.75rem', color: '#64748B' }}>
+                      OCR & deterministic fact verification
+                    </span>
+                  </div>
+                </div>
+
+                <div className="trust-item">
+                  <div className="trust-icon-box">
+                    <Sparkles size={16} />
+                  </div>
+                  <div>
+                    <strong style={{ fontSize: '0.8125rem', color: '#0F172A', display: 'block' }}>
+                      Transparent Explanations
+                    </strong>
+                    <span style={{ fontSize: '0.75rem', color: '#64748B' }}>
+                      Clear sub-limit breakdown
+                    </span>
+                  </div>
+                </div>
+
+                <div className="trust-item">
+                  <div className="trust-icon-box">
+                    <LifeBuoy size={16} />
+                  </div>
+                  <div>
+                    <strong style={{ fontSize: '0.8125rem', color: '#0F172A', display: 'block' }}>
+                      Human Support When Needed
+                    </strong>
+                    <span style={{ fontSize: '0.75rem', color: '#64748B' }}>
+                      15-field context specialist escalation
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* STEP: GOAL */}
           {!journey && (
             <GoalEntryCard

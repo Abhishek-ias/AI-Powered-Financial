@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Shield, Home, DollarSign, CreditCard, History, LifeBuoy } from 'lucide-react';
 import { Header } from './components/common/Header';
+import { Footer } from './components/common/Footer';
 import { HomeView } from './views/HomeView';
 import { ClaimSahayView } from './views/ClaimSahayView';
 import { LendingView } from './views/LendingView';
@@ -154,6 +155,9 @@ export function App() {
         )}
         {activeTab === 'support' && <SupportView />}
       </main>
+
+      {/* Institutional Enterprise Footer */}
+      <Footer onNavigateTab={(tab) => setActiveTab(tab as any)} />
     </div>
   );
 }
