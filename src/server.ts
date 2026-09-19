@@ -8,7 +8,7 @@ async function main() {
   const app = createApp();
   const port = env.PORT;
 
-  app.listen(port, () => {
+  app.listen(port, '0.0.0.0', () => {
     const providers = getProviderStatus();
     console.log('');
     console.log('╔══════════════════════════════════════════════════════╗');

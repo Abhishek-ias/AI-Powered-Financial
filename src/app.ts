@@ -8,7 +8,7 @@ import morgan from 'morgan';
 import { requestIdMiddleware } from './middleware/requestId';
 import { errorHandler, notFoundHandler } from './middleware/errors';
 import { rateLimiter } from './middleware/rateLimiter';
-import { getProviderStatus, getFeatureFlags } from './config/env';
+import { env, getProviderStatus, getFeatureFlags } from './config/env';
 import apiRoutes from './routes/api';
 import prisma from './config/database';
 
@@ -17,7 +17,55 @@ export function createApp() {
 
   // ---- Security ----
   app.use(helmet());
-  app.use(cors());
+
+  // ---- Production-Ready CORS ----
+  const defaultAllowedOrigins = [
+    'http://localhost:5173',
+    'http://localhost:3000',
+    'http://127.0.0.1:5173',
+    'http://127.0.0.1:3000',
+  ];
+
+  const configuredOrigins = env.FRONTEND_URL
+    ? env.FRONTEND_URL.split(',').map((u) => u.trim().replace(/\/$/, ''))
+    : [];
+
+  const allowedOrigins = [...defaultAllowedOrigins, ...configuredOrigins];
+
+  app.use(
+    cors({
+      origin: (origin, callback) => {
+        // Allow requests with no origin (like mobile apps, curl, server-to-server)
+        if (!origin) return callback(null, true);
+
+        // Allow explicitly configured origins and local development
+        if (allowedOrigins.includes(origin)) {
+          return callback(null, true);
+        }
+
+        // Allow Vercel preview/production deployments (*.vercel.app)
+        if (/^https:\/\/.*\.vercel\.app$/.test(origin)) {
+          return callback(null, true);
+        }
+
+        // In development mode, allow any origin
+        if (env.NODE_ENV === 'development') {
+          return callback(null, true);
+        }
+
+        return callback(new Error(`Origin ${origin} not allowed by CORS policy`));
+      },
+      credentials: true,
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+      allowedHeaders: [
+        'Content-Type',
+        'Authorization',
+        'X-User-Id',
+        'X-User-Role',
+        'X-Request-Id',
+      ],
+    })
+  );
 
   // ---- Parsing ----
   app.use(express.json({ limit: '10mb' }));

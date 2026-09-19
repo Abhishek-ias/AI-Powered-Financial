@@ -1,0 +1,33 @@
+services:
+  - type: web
+    name: ai-financial-journey-copilot-backend
+    runtime: node
+    plan: free
+    buildCommand: npm install && npx prisma generate && npx prisma db push && npx tsx scripts/seed.ts && npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        value: "file:./dev.db"
+      - key: USE_MOCK_DOCUMENT_AI
+        value: "true"
+      - key: USE_MOCK_SEARCH
+        value: "true"
+      - key: USE_MOCK_MEMORY
+        value: "true"
+      - key: USE_MOCK_WORKFLOW
+        value: "true"
+      - key: MOCK_INSURER
+        value: "true"
+      - key: MOCK_LENDER
+        value: "true"
+      - key: MOCK_FINTECH
+        value: "true"
+      - key: ENABLE_LENDING
+        value: "true"
+      - key: ENABLE_FINTECH
+        value: "true"
+      - key: FRONTEND_URL
+        sync: false

@@ -64,6 +64,9 @@ const envSchema = z.object({
 
   // Auth
   JWT_SECRET: z.string().default('dev-secret-change-in-production'),
+
+  // Frontend Deployment URL for CORS
+  FRONTEND_URL: z.string().default(''),
 });
 
 function loadEnv() {
