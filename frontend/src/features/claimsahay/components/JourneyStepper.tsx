@@ -191,10 +191,10 @@ export const JourneyStepper: React.FC<JourneyStepperProps> = ({
           const isAccessible = complete || isCurrentActive || Boolean(onSelectStep);
 
           // 15. Semantic Stepper Colors
-          const circleBg = complete ? '#DCFCE7' : isCurrentActive ? '#2563EB' : '#F1F5F9';
-          const circleBorder = complete ? '#BBF7D0' : isCurrentActive ? '#2563EB' : '#CBD5E1';
-          const circleColor = complete ? '#166534' : isCurrentActive ? '#FFFFFF' : '#64748B';
-          const textColor = complete ? '#166534' : isCurrentActive ? '#1D4ED8' : '#64748B';
+          const circleBg = complete ? '#EAF4EE' : isCurrentActive ? 'var(--color-primary)' : 'var(--bg-surface-secondary)';
+          const circleBorder = complete ? '#B7DEC8' : isCurrentActive ? 'var(--color-primary)' : 'var(--border-subtle)';
+          const circleColor = complete ? '#1B563D' : isCurrentActive ? '#FFFFFF' : 'var(--color-text-muted)';
+          const textColor = complete ? '#1B563D' : isCurrentActive ? 'var(--color-primary)' : 'var(--color-text-muted)';
 
           return (
             <React.Fragment key={step.id}>
@@ -207,8 +207,8 @@ export const JourneyStepper: React.FC<JourneyStepperProps> = ({
                   display: 'flex',
                   alignItems: 'center',
                   gap: '0.5rem',
-                  background: isCurrentActive ? '#EFF6FF' : 'transparent',
-                  border: isCurrentActive ? '1px solid #BFDBFE' : '1px solid transparent',
+                  background: isCurrentActive ? 'var(--primary-subtle)' : 'transparent',
+                  border: isCurrentActive ? '1px solid var(--primary-border)' : '1px solid transparent',
                   padding: '0.375rem 0.625rem',
                   cursor: isAccessible && onSelectStep ? 'pointer' : 'default',
                   borderRadius: 'var(--radius-md)',

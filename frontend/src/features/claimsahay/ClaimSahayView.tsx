@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   RotateCcw,
   LifeBuoy,
   Copy,
   Check,
   ArrowRight,
+  ArrowLeft,
+  AlertTriangle,
   Shield,
   FileCheck,
   Sparkles,
@@ -13,7 +15,7 @@ import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
 import { ErrorBanner } from '../../components/ui/ErrorBanner';
 import { JourneyStepper } from './components/JourneyStepper';
-import { GoalEntryCard } from './components/GoalEntryCard';
+import { GoalEntryCard, GoalEntryCardHandle } from './components/GoalEntryCard';
 import { DynamicQuestionnaire } from './components/DynamicQuestionnaire';
 import { ConsentCard } from './components/ConsentCard';
 import { DocumentUploadSection } from './components/DocumentUploadSection';
@@ -23,6 +25,7 @@ import { ReviewApprovalCard } from './components/ReviewApprovalCard';
 import { TimelineView } from './components/TimelineView';
 import { NextBestActionCard } from './components/NextBestActionCard';
 import { HumanEscalationModal } from './components/HumanEscalationModal';
+import { N8nOrchestrationPanel } from './components/N8nOrchestrationPanel';
 import { journeysApi } from '../../api/journeys';
 import {
   Journey,
@@ -39,15 +42,21 @@ import {
 
 export interface ClaimSahayViewProps {
   initialGoal?: string;
+  initialJourneyId?: string;
   onResetGoal?: () => void;
   onNavigateToSupport?: () => void;
+  onNavigateToJourneys?: () => void;
 }
 
 export const ClaimSahayView: React.FC<ClaimSahayViewProps> = ({
   initialGoal = '',
+  initialJourneyId,
   onResetGoal,
-  onNavigateToSupport,
+  onNavigateToSupport: _onNavigateToSupport,
+  onNavigateToJourneys,
 }) => {
+  // Ref to GoalEntryCard for smooth scroll + focus
+  const goalSectionRef = useRef<GoalEntryCardHandle>(null);
   // Journey state
   const [journey, setJourney] = useState<Journey | null>(null);
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -66,6 +75,8 @@ export const ClaimSahayView: React.FC<ClaimSahayViewProps> = ({
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [isReconciling, setIsReconciling] = useState<boolean>(false);
+  const [isLoadingJourney, setIsLoadingJourney] = useState<boolean>(false);
+  const [loadJourneyError, setLoadJourneyError] = useState<string | null>(null);
 
   // Error state
   const [apiError, setApiError] = useState<{ message: string; details?: unknown } | null>(null);
@@ -76,6 +87,133 @@ export const ClaimSahayView: React.FC<ClaimSahayViewProps> = ({
 
   // Human Escalation Modal state
   const [isEscalateModalOpen, setIsEscalateModalOpen] = useState<boolean>(false);
+
+  const loadExistingJourney = async (journeyId: string) => {
+    setIsLoadingJourney(true);
+    setLoadJourneyError(null);
+    setApiError(null);
+
+    try {
+      const res = await journeysApi.getJourney(journeyId);
+      if (!res || !res.journey) {
+        throw new Error(`Journey ${journeyId} not found.`);
+      }
+      const j = res.journey;
+      setJourney(j);
+
+      if (j.questions && j.questions.length > 0) {
+        setQuestions(j.questions);
+      }
+
+      if (j.documents && j.documents.length > 0) {
+        setDocuments(j.documents);
+      } else {
+        try {
+          const docsRes = await journeysApi.getDocuments(journeyId);
+          if (docsRes?.documents) setDocuments(docsRes.documents);
+        } catch {
+          // ignore
+        }
+      }
+
+      if (j.requirements && j.requirements.length > 0) {
+        setRequirements(j.requirements);
+      } else {
+        try {
+          const reqRes = await journeysApi.getRequirements(journeyId);
+          if (reqRes?.requirements) setRequirements(reqRes.requirements);
+        } catch {
+          // ignore
+        }
+      }
+
+      if (j.evidenceItems && j.evidenceItems.length > 0) {
+        setEvidence(j.evidenceItems);
+      } else {
+        try {
+          const evRes = await journeysApi.getEvidence(journeyId);
+          if (evRes?.evidence) setEvidence(evRes.evidence);
+        } catch {
+          // ignore
+        }
+      }
+
+      if (j.validationResults && j.validationResults.length > 0) {
+        const blocking = j.validationResults.filter((v: any) => v.status === 'FAIL' || v.severity === 'BLOCKING');
+        const warnings = j.validationResults.filter((v: any) => v.status === 'WARNING' || v.severity === 'WARNING');
+        setValidation({
+          valid: blocking.length === 0,
+          results: j.validationResults,
+          blocking,
+          warnings,
+        });
+      }
+
+      if (j.reconciliations && j.reconciliations.length > 0) {
+        const rec = j.reconciliations[0];
+        setReconciliation({
+          reconciliationId: rec.id,
+          summary: rec.summary || 'Policy reconciliation active.',
+          explanation: rec.explanation || '',
+          matchedItems: rec.matchedItems || [],
+          disputedItems: rec.disputedItems || [],
+          status: rec.status,
+        } as any);
+      }
+
+      if (res.nextActions && res.nextActions.length > 0) {
+        setNextActions(res.nextActions);
+      } else {
+        try {
+          const naRes = await journeysApi.getNextActions(journeyId);
+          if (naRes?.nextActions) setNextActions(naRes.nextActions);
+        } catch {
+          // ignore
+        }
+      }
+
+      // Map status to viewStep
+      const status = j.status;
+      if (status === 'QUESTIONS_PENDING') {
+        setViewStep('questions');
+      } else if (status === 'CONSENT_PENDING') {
+        setViewStep('consent');
+      } else if (status === 'DOCUMENTS_PENDING' || status === 'DOCUMENT_PROCESSING') {
+        setViewStep('documents');
+      } else if (status === 'VALIDATING' || status === 'NEEDS_ACTION') {
+        setViewStep('evidence');
+      } else if (status === 'READY_FOR_REVIEW') {
+        setViewStep('reconcile');
+      } else if (
+        status === 'USER_CONFIRMED' ||
+        status === 'SUBMITTED' ||
+        status === 'INSTITUTION_REVIEW' ||
+        status === 'COMPLETED'
+      ) {
+        setViewStep('review');
+      } else if (status === 'HUMAN_REVIEW') {
+        setViewStep('timeline');
+      } else if (status === 'CREATED' || status === 'GOAL_IDENTIFIED') {
+        if (j.questions && j.questions.length > 0 && j.questions.some((q: any) => q.status !== 'ANSWERED')) {
+          setViewStep('questions');
+        } else {
+          setViewStep('consent');
+        }
+      } else {
+        setViewStep('goal');
+      }
+    } catch (err: any) {
+      setLoadJourneyError(err.message || "We couldn't open this journey right now.");
+    } finally {
+      setIsLoadingJourney(false);
+    }
+  };
+
+  useEffect(() => {
+    if (initialJourneyId && journey?.id !== initialJourneyId) {
+      loadExistingJourney(initialJourneyId);
+    }
+  }, [initialJourneyId]);
 
   // Load requirements & documents when journey is active
   useEffect(() => {
@@ -465,29 +603,84 @@ export const ClaimSahayView: React.FC<ClaimSahayViewProps> = ({
         </div>
 
         {/* Header Secondary Actions */}
-        {journey && (
-          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+          {onNavigateToJourneys && (
             <button
               type="button"
-              onClick={() => setIsEscalateModalOpen(true)}
+              onClick={onNavigateToJourneys}
               className="btn btn-secondary"
               style={{ fontSize: '0.8125rem', padding: '0.375rem 0.75rem', gap: '0.375rem' }}
+              title="Return to Journeys & Audit"
             >
-              <LifeBuoy size={14} color="var(--primary)" />
-              <span>Specialist Help</span>
+              <ArrowLeft size={13} />
+              <span>All Journeys</span>
             </button>
+          )}
 
-            <button
-              onClick={handleResetJourney}
-              className="btn btn-secondary"
-              style={{ fontSize: '0.8125rem', padding: '0.375rem 0.75rem', gap: '0.375rem' }}
-            >
-              <RotateCcw size={13} />
-              <span>New Journey</span>
-            </button>
-          </div>
-        )}
+          {journey && (
+            <>
+              <button
+                type="button"
+                onClick={() => setIsEscalateModalOpen(true)}
+                className="btn btn-secondary"
+                style={{ fontSize: '0.8125rem', padding: '0.375rem 0.75rem', gap: '0.375rem' }}
+              >
+                <LifeBuoy size={14} color="var(--primary)" />
+                <span>Specialist Help</span>
+              </button>
+
+              <button
+                onClick={handleResetJourney}
+                className="btn btn-secondary"
+                style={{ fontSize: '0.8125rem', padding: '0.375rem 0.75rem', gap: '0.375rem' }}
+              >
+                <RotateCcw size={13} />
+                <span>New Journey</span>
+              </button>
+            </>
+          )}
+        </div>
       </div>
+
+      {/* Loading Existing Journey State */}
+      {isLoadingJourney && (
+        <div style={{ padding: '3.5rem 2rem', textAlign: 'center', background: '#FFFFFF', borderRadius: '16px', border: '1px solid var(--border-subtle)', boxShadow: '0 1px 4px rgba(20,35,28,0.04)' }}>
+          <div className="spinner" style={{ margin: '0 auto 1rem', width: '32px', height: '32px', borderTopColor: 'var(--color-primary)' }} />
+          <h3 style={{ fontSize: '1.125rem', fontWeight: 700, color: 'var(--color-text)', margin: '0 0 0.375rem' }}>Opening your journey...</h3>
+          <p style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)', margin: 0 }}>Restoring your case details, documents, and verification state.</p>
+        </div>
+      )}
+
+      {/* Error Loading Existing Journey State */}
+      {loadJourneyError && (
+        <div style={{ padding: '2.5rem 2rem', textAlign: 'center', background: '#FEF2F2', borderRadius: '16px', border: '1px solid #FCA5A5' }}>
+          <AlertTriangle size={32} color="#DC2626" style={{ margin: '0 auto 0.75rem' }} />
+          <h3 style={{ fontSize: '1.125rem', fontWeight: 700, color: '#991B1B', margin: '0 0 0.5rem' }}>We couldn't open this journey right now.</h3>
+          <p style={{ fontSize: '0.875rem', color: '#7F1D1D', margin: '0 0 1.25rem' }}>{loadJourneyError}</p>
+          <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center' }}>
+            {initialJourneyId && (
+              <button
+                type="button"
+                onClick={() => loadExistingJourney(initialJourneyId)}
+                className="btn btn-primary"
+                style={{ fontSize: '0.875rem' }}
+              >
+                Try Again
+              </button>
+            )}
+            {onNavigateToJourneys && (
+              <button
+                type="button"
+                onClick={onNavigateToJourneys}
+                className="btn btn-secondary"
+                style={{ fontSize: '0.875rem' }}
+              >
+                Back to all journeys
+              </button>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Global API Error Banner */}
       {apiError && (
@@ -535,8 +728,17 @@ export const ClaimSahayView: React.FC<ClaimSahayViewProps> = ({
                     <button
                       type="button"
                       onClick={() => {
-                        const el = document.querySelector('textarea, input[type="text"]') as HTMLElement;
-                        if (el) el.focus();
+                        // Scroll to GoalEntryCard section then focus the textarea
+                        const el = document.getElementById('claim-goal-section');
+                        if (el) {
+                          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                          // Focus textarea after scroll animation (~500ms)
+                          setTimeout(() => {
+                            goalSectionRef.current?.focusInput();
+                          }, 520);
+                        } else {
+                          goalSectionRef.current?.focusInput();
+                        }
                       }}
                       className="btn btn-primary"
                       style={{ padding: '0.625rem 1.25rem', gap: '0.5rem', fontSize: '0.875rem' }}
@@ -548,7 +750,7 @@ export const ClaimSahayView: React.FC<ClaimSahayViewProps> = ({
                     <button
                       type="button"
                       onClick={() => {
-                        if (onNavigateToSupport) onNavigateToSupport();
+                        if (onNavigateToJourneys) onNavigateToJourneys();
                       }}
                       className="btn btn-secondary"
                       style={{ padding: '0.625rem 1.25rem', fontSize: '0.875rem' }}
@@ -632,6 +834,7 @@ export const ClaimSahayView: React.FC<ClaimSahayViewProps> = ({
           {/* STEP: GOAL */}
           {!journey && (
             <GoalEntryCard
+              ref={goalSectionRef}
               initialGoal={initialGoal}
               onSubmitGoal={handleStartJourney}
               isSubmitting={isCreatingJourney}
@@ -742,14 +945,17 @@ export const ClaimSahayView: React.FC<ClaimSahayViewProps> = ({
 
           {/* STEP: TRACK & TIMELINE */}
           {journey && viewStep === 'timeline' && (
-            <TimelineView
-              journeyId={journey.id}
-              status={currentStatus}
-              onEscalate={() => setIsEscalateModalOpen(true)}
-              onRefreshJourney={() => {
-                journeysApi.getJourney(journey.id).then((res) => setJourney(res.journey));
-              }}
-            />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              <N8nOrchestrationPanel journey={journey} timelineEvents={journey.timelineEvents} />
+              <TimelineView
+                journeyId={journey.id}
+                status={currentStatus}
+                onEscalate={() => setIsEscalateModalOpen(true)}
+                onRefreshJourney={() => {
+                  journeysApi.getJourney(journey.id).then((res) => setJourney(res.journey));
+                }}
+              />
+            </div>
           )}
         </div>
 
@@ -785,9 +991,9 @@ export const ClaimSahayView: React.FC<ClaimSahayViewProps> = ({
                     alignItems: 'center',
                     gap: '0.25rem',
                   }}
-                  title="Copy full Journey ID"
+                  title={`Copy full Journey ID: ${journey.id}`}
                 >
-                  <span>{journey.id.slice(0, 12)}...</span>
+                  <span style={{ fontFamily: 'monospace', fontWeight: 600 }}>{journey.id.slice(0, 16)}...</span>
                   {copiedId ? <Check size={11} color="var(--success)" /> : <Copy size={11} />}
                 </button>
               </div>

@@ -55,20 +55,20 @@ export const TimelineView: React.FC<TimelineViewProps> = ({
   const getActorDetails = (actorType: string) => {
     switch (actorType) {
       case 'USER':
-        return { icon: User, color: '#2563EB', badge: 'Customer' };
+        return { icon: User, color: '#1A382B', badge: 'Customer' };
       case 'AI':
-        return { icon: Activity, color: '#16A34A', badge: 'Copilot AI' };
+        return { icon: Activity, color: '#2E7D5B', badge: 'Copilot AI' };
       case 'SYSTEM':
-        return { icon: Cpu, color: '#475569', badge: 'System' };
+        return { icon: Cpu, color: '#4A5A51', badge: 'System' };
       case 'WORKFLOW':
-        return { icon: Shield, color: '#475569', badge: 'Workflow' };
+        return { icon: Shield, color: '#4A6B5B', badge: 'Workflow' };
       default:
-        return { icon: Clock, color: '#64748B', badge: actorType };
+        return { icon: Clock, color: '#6B766F', badge: actorType };
     }
   };
 
   return (
-    <Card style={{ padding: '1.5rem', background: '#FFFFFF', border: '1px solid #E2E8F0' }}>
+    <Card style={{ padding: '1.5rem', background: '#FFFFFF', border: '1px solid var(--color-border)' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
         <div>
           <h4 style={{ fontSize: '1.125rem', fontWeight: 600, color: 'var(--text-primary)' }}>
@@ -121,7 +121,7 @@ export const TimelineView: React.FC<TimelineViewProps> = ({
             bottom: '8px',
             left: '6px',
             width: '1px',
-            background: '#E2E8F0',
+            background: 'var(--color-border)',
           }}
         />
 
@@ -152,8 +152,8 @@ export const TimelineView: React.FC<TimelineViewProps> = ({
 
                 <div
                   style={{
-                    background: '#F8FAFC',
-                    border: '1px solid #E2E8F0',
+                    background: 'var(--bg-surface-secondary)',
+                    border: '1px solid var(--color-border)',
                     borderRadius: 'var(--radius-sm)',
                     padding: '0.625rem 0.875rem',
                   }}

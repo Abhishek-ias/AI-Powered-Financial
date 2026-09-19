@@ -56,11 +56,11 @@ export const FintechView: React.FC = () => {
                 alignItems: 'center',
                 gap: '0.3rem',
                 padding: '0.25rem 0.65rem',
-                background: '#EFF6FF',
-                border: '1px solid #BFDBFE',
+                background: 'var(--primary-subtle)',
+                border: '1px solid var(--primary-border)',
                 borderRadius: '9999px',
                 fontSize: '0.75rem',
-                color: '#2563EB',
+                color: 'var(--color-primary)',
                 fontWeight: 600,
               }}
             >
@@ -266,14 +266,14 @@ export const FintechView: React.FC = () => {
                 </div>
 
                 {classification && (
-                  <div style={{ background: '#EFF6FF', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid #BFDBFE' }}>
+                  <div style={{ background: 'var(--primary-subtle)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--primary-border)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
-                      <Clock size={15} color="var(--primary)" />
-                      <strong style={{ color: '#0F172A', fontSize: '0.875rem' }}>
+                      <Clock size={15} color="var(--color-primary)" />
+                      <strong style={{ color: 'var(--color-primary)', fontSize: '0.875rem' }}>
                         What Happened: {classification.classification?.issueType?.replace(/_/g, ' ') || 'FAILED BUT DEBITED'}
                       </strong>
                     </div>
-                    <p style={{ color: '#334155', fontSize: '0.8125rem', margin: '0 0 0.75rem' }}>
+                    <p style={{ color: 'var(--color-text)', fontSize: '0.8125rem', margin: '0 0 0.75rem' }}>
                       Auto-reversal cycle: <strong>{classification.resolution?.estimatedDays || 2} business days</strong> via {classification.resolution?.standardResolution || 'NPCI dispute resolution'}.
                     </p>
 

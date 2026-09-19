@@ -160,42 +160,42 @@ export const DynamicQuestionnaire: React.FC<DynamicQuestionnaireProps> = ({
             style={{ fontSize: '0.75rem', padding: '0.35rem 0.65rem', gap: '0.375rem' }}
             title="Pre-populate answers for seamless testing"
           >
-            <Sparkles size={13} color="#2563EB" />
+            <Sparkles size={13} color="var(--color-primary)" />
             <span>{isFillingDemo ? 'Filling...' : 'Auto-fill Demo Answers'}</span>
           </button>
         </div>
 
-        {/* Question Text (#0F172A) */}
+        {/* Question Text */}
         <h3
           style={{
             fontSize: '1.25rem',
             fontWeight: 600,
             lineHeight: 1.4,
             marginBottom: '0.75rem',
-            color: '#0F172A',
+            color: 'var(--color-text)',
           }}
         >
           {currentQ.text || currentQ.questionText}
         </h3>
 
-        {/* Informational Panel (#EFF6FF, border #BFDBFE) */}
+        {/* Informational Panel */}
         <div
           style={{
             display: 'flex',
             alignItems: 'flex-start',
             gap: '0.5rem',
-            background: '#EFF6FF',
-            borderLeft: '3px solid #2563EB',
+            background: 'var(--primary-subtle)',
+            borderLeft: '3px solid var(--color-primary)',
             padding: '0.625rem 0.875rem',
             borderRadius: '0 var(--radius-sm) var(--radius-sm) 0',
             marginBottom: '1.5rem',
             fontSize: '0.8125rem',
-            color: '#1E40AF',
+            color: 'var(--color-primary)',
           }}
         >
-          <HelpCircle size={15} color="#2563EB" style={{ flexShrink: 0, marginTop: '2px' }} />
+          <HelpCircle size={15} color="var(--color-primary)" style={{ flexShrink: 0, marginTop: '2px' }} />
           <div>
-            <strong style={{ color: '#1E3A8A', marginRight: '0.375rem' }}>Why we ask this:</strong>
+            <strong style={{ color: 'var(--color-primary)', marginRight: '0.375rem' }}>Why we ask this:</strong>
             {reasonText}
           </div>
         </div>
@@ -223,9 +223,9 @@ export const DynamicQuestionnaire: React.FC<DynamicQuestionnaireProps> = ({
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
-                      background: isSelected ? '#EFF6FF' : '#FFFFFF',
-                      border: isSelected ? '1px solid #2563EB' : '1px solid #CBD5E1',
-                      color: isSelected ? '#1E40AF' : '#334155',
+                      background: isSelected ? 'var(--primary-subtle)' : '#FFFFFF',
+                      border: isSelected ? '1px solid var(--color-primary)' : '1px solid var(--color-border)',
+                      color: isSelected ? 'var(--color-primary)' : 'var(--color-text)',
                       fontSize: '0.875rem',
                       fontWeight: isSelected ? 600 : 400,
                       transition: 'all 0.15s ease',
@@ -233,7 +233,7 @@ export const DynamicQuestionnaire: React.FC<DynamicQuestionnaireProps> = ({
                     }}
                   >
                     <span>{opt}</span>
-                    {isSelected && <Check size={16} color="#2563EB" />}
+                    {isSelected && <Check size={16} color="var(--color-primary)" />}
                   </button>
                 );
               })}

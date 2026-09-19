@@ -33,8 +33,8 @@ export const PolicyCitation: React.FC<PolicyCitationProps> = ({
   return (
     <div
       style={{
-        background: '#F8FAFC',
-        border: '1px solid #E2E8F0',
+        background: 'var(--bg-surface-secondary)',
+        border: '1px solid var(--color-border)',
         borderRadius: 'var(--radius-lg)',
         padding: '1.25rem',
         display: 'flex',
@@ -43,7 +43,7 @@ export const PolicyCitation: React.FC<PolicyCitationProps> = ({
         boxShadow: 'var(--shadow-sm)',
       }}
     >
-      {/* 13. POLICY SOURCE Header (Dark navy heading, blue source accent, light neutral background) */}
+      {/* Policy Source Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.5rem' }}>
         <div>
           <span
@@ -52,21 +52,21 @@ export const PolicyCitation: React.FC<PolicyCitationProps> = ({
               fontWeight: 700,
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
-              color: '#2563EB',
+              color: 'var(--color-secondary)',
             }}
           >
             Policy Source
           </span>
-          <h4 style={{ fontSize: '1.0625rem', fontWeight: 700, color: '#0F172A', marginTop: '0.125rem' }}>
+          <h4 style={{ fontSize: '1.0625rem', fontWeight: 700, color: 'var(--color-text)', marginTop: '0.125rem' }}>
             SafeGuard Health Insurance
           </h4>
-          <div style={{ fontSize: '0.8125rem', color: '#64748B' }}>
+          <div style={{ fontSize: '0.8125rem', color: 'var(--color-text-muted)' }}>
             Policy {polNum} · Version {ver} · Clause 4.2 · Page {pageNum}
           </div>
         </div>
 
         <div style={{ display: 'flex', gap: '0.375rem', alignItems: 'center' }}>
-          <Badge variant="blue">Clause 4.2</Badge>
+          <Badge variant="primary">Clause 4.2</Badge>
           <Badge variant="gray">Match: {Math.round(score * 100)}%</Badge>
         </div>
       </div>
@@ -77,13 +77,13 @@ export const PolicyCitation: React.FC<PolicyCitationProps> = ({
           margin: 0,
           padding: '0.875rem 1rem',
           background: '#FFFFFF',
-          borderLeft: '3px solid #2563EB',
-          borderTop: '1px solid #E2E8F0',
-          borderRight: '1px solid #E2E8F0',
-          borderBottom: '1px solid #E2E8F0',
+          borderLeft: '3px solid var(--color-primary)',
+          borderTop: '1px solid var(--color-border)',
+          borderRight: '1px solid var(--color-border)',
+          borderBottom: '1px solid var(--color-border)',
           borderRadius: '0 var(--radius-sm) var(--radius-sm) 0',
           fontSize: '0.875rem',
-          color: '#1E293B',
+          color: 'var(--color-text)',
           lineHeight: 1.5,
           fontStyle: 'italic',
         }}
@@ -91,8 +91,8 @@ export const PolicyCitation: React.FC<PolicyCitationProps> = ({
         "{content}"
       </blockquote>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', fontSize: '0.75rem', color: '#166534' }}>
-        <ShieldCheck size={14} color="#16A34A" />
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', fontSize: '0.75rem', color: '#2E7D5B' }}>
+        <ShieldCheck size={14} color="#2E7D5B" />
         <span style={{ fontWeight: 500 }}>Grounded in deterministic policy contract schedule</span>
       </div>
     </div>

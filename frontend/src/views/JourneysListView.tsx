@@ -36,11 +36,11 @@ export const JourneysListView: React.FC<JourneysListViewProps> = ({ onSelectJour
   const getDomainIcon = (domain: string) => {
     switch (domain) {
       case 'INSURANCE':
-        return <Shield size={18} color="#3b82f6" />;
+        return <Shield size={18} color="#1A382B" />;
       case 'LENDING':
-        return <DollarSign size={18} color="#10b981" />;
+        return <DollarSign size={18} color="#C29853" />;
       case 'FINTECH':
-        return <CreditCard size={18} color="#8b5cf6" />;
+        return <CreditCard size={18} color="#4A6B5B" />;
       default:
         return <History size={18} color="#94a3b8" />;
     }

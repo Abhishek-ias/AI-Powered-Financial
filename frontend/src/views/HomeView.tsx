@@ -294,7 +294,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                         boxShadow: '0 1px 3px rgba(15, 23, 42, 0.1)',
                       }}
                     >
-                      <Icon size={12} color="#2563EB" />
+                      <Icon size={12} color="var(--color-primary)" />
                       <span>{card.title}</span>
                     </span>
                   </div>
@@ -308,7 +308,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                   >
                     <span
                       style={{
-                        background: 'rgba(15, 23, 42, 0.75)',
+                        background: 'rgba(26, 56, 43, 0.75)',
                         backdropFilter: 'blur(4px)',
                         color: '#FFFFFF',
                         fontSize: '0.6875rem',
@@ -325,10 +325,10 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 {/* Card Content */}
                 <div style={{ padding: '1.25rem 1.5rem', display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'space-between' }}>
                   <div>
-                    <h3 style={{ fontSize: '1.125rem', fontWeight: 600, color: '#0F172A', marginBottom: '0.375rem' }}>
+                    <h3 style={{ fontSize: '1.125rem', fontWeight: 600, color: 'var(--color-text)', marginBottom: '0.375rem' }}>
                       {card.title}
                     </h3>
-                    <p style={{ fontSize: '0.8125rem', color: '#475569', lineHeight: 1.5 }}>
+                    <p style={{ fontSize: '0.8125rem', color: 'var(--color-text-secondary)', lineHeight: 1.5 }}>
                       {card.subtitle}
                     </p>
                   </div>
@@ -337,12 +337,12 @@ export const HomeView: React.FC<HomeViewProps> = ({
                     style={{
                       marginTop: '1.25rem',
                       paddingTop: '0.875rem',
-                      borderTop: '1px solid #E2E8F0',
+                      borderTop: '1px solid var(--color-border)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
                       fontSize: '0.8125rem',
-                      color: '#2563EB',
+                      color: 'var(--color-primary)',
                       fontWeight: 600,
                     }}
                   >

@@ -57,7 +57,7 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({ document, onRetry })
     <div
       style={{
         background: '#FFFFFF',
-        border: '1px solid #E2E8F0',
+        border: '1px solid var(--color-border)',
         borderRadius: 'var(--radius-md)',
         padding: '0.875rem 1rem',
         display: 'flex',
@@ -73,14 +73,14 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({ document, onRetry })
               width: '32px',
               height: '32px',
               borderRadius: 'var(--radius-sm)',
-              background: '#EFF6FF',
+              background: 'var(--primary-subtle)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               flexShrink: 0,
             }}
           >
-            <FileText size={16} color="#2563EB" />
+            <FileText size={16} color="var(--color-primary)" />
           </div>
 
           <div style={{ minWidth: 0 }}>
@@ -88,7 +88,7 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({ document, onRetry })
               style={{
                 fontSize: '0.875rem',
                 fontWeight: 600,
-                color: '#0F172A',
+                color: 'var(--color-text)',
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
@@ -97,7 +97,7 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({ document, onRetry })
             >
               {document.originalName}
             </div>
-            <div style={{ fontSize: '0.75rem', color: '#64748B' }}>
+            <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
               {document.documentType} • {formattedSize}
             </div>
           </div>

@@ -109,25 +109,25 @@ export const ConsentCard: React.FC<ConsentCardProps> = ({
               fontWeight: 700,
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
-              color: '#2563EB',
+              color: 'var(--color-primary)',
             }}
           >
             Permissions & Data Privacy
           </span>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#0F172A', marginTop: '0.25rem' }}>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--color-text)', marginTop: '0.25rem' }}>
             Before we continue
           </h2>
-          <p style={{ color: '#475569', fontSize: '0.875rem', marginTop: '0.25rem' }}>
+          <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.875rem', marginTop: '0.25rem' }}>
             To assist with your claim reconciliation, we need your authorization to process your medical documents.
           </p>
         </div>
 
-        <Badge variant={consentGranted ? 'green' : 'blue'}>
+        <Badge variant={consentGranted ? 'green' : 'primary'}>
           {consentGranted ? 'Consent Granted' : 'Action Required'}
         </Badge>
       </div>
 
-      {/* 3 Pillars: WHAT WE USE, WHY WE NEED IT, YOUR CONTROL (Light neutral panels #F8FAFC) */}
+      {/* 3 Pillars: WHAT WE USE, WHY WE NEED IT, YOUR CONTROL */}
       <div
         style={{
           display: 'grid',
@@ -138,48 +138,48 @@ export const ConsentCard: React.FC<ConsentCardProps> = ({
       >
         <div
           style={{
-            background: '#F8FAFC',
+            background: 'var(--bg-surface-secondary)',
             padding: '1rem',
             borderRadius: 'var(--radius-md)',
-            border: '1px solid #E2E8F0',
+            border: '1px solid var(--color-border)',
           }}
         >
-          <div style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: '#64748B', marginBottom: '0.375rem' }}>
+          <div style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--color-text-muted)', marginBottom: '0.375rem' }}>
             What We Use
           </div>
-          <p style={{ fontSize: '0.8125rem', color: '#334155', lineHeight: 1.4, margin: 0 }}>
+          <p style={{ fontSize: '0.8125rem', color: 'var(--color-text-secondary)', lineHeight: 1.4, margin: 0 }}>
             Itemized hospital bills, discharge summaries, and your active health policy document.
           </p>
         </div>
 
         <div
           style={{
-            background: '#F8FAFC',
+            background: 'var(--bg-surface-secondary)',
             padding: '1rem',
             borderRadius: 'var(--radius-md)',
-            border: '1px solid #E2E8F0',
+            border: '1px solid var(--color-border)',
           }}
         >
-          <div style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: '#64748B', marginBottom: '0.375rem' }}>
+          <div style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--color-text-muted)', marginBottom: '0.375rem' }}>
             Why We Need It
           </div>
-          <p style={{ fontSize: '0.8125rem', color: '#334155', lineHeight: 1.4, margin: 0 }}>
+          <p style={{ fontSize: '0.8125rem', color: 'var(--color-text-secondary)', lineHeight: 1.4, margin: 0 }}>
             To extract line items, identify insurer deductions, and cite exact policy clauses.
           </p>
         </div>
 
         <div
           style={{
-            background: '#F8FAFC',
+            background: 'var(--bg-surface-secondary)',
             padding: '1rem',
             borderRadius: 'var(--radius-md)',
-            border: '1px solid #E2E8F0',
+            border: '1px solid var(--color-border)',
           }}
         >
-          <div style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: '#64748B', marginBottom: '0.375rem' }}>
+          <div style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--color-text-muted)', marginBottom: '0.375rem' }}>
             Your Control
           </div>
-          <p style={{ fontSize: '0.8125rem', color: '#334155', lineHeight: 1.4, margin: 0 }}>
+          <p style={{ fontSize: '0.8125rem', color: 'var(--color-text-secondary)', lineHeight: 1.4, margin: 0 }}>
             Your data is never shared without your separate explicit review and final approval.
           </p>
         </div>
@@ -187,7 +187,7 @@ export const ConsentCard: React.FC<ConsentCardProps> = ({
 
       {/* Checkbox Purposes */}
       <form onSubmit={handleSubmit}>
-        <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#0F172A', marginBottom: '0.75rem' }}>
+        <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--color-text)', marginBottom: '0.75rem' }}>
           Select Authorized Purposes:
         </div>
 
@@ -205,8 +205,8 @@ export const ConsentCard: React.FC<ConsentCardProps> = ({
                   gap: '0.75rem',
                   padding: '0.875rem 1rem',
                   borderRadius: 'var(--radius-md)',
-                  background: isChecked ? '#EFF6FF' : '#FFFFFF',
-                  border: isChecked ? '1px solid #2563EB' : '1px solid #E2E8F0',
+                  background: isChecked ? 'var(--primary-subtle)' : '#FFFFFF',
+                  border: isChecked ? '1px solid var(--color-primary)' : '1px solid var(--color-border)',
                   cursor: consentGranted || isSubmittingConsent ? 'default' : 'pointer',
                   transition: 'all 0.15s ease',
                   boxShadow: 'var(--shadow-sm)',
@@ -217,8 +217,8 @@ export const ConsentCard: React.FC<ConsentCardProps> = ({
                     width: '18px',
                     height: '18px',
                     borderRadius: '4px',
-                    border: isChecked ? '1px solid #2563EB' : '1px solid #CBD5E1',
-                    background: isChecked ? '#2563EB' : '#FFFFFF',
+                    border: isChecked ? '1px solid var(--color-primary)' : '1px solid var(--color-border)',
+                    background: isChecked ? 'var(--color-primary)' : '#FFFFFF',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -230,7 +230,7 @@ export const ConsentCard: React.FC<ConsentCardProps> = ({
                 </div>
 
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#0F172A' }}>
+                  <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--color-text)' }}>
                     {purpose.title}
                   </div>
                   <div style={{ fontSize: '0.8125rem', color: '#475569', marginTop: '0.125rem' }}>

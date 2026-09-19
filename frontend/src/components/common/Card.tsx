@@ -16,7 +16,7 @@ export const Card: React.FC<CardProps> = ({
   ...props
 }) => {
   const cardClass = `card ${interactive ? 'card-interactive' : ''} ${className}`;
-  const glowStyle = glow ? { boxShadow: 'var(--shadow-md)', borderColor: '#BFDBFE' } : {};
+  const glowStyle = glow ? { boxShadow: 'var(--shadow-sm)', borderColor: 'var(--color-primary)' } : {};
 
   return (
     <div className={cardClass} style={{ ...glowStyle, ...style }} {...props}>

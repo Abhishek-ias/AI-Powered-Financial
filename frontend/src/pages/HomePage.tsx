@@ -93,7 +93,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 display: 'flex',
                 alignItems: 'center',
                 background: '#FFFFFF',
-                border: '1px solid #CBD5E1',
+                border: '1px solid var(--border-subtle)',
                 borderRadius: '12px',
                 padding: '0.375rem 0.5rem 0.375rem 0.875rem',
                 boxShadow: 'var(--shadow-card)',
@@ -109,7 +109,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                   flex: 1,
                   background: 'transparent',
                   border: 'none',
-                  color: '#0F172A',
+                  color: 'var(--color-text)',
                   padding: '0.625rem 0.5rem',
                   fontSize: '0.9375rem',
                   outline: 'none',
@@ -129,7 +129,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
 
           {/* Prompt Suggestion Chips */}
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '1rem', alignItems: 'center' }}>
-            <span style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: 500 }}>Try:</span>
+            <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', fontWeight: 500 }}>Try:</span>
             {[
               { label: 'Room Rent Dispute', text: "My hospital claim was queried and room rent was capped at ₹5,000/day.", domain: 'INSURANCE' as const },
               { label: '₹10L Home Loan EMI', text: 'I need a home renovation loan of ₹10 Lakhs for 5 years.', domain: 'LENDING' as const },
@@ -143,10 +143,10 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 style={{
                   padding: '0.2rem 0.6rem',
                   background: '#FFFFFF',
-                  border: '1px solid #E2E8F0',
+                  border: '1px solid var(--border-subtle)',
                   borderRadius: '9999px',
                   fontSize: '0.75rem',
-                  color: '#334155',
+                  color: 'var(--color-text-secondary)',
                 }}
               >
                 {chip.label}
@@ -173,10 +173,10 @@ export const HomeView: React.FC<HomeViewProps> = ({
             <Shield size={16} />
           </div>
           <div>
-            <strong style={{ fontSize: '0.8125rem', color: '#0F172A', display: 'block' }}>
+            <strong style={{ fontSize: '0.8125rem', color: 'var(--color-text)', display: 'block' }}>
               Policy-Aware Guidance
             </strong>
-            <span style={{ fontSize: '0.75rem', color: '#64748B' }}>
+            <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
               Grounded in verified policy schedules
             </span>
           </div>
@@ -187,10 +187,10 @@ export const HomeView: React.FC<HomeViewProps> = ({
             <FileCheck size={16} />
           </div>
           <div>
-            <strong style={{ fontSize: '0.8125rem', color: '#0F172A', display: 'block' }}>
+            <strong style={{ fontSize: '0.8125rem', color: 'var(--color-text)', display: 'block' }}>
               Secure Document Intelligence
             </strong>
-            <span style={{ fontSize: '0.75rem', color: '#64748B' }}>
+            <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
               Deterministic OCR fact provenance
             </span>
           </div>
@@ -201,10 +201,10 @@ export const HomeView: React.FC<HomeViewProps> = ({
             <Sparkles size={16} />
           </div>
           <div>
-            <strong style={{ fontSize: '0.8125rem', color: '#0F172A', display: 'block' }}>
+            <strong style={{ fontSize: '0.8125rem', color: 'var(--color-text)', display: 'block' }}>
               Transparent Explanations
             </strong>
-            <span style={{ fontSize: '0.75rem', color: '#64748B' }}>
+            <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
               Plain-English reasoning with citations
             </span>
           </div>
@@ -215,10 +215,10 @@ export const HomeView: React.FC<HomeViewProps> = ({
             <LifeBuoy size={16} />
           </div>
           <div>
-            <strong style={{ fontSize: '0.8125rem', color: '#0F172A', display: 'block' }}>
+            <strong style={{ fontSize: '0.8125rem', color: 'var(--color-text)', display: 'block' }}>
               Human Support When Needed
             </strong>
-            <span style={{ fontSize: '0.75rem', color: '#64748B' }}>
+            <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
               Seamless specialist handoff
             </span>
           </div>
@@ -229,10 +229,10 @@ export const HomeView: React.FC<HomeViewProps> = ({
       <div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
           <div>
-            <h2 style={{ fontSize: '1.375rem', fontWeight: 700, color: '#0F172A' }}>
+            <h2 style={{ fontSize: '1.375rem', fontWeight: 700, color: 'var(--color-text)' }}>
               Specialized Financial Domains
             </h2>
-            <p style={{ fontSize: '0.875rem', color: '#64748B', marginTop: '0.25rem' }}>
+            <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)', marginTop: '0.25rem' }}>
               Explore deep workflows tailored for complex retail banking and health insurance problems.
             </p>
           </div>
@@ -266,7 +266,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                     style={{
                       position: 'absolute',
                       inset: 0,
-                      background: 'linear-gradient(180deg, rgba(15, 23, 42, 0.05) 0%, rgba(15, 23, 42, 0.35) 100%)',
+                      background: 'linear-gradient(180deg, rgba(20, 35, 28, 0.05) 0%, rgba(20, 35, 28, 0.35) 100%)',
                     }}
                   />
                   <div
@@ -290,11 +290,11 @@ export const HomeView: React.FC<HomeViewProps> = ({
                         borderRadius: '9999px',
                         fontSize: '0.6875rem',
                         fontWeight: 700,
-                        color: '#0F172A',
-                        boxShadow: '0 1px 3px rgba(15, 23, 42, 0.1)',
+                        color: 'var(--color-text)',
+                        boxShadow: '0 1px 3px rgba(20, 35, 28, 0.1)',
                       }}
                     >
-                      <Icon size={12} color="#2563EB" />
+                      <Icon size={12} color="var(--color-primary)" />
                       <span>{card.title}</span>
                     </span>
                   </div>
@@ -308,7 +308,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                   >
                     <span
                       style={{
-                        background: 'rgba(15, 23, 42, 0.75)',
+                        background: 'rgba(20, 35, 28, 0.8)',
                         backdropFilter: 'blur(4px)',
                         color: '#FFFFFF',
                         fontSize: '0.6875rem',
@@ -325,10 +325,10 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 {/* Card Content */}
                 <div style={{ padding: '1.25rem 1.5rem', display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'space-between' }}>
                   <div>
-                    <h3 style={{ fontSize: '1.125rem', fontWeight: 600, color: '#0F172A', marginBottom: '0.375rem' }}>
+                    <h3 style={{ fontSize: '1.125rem', fontWeight: 600, color: 'var(--color-text)', marginBottom: '0.375rem' }}>
                       {card.title}
                     </h3>
-                    <p style={{ fontSize: '0.8125rem', color: '#475569', lineHeight: 1.5 }}>
+                    <p style={{ fontSize: '0.8125rem', color: 'var(--color-text-secondary)', lineHeight: 1.5 }}>
                       {card.subtitle}
                     </p>
                   </div>
@@ -337,12 +337,12 @@ export const HomeView: React.FC<HomeViewProps> = ({
                     style={{
                       marginTop: '1.25rem',
                       paddingTop: '0.875rem',
-                      borderTop: '1px solid #E2E8F0',
+                      borderTop: '1px solid var(--border-subtle)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
                       fontSize: '0.8125rem',
-                      color: '#2563EB',
+                      color: 'var(--color-primary)',
                       fontWeight: 600,
                     }}
                   >

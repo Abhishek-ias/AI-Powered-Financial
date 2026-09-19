@@ -186,7 +186,7 @@ export const DocumentUploadSection: React.FC<DocumentUploadSectionProps> = ({
           style={{ fontSize: '0.8125rem', padding: '0.375rem 0.75rem', gap: '0.375rem' }}
           title="Instantly upload synthetic test documents"
         >
-          <Sparkles size={13} color="#2563EB" />
+          <Sparkles size={13} color="var(--color-primary)" />
           <span>{isSynthesizing ? 'Uploading...' : 'Load Sample Claim Packet'}</span>
         </button>
       </div>
@@ -286,8 +286,8 @@ export const DocumentUploadSection: React.FC<DocumentUploadSectionProps> = ({
       {/* 15. Clean Drag/Drop Zone (#F8FAFC) */}
       <div
         style={{
-          border: dragActive ? '2px dashed #2563EB' : '1px dashed #CBD5E1',
-          background: dragActive ? '#EFF6FF' : '#F8FAFC',
+          border: dragActive ? '2px dashed var(--color-primary)' : '1px dashed var(--color-border)',
+          background: dragActive ? 'var(--primary-subtle)' : 'var(--bg-surface-secondary)',
           borderRadius: 'var(--radius-lg)',
           padding: '1.75rem 1.25rem',
           textAlign: 'center',
@@ -308,11 +308,11 @@ export const DocumentUploadSection: React.FC<DocumentUploadSectionProps> = ({
 
         <UploadCloud
           size={32}
-          color={dragActive ? '#2563EB' : '#64748B'}
+          color={dragActive ? 'var(--color-primary)' : 'var(--color-text-muted)'}
           style={{ margin: '0 auto 0.5rem' }}
         />
 
-        <div style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#0F172A' }}>
+        <div style={{ fontSize: '0.9375rem', fontWeight: 600, color: 'var(--color-text)' }}>
           Drop your document here, or{' '}
           <button
             type="button"
@@ -320,7 +320,7 @@ export const DocumentUploadSection: React.FC<DocumentUploadSectionProps> = ({
             style={{
               background: 'transparent',
               border: 'none',
-              color: '#2563EB',
+              color: 'var(--color-primary)',
               fontWeight: 600,
               cursor: 'pointer',
               textDecoration: 'underline',
@@ -332,21 +332,21 @@ export const DocumentUploadSection: React.FC<DocumentUploadSectionProps> = ({
           </button>
         </div>
 
-        <p style={{ fontSize: '0.75rem', color: '#64748B', marginTop: '0.25rem' }}>
+        <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '0.25rem' }}>
           Accepted formats: PDF, JPG, PNG • Max size: 20MB
         </p>
 
         <div style={{ marginTop: '0.875rem', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8125rem' }}>
-          <span style={{ color: '#475569' }}>Uploading as:</span>
+          <span style={{ color: 'var(--color-text-secondary)' }}>Uploading as:</span>
           <select
             value={selectedType}
             onChange={(e) => setSelectedType(e.target.value)}
             disabled={isUploading || isProcessing}
             style={{
               background: '#FFFFFF',
-              border: '1px solid #CBD5E1',
+              border: '1px solid var(--color-border)',
               borderRadius: 'var(--radius-sm)',
-              color: '#0F172A',
+              color: 'var(--color-text)',
               padding: '0.25rem 0.5rem',
               fontSize: '0.8125rem',
               outline: 'none',
@@ -369,15 +369,15 @@ export const DocumentUploadSection: React.FC<DocumentUploadSectionProps> = ({
         )}
 
         {uploadSuccessMsg && (
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.375rem', color: '#16A34A', fontSize: '0.8125rem', marginTop: '0.75rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.375rem', color: '#2E7D5B', fontSize: '0.8125rem', marginTop: '0.75rem' }}>
             <CheckCircle2 size={14} />
             <span>{uploadSuccessMsg}</span>
           </div>
         )}
 
         {isUploading && (
-          <div style={{ marginTop: '0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', fontSize: '0.8125rem', color: '#2563EB' }}>
-            <div className="spinner" style={{ width: '13px', height: '13px', borderTopColor: '#2563EB' }} />
+          <div style={{ marginTop: '0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', fontSize: '0.8125rem', color: 'var(--color-primary)' }}>
+            <div className="spinner" style={{ width: '13px', height: '13px', borderTopColor: 'var(--color-primary)' }} />
             <span>Uploading document...</span>
           </div>
         )}
@@ -386,15 +386,15 @@ export const DocumentUploadSection: React.FC<DocumentUploadSectionProps> = ({
       {/* 16. Processing Sequence Indicator */}
       {isProcessing && (
         <Card style={{ padding: '1rem 1.25rem' }}>
-          <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#0F172A', marginBottom: '0.5rem' }}>
+          <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--color-text)', marginBottom: '0.5rem' }}>
             Document Processing Pipeline:
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.375rem', fontSize: '0.8125rem', color: '#475569' }}>
-            <div style={{ color: '#16A34A', fontWeight: 500 }}>✓ Uploaded files secured</div>
-            <div style={{ color: '#2563EB', fontWeight: 600 }}>● Analyzing document structure & OCR...</div>
-            <div style={{ color: '#64748B' }}>○ Extracting itemized hospital charges</div>
-            <div style={{ color: '#64748B' }}>○ Checking cross-document consistency</div>
-            <div style={{ color: '#64748B' }}>○ Preparing evidence items</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.375rem', fontSize: '0.8125rem', color: 'var(--color-text-secondary)' }}>
+            <div style={{ color: '#2E7D5B', fontWeight: 500 }}>✓ Uploaded files secured</div>
+            <div style={{ color: 'var(--color-primary)', fontWeight: 600 }}>● Analyzing document structure & OCR...</div>
+            <div style={{ color: 'var(--color-text-muted)' }}>○ Extracting itemized hospital charges</div>
+            <div style={{ color: 'var(--color-text-muted)' }}>○ Checking cross-document consistency</div>
+            <div style={{ color: 'var(--color-text-muted)' }}>○ Preparing evidence items</div>
           </div>
         </Card>
       )}

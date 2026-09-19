@@ -2,14 +2,14 @@ import React from 'react';
 
 export interface BadgeProps {
   children: React.ReactNode;
-  variant?: 'blue' | 'green' | 'amber' | 'red' | 'purple' | 'gray';
+  variant?: 'blue' | 'green' | 'amber' | 'red' | 'purple' | 'gray' | 'gold' | 'forest' | 'primary';
   size?: 'sm' | 'md';
   icon?: React.ReactNode;
 }
 
 export const Badge: React.FC<BadgeProps> = ({
   children,
-  variant = 'blue',
+  variant = 'forest',
   size = 'md',
   icon,
 }) => {

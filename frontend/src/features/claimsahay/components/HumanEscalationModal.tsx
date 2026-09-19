@@ -201,22 +201,22 @@ export const HumanEscalationModal: React.FC<HumanEscalationModalProps> = ({
                 }}
               >
                 <div>
-                  <div style={{ color: 'var(--text-muted)' }}>Support Case ID:</div>
-                  <div style={{ fontWeight: 600, color: '#2563EB', fontFamily: 'monospace', marginTop: '0.125rem' }}>
+                  <div style={{ color: 'var(--color-text-muted)' }}>Support Case ID:</div>
+                  <div style={{ fontWeight: 600, color: 'var(--color-primary)', fontFamily: 'monospace', marginTop: '0.125rem' }}>
                     {supportCase.id.slice(0, 14)}...
                   </div>
                 </div>
 
                 <div>
-                  <div style={{ color: 'var(--text-muted)' }}>Priority Level:</div>
-                  <div style={{ fontWeight: 600, color: '#92400E', marginTop: '0.125rem' }}>
+                  <div style={{ color: 'var(--color-text-muted)' }}>Priority Level:</div>
+                  <div style={{ fontWeight: 600, color: 'var(--color-secondary)', marginTop: '0.125rem' }}>
                     {supportCase.priority}
                   </div>
                 </div>
 
                 <div>
-                  <div style={{ color: 'var(--text-muted)' }}>Next Step:</div>
-                  <div style={{ fontWeight: 600, color: '#166534', marginTop: '0.125rem' }}>
+                  <div style={{ color: 'var(--color-text-muted)' }}>Next Step:</div>
+                  <div style={{ fontWeight: 600, color: '#2E7D5B', marginTop: '0.125rem' }}>
                     Specialist Review (Est. 2 hours)
                   </div>
                 </div>
@@ -236,22 +236,22 @@ export const HumanEscalationModal: React.FC<HumanEscalationModalProps> = ({
           ) : (
             /* Pre-Escalation Disclosure Form */
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-              {/* 1. WHY ESCALATION IS NEEDED (Calm light blue/indigo accent) */}
+              {/* 1. WHY ESCALATION IS NEEDED */}
               <div
                 style={{
-                  background: '#EFF6FF',
-                  border: '1px solid #BFDBFE',
+                  background: 'var(--primary-subtle)',
+                  border: '1px solid var(--primary-border)',
                   borderRadius: 'var(--radius-md)',
                   padding: '1rem',
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.375rem' }}>
-                  <AlertTriangle size={15} color="#2563EB" />
-                  <strong style={{ fontSize: '0.875rem', color: '#1E40AF' }}>
+                  <AlertTriangle size={15} color="var(--color-primary)" />
+                  <strong style={{ fontSize: '0.875rem', color: 'var(--color-primary)' }}>
                     WHY ESCALATION IS NEEDED
                   </strong>
                 </div>
-                <p style={{ fontSize: '0.8125rem', color: '#1E3A8A', margin: 0, lineHeight: 1.5 }}>
+                <p style={{ fontSize: '0.8125rem', color: 'var(--color-text)', margin: 0, lineHeight: 1.5 }}>
                   The automated copilot identified a cross-document discrepancy or policy sub-limit question that requires human judgment. A licensed claims specialist will review the evidence without you needing to re-explain your situation.
                 </p>
               </div>
@@ -259,16 +259,16 @@ export const HumanEscalationModal: React.FC<HumanEscalationModalProps> = ({
               {/* 2. CURRENT UNRESOLVED ISSUE */}
               <div
                 style={{
-                  background: '#F8FAFC',
-                  border: '1px solid #E2E8F0',
+                  background: 'var(--bg-surface-secondary)',
+                  border: '1px solid var(--color-border)',
                   borderRadius: 'var(--radius-sm)',
                   padding: '0.875rem 1rem',
                 }}
               >
-                <div style={{ fontSize: '0.6875rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.25rem' }}>
+                <div style={{ fontSize: '0.6875rem', fontWeight: 700, color: 'var(--color-text-muted)', textTransform: 'uppercase', marginBottom: '0.25rem' }}>
                   Current Unresolved Issue
                 </div>
-                <div style={{ fontSize: '0.875rem', color: '#9A3412', fontWeight: 500 }}>
+                <div style={{ fontSize: '0.875rem', color: 'var(--color-secondary)', fontWeight: 500 }}>
                   {unresolvedIssue}
                 </div>
               </div>
@@ -276,8 +276,8 @@ export const HumanEscalationModal: React.FC<HumanEscalationModalProps> = ({
               {/* 3. WHAT INFORMATION WILL BE SHARED */}
               <div
                 style={{
-                  background: '#F8FAFC',
-                  border: '1px solid #E2E8F0',
+                  background: 'var(--bg-surface-secondary)',
+                  border: '1px solid var(--color-border)',
                   borderRadius: 'var(--radius-sm)',
                   padding: '0.875rem 1rem',
                 }}

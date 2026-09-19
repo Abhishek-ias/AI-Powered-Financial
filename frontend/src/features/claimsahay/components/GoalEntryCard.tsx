@@ -1,7 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useImperativeHandle, forwardRef } from 'react';
 import { ArrowRight, ShieldCheck } from 'lucide-react';
 import { Card } from '../../../components/ui/Card';
 import { Badge } from '../../../components/ui/Badge';
+
+export interface GoalEntryCardHandle {
+  focusInput: () => void;
+}
 
 export interface GoalEntryCardProps {
   initialGoal?: string;
@@ -33,14 +37,22 @@ const SAMPLE_PROMPTS = [
   },
 ];
 
-export const GoalEntryCard: React.FC<GoalEntryCardProps> = ({
+export const GoalEntryCard = forwardRef<GoalEntryCardHandle, GoalEntryCardProps>(function GoalEntryCard({
   initialGoal = '',
   onSubmitGoal,
   isSubmitting,
   intentResult,
   disabled = false,
-}) => {
+}, ref) {
   const [goal, setGoal] = useState(initialGoal || '');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Expose focusInput to parent via ref
+  useImperativeHandle(ref, () => ({
+    focusInput: () => {
+      textareaRef.current?.focus();
+    },
+  }));
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,7 +66,7 @@ export const GoalEntryCard: React.FC<GoalEntryCardProps> = ({
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+    <div id="claim-goal-section" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', scrollMarginTop: '120px' }}>
       <Card style={{ padding: '2rem' }}>
         <div style={{ marginBottom: '1.25rem' }}>
           <span
@@ -63,22 +75,24 @@ export const GoalEntryCard: React.FC<GoalEntryCardProps> = ({
               fontWeight: 700,
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
-              color: '#2563EB',
+              color: 'var(--color-primary)',
             }}
           >
             Start Your Journey
           </span>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#0F172A', marginTop: '0.25rem' }}>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--color-text)', marginTop: '0.25rem' }}>
             Tell us what you want to accomplish
           </h2>
-          <p style={{ color: '#475569', fontSize: '0.875rem', marginTop: '0.25rem' }}>
+          <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.875rem', marginTop: '0.25rem' }}>
             Describe your insurance query, hospital deduction, or reimbursement issue.
           </p>
         </div>
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <div>
-            <textarea
+          <textarea
+              ref={textareaRef}
+              id="claim-goal-input"
               value={goal}
               onChange={(e) => setGoal(e.target.value)}
               disabled={disabled || isSubmitting}
@@ -91,7 +105,7 @@ export const GoalEntryCard: React.FC<GoalEntryCardProps> = ({
 
           {!disabled && (
             <div>
-              <div style={{ fontSize: '0.75rem', color: '#64748B', marginBottom: '0.5rem', fontWeight: 600 }}>
+              <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginBottom: '0.5rem', fontWeight: 600 }}>
                 Suggested goals:
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '0.5rem' }}>
@@ -103,18 +117,18 @@ export const GoalEntryCard: React.FC<GoalEntryCardProps> = ({
                     disabled={isSubmitting}
                     style={{
                       textAlign: 'left',
-                      background: goal === prompt.text ? '#EFF6FF' : '#F8FAFC',
-                      border: goal === prompt.text ? '1px solid #2563EB' : '1px solid #E2E8F0',
+                      background: goal === prompt.text ? 'var(--primary-subtle)' : 'var(--bg-surface-secondary)',
+                      border: goal === prompt.text ? '1px solid var(--color-primary)' : '1px solid var(--border-subtle)',
                       borderRadius: 'var(--radius-sm)',
                       padding: '0.625rem 0.75rem',
                       cursor: 'pointer',
                       transition: 'all 0.15s ease',
                     }}
                   >
-                    <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#0F172A', marginBottom: '0.125rem' }}>
+                    <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--color-text)', marginBottom: '0.125rem' }}>
                       {prompt.title}
                     </div>
-                    <div style={{ fontSize: '0.75rem', color: '#64748B', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {prompt.text}
                     </div>
                   </button>
@@ -182,4 +196,4 @@ export const GoalEntryCard: React.FC<GoalEntryCardProps> = ({
       )}
     </div>
   );
-};
+});

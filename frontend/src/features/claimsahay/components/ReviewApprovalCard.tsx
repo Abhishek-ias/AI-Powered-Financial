@@ -15,9 +15,12 @@ import {
   Hash,
   Activity,
   Layers,
+  Copy,
+  Check,
 } from 'lucide-react';
 import { Card } from '../../../components/ui/Card';
 import { Badge } from '../../../components/ui/Badge';
+import { N8nOrchestrationPanel } from './N8nOrchestrationPanel';
 import {
   Journey,
   EvidenceItem,
@@ -60,6 +63,7 @@ export const ReviewApprovalCard: React.FC<ReviewApprovalCardProps> = ({
 
   const [approval, setApproval] = useState<ApprovalRequest | null>(null);
   const [submissionResult, setSubmissionResult] = useState<any | null>(null);
+  const [copiedJourneyId, setCopiedJourneyId] = useState<boolean>(false);
 
   // Status checks
   const isConfirmed = journey.status === 'USER_CONFIRMED' || !!approval;
@@ -210,8 +214,22 @@ export const ReviewApprovalCard: React.FC<ReviewApprovalCardProps> = ({
           >
             <div>
               <div style={{ fontSize: '0.75rem', color: '#64748B' }}>Journey ID:</div>
-              <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#0F172A', fontFamily: 'monospace', marginTop: '0.125rem' }}>
-                {journey.id.slice(0, 16)}...
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', marginTop: '0.125rem' }}>
+                <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#0F172A', fontFamily: 'monospace' }} title={journey.id}>
+                  {journey.id}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard.writeText(journey.id);
+                    setCopiedJourneyId(true);
+                    setTimeout(() => setCopiedJourneyId(false), 2000);
+                  }}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-primary)', padding: '0.125rem', display: 'flex' }}
+                  title="Copy full Journey ID"
+                >
+                  {copiedJourneyId ? <Check size={13} color="#16A34A" /> : <Copy size={13} />}
+                </button>
               </div>
             </div>
 
@@ -223,18 +241,27 @@ export const ReviewApprovalCard: React.FC<ReviewApprovalCardProps> = ({
             </div>
 
             <div>
-              <div style={{ fontSize: '0.75rem', color: '#64748B' }}>Workflow Execution:</div>
-              <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#2563EB', fontFamily: 'monospace', marginTop: '0.125rem' }}>
+              <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>Workflow Execution:</div>
+              <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--color-primary)', fontFamily: 'monospace', marginTop: '0.125rem' }}>
                 {submissionResult?.workflow?.executionId || 'exec-mock-active'}
               </div>
             </div>
 
             <div>
-              <div style={{ fontSize: '0.75rem', color: '#64748B' }}>Next Step:</div>
-              <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#0F172A', marginTop: '0.125rem' }}>
+              <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>Next Step:</div>
+              <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--color-text)', marginTop: '0.125rem' }}>
                 Awaiting Insurer Adjudication Response
               </div>
             </div>
+          </div>
+
+          {/* n8n Workflow Orchestration Panel */}
+          <div style={{ marginBottom: '1.5rem' }}>
+            <N8nOrchestrationPanel
+              journey={journey}
+              timelineEvents={journey.timelineEvents}
+              workflowRun={submissionResult?.workflow}
+            />
           </div>
 
           {/* Navigation CTA */}
@@ -313,6 +340,13 @@ export const ReviewApprovalCard: React.FC<ReviewApprovalCardProps> = ({
         </div>
       )}
 
+      {/* Visual n8n Workflow Pipeline Tracker */}
+      <N8nOrchestrationPanel
+        journey={journey}
+        timelineEvents={journey.timelineEvents}
+        compact={true}
+      />
+
       {/* 1. REVIEW SCREEN: Customer Goal & Case Metadata */}
       <Card
         style={{
@@ -330,30 +364,30 @@ export const ReviewApprovalCard: React.FC<ReviewApprovalCardProps> = ({
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.75rem' }}>
-          <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '0.75rem', borderRadius: 'var(--radius-sm)' }}>
+          <div style={{ background: 'var(--bg-surface-secondary)', border: '1px solid var(--color-border)', padding: '0.75rem', borderRadius: 'var(--radius-sm)' }}>
             <div style={{ fontSize: '0.6875rem', color: 'var(--text-muted)' }}>Domain:</div>
-            <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#0F172A', marginTop: '0.125rem' }}>
+            <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--color-text)', marginTop: '0.125rem' }}>
               {journey.domain} ({journey.journeyType})
             </div>
           </div>
 
-          <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '0.75rem', borderRadius: 'var(--radius-sm)' }}>
+          <div style={{ background: 'var(--bg-surface-secondary)', border: '1px solid var(--color-border)', padding: '0.75rem', borderRadius: 'var(--radius-sm)' }}>
             <div style={{ fontSize: '0.6875rem', color: 'var(--text-muted)' }}>Active Status:</div>
-            <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#92400E', marginTop: '0.125rem' }}>
+            <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--color-secondary)', marginTop: '0.125rem' }}>
               {journey.status}
             </div>
           </div>
 
-          <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '0.75rem', borderRadius: 'var(--radius-sm)' }}>
+          <div style={{ background: 'var(--bg-surface-secondary)', border: '1px solid var(--color-border)', padding: '0.75rem', borderRadius: 'var(--radius-sm)' }}>
             <div style={{ fontSize: '0.6875rem', color: 'var(--text-muted)' }}>Policy Schedule:</div>
-            <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#2563EB', marginTop: '0.125rem' }}>
+            <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--color-primary)', marginTop: '0.125rem' }}>
               POL-HEALTH-2024-001 (v2024-v1)
             </div>
           </div>
 
-          <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '0.75rem', borderRadius: 'var(--radius-sm)' }}>
+          <div style={{ background: 'var(--bg-surface-secondary)', border: '1px solid var(--color-border)', padding: '0.75rem', borderRadius: 'var(--radius-sm)' }}>
             <div style={{ fontSize: '0.6875rem', color: 'var(--text-muted)' }}>Documents Uploaded:</div>
-            <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#166534', marginTop: '0.125rem' }}>
+            <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#2E7D5B', marginTop: '0.125rem' }}>
               {documents.length} Files ({documents.filter((d) => d.status === 'PROCESSED').length} Processed)
             </div>
           </div>
@@ -510,16 +544,16 @@ export const ReviewApprovalCard: React.FC<ReviewApprovalCardProps> = ({
             </div>
           </div>
 
-          <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '0.875rem', borderRadius: 'var(--radius-sm)' }}>
+          <div style={{ background: 'var(--bg-surface-secondary)', border: '1px solid var(--color-border)', padding: '0.875rem', borderRadius: 'var(--radius-sm)' }}>
             <div style={{ fontSize: '0.6875rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>EVIDENCE:</div>
-            <div style={{ fontSize: '0.875rem', color: '#2563EB', fontWeight: 500, marginTop: '0.25rem' }}>
+            <div style={{ fontSize: '0.875rem', color: 'var(--color-primary)', fontWeight: 500, marginTop: '0.25rem' }}>
               {documents.length} verified documents ({evidence.length} extracted facts)
             </div>
           </div>
 
-          <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '0.875rem', borderRadius: 'var(--radius-sm)' }}>
+          <div style={{ background: 'var(--bg-surface-secondary)', border: '1px solid var(--color-border)', padding: '0.875rem', borderRadius: 'var(--radius-sm)' }}>
             <div style={{ fontSize: '0.6875rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>SOURCE:</div>
-            <div style={{ fontSize: '0.875rem', color: '#0F172A', marginTop: '0.25rem' }}>
+            <div style={{ fontSize: '0.875rem', color: 'var(--color-text)', marginTop: '0.25rem' }}>
               SafeGuard Policy POL-HEALTH-2024-001 (v2024-v1)
             </div>
           </div>
@@ -528,8 +562,8 @@ export const ReviewApprovalCard: React.FC<ReviewApprovalCardProps> = ({
         {/* 4. TWO-STEP CONFIRMATION & APPROVAL GATE */}
         <div
           style={{
-            background: '#F8FAFC',
-            border: '1px solid #E2E8F0',
+            background: 'var(--bg-surface-secondary)',
+            border: '1px solid var(--color-border)',
             borderRadius: 'var(--radius-md)',
             padding: '1.25rem',
           }}
@@ -539,7 +573,7 @@ export const ReviewApprovalCard: React.FC<ReviewApprovalCardProps> = ({
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
                 <Lock size={16} color="var(--primary)" />
-                <h4 style={{ fontSize: '1rem', fontWeight: 600, color: '#0F172A' }}>
+                <h4 style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--color-text)' }}>
                   Consequential Confirmation Required
                 </h4>
               </div>
@@ -549,8 +583,8 @@ export const ReviewApprovalCard: React.FC<ReviewApprovalCardProps> = ({
               </p>
 
               {loadingStep && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', color: '#2563EB', fontSize: '0.8125rem' }}>
-                  <div className="spinner" style={{ width: '14px', height: '14px', borderTopColor: '#2563EB' }} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', color: 'var(--color-primary)', fontSize: '0.8125rem' }}>
+                  <div className="spinner" style={{ width: '14px', height: '14px', borderTopColor: 'var(--color-primary)' }} />
                   <span>{loadingStep}</span>
                 </div>
               )}
@@ -632,7 +666,7 @@ export const ReviewApprovalCard: React.FC<ReviewApprovalCardProps> = ({
 
                 <div>
                   <span style={{ color: 'var(--text-muted)' }}>Approval ID:</span>
-                  <div style={{ fontWeight: 600, color: '#2563EB', fontFamily: 'monospace', marginTop: '0.125rem' }}>
+                  <div style={{ fontWeight: 600, color: 'var(--color-primary)', fontFamily: 'monospace', marginTop: '0.125rem' }}>
                     {approval?.id?.slice(0, 14) || 'appr-generated'}...
                   </div>
                 </div>
@@ -646,15 +680,15 @@ export const ReviewApprovalCard: React.FC<ReviewApprovalCardProps> = ({
 
                 <div>
                   <span style={{ color: 'var(--text-muted)' }}>Environment:</span>
-                  <div style={{ fontWeight: 600, color: '#92400E', marginTop: '0.125rem' }}>
+                  <div style={{ fontWeight: 600, color: 'var(--color-secondary)', marginTop: '0.125rem' }}>
                     Sandbox / Demo
                   </div>
                 </div>
               </div>
 
               {loadingStep && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', color: '#2563EB', fontSize: '0.8125rem' }}>
-                  <div className="spinner" style={{ width: '14px', height: '14px', borderTopColor: '#2563EB' }} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', color: 'var(--color-primary)', fontSize: '0.8125rem' }}>
+                  <div className="spinner" style={{ width: '14px', height: '14px', borderTopColor: 'var(--color-primary)' }} />
                   <span>{loadingStep}</span>
                 </div>
               )}

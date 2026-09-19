@@ -59,11 +59,11 @@ export const LendingView: React.FC = () => {
                 alignItems: 'center',
                 gap: '0.3rem',
                 padding: '0.25rem 0.65rem',
-                background: '#EFF6FF',
-                border: '1px solid #BFDBFE',
+                background: 'var(--primary-subtle)',
+                border: '1px solid var(--primary-border)',
                 borderRadius: '9999px',
                 fontSize: '0.75rem',
-                color: '#2563EB',
+                color: 'var(--color-primary)',
                 fontWeight: 600,
               }}
             >

@@ -111,16 +111,16 @@ export const PolicyExplanationCard: React.FC<PolicyExplanationCardProps> = ({
                 textAlign: 'left',
                 padding: '0.625rem 0.875rem',
                 borderRadius: 'var(--radius-md)',
-                background: selectedScenarioIdx === idx ? '#EFF6FF' : '#F8FAFC',
-                border: selectedScenarioIdx === idx ? '1px solid #2563EB' : '1px solid #E2E8F0',
+                background: selectedScenarioIdx === idx ? 'var(--primary-subtle)' : 'var(--bg-surface-secondary)',
+                border: selectedScenarioIdx === idx ? '1px solid var(--color-primary)' : '1px solid var(--color-border)',
                 cursor: 'pointer',
                 transition: 'all 0.15s ease',
               }}
             >
-              <div style={{ fontWeight: 600, fontSize: '0.8125rem', color: '#0F172A', marginBottom: '0.125rem' }}>
+              <div style={{ fontWeight: 600, fontSize: '0.8125rem', color: selectedScenarioIdx === idx ? 'var(--color-primary)' : 'var(--color-text)', marginBottom: '0.125rem' }}>
                 {sc.title}
               </div>
-              <div style={{ fontSize: '0.75rem', color: '#64748B', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {sc.queryText}
               </div>
             </button>
@@ -218,8 +218,8 @@ export const PolicyExplanationCard: React.FC<PolicyExplanationCardProps> = ({
           <Card style={{ padding: '1.5rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <Sparkles size={16} color="#2563EB" />
-                <h4 style={{ fontSize: '1rem', fontWeight: 600, color: '#0F172A' }}>Plain-Language Policy Guidance</h4>
+                <Sparkles size={16} color="var(--color-primary)" />
+                <h4 style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--color-text)' }}>Plain-Language Policy Guidance</h4>
               </div>
 
               <button
@@ -228,39 +228,39 @@ export const PolicyExplanationCard: React.FC<PolicyExplanationCardProps> = ({
                 className="btn btn-secondary"
                 style={{ fontSize: '0.75rem', padding: '0.25rem 0.625rem', gap: '0.25rem' }}
               >
-                {copiedExplanation ? <Check size={12} color="#16A34A" /> : <Copy size={12} />}
+                {copiedExplanation ? <Check size={12} color="#2E7D5B" /> : <Copy size={12} />}
                 <span>{copiedExplanation ? 'Copied' : 'Copy Explanation'}</span>
               </button>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {/* WHAT THE POLICY SAYS */}
-              <div style={{ background: '#F8FAFC', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid #E2E8F0' }}>
-                <div style={{ fontSize: '0.6875rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#64748B', marginBottom: '0.375rem' }}>
+              <div style={{ background: 'var(--bg-surface-secondary)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
+                <div style={{ fontSize: '0.6875rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-muted)', marginBottom: '0.375rem' }}>
                   What the Policy Says
                 </div>
-                <div style={{ fontSize: '0.875rem', color: '#0F172A', lineHeight: 1.5 }}>
+                <div style={{ fontSize: '0.875rem', color: 'var(--color-text)', lineHeight: 1.5 }}>
                   {reconciliation.matchedClause?.content || 'Clause 4.2: Room rent capped at 1% of Sum Insured (max ₹5,000/day for normal room).'}
                 </div>
               </div>
 
               {/* WHAT THIS MEANS FOR YOU */}
-              <div style={{ background: '#F8FAFC', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid #E2E8F0' }}>
-                <div style={{ fontSize: '0.6875rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#64748B', marginBottom: '0.375rem' }}>
+              <div style={{ background: 'var(--bg-surface-secondary)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
+                <div style={{ fontSize: '0.6875rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-muted)', marginBottom: '0.375rem' }}>
                   What This Means For You
                 </div>
-                <div style={{ fontSize: '0.875rem', color: '#334155', lineHeight: 1.5 }}>
+                <div style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)', lineHeight: 1.5 }}>
                   {reconciliation.explanation ||
                     'Your hospital billed ₹7,500/day which exceeds the ₹5,000/day policy limit. You have an excess tariff of ₹2,500/day across 5 days (₹12,500 total) which is subject to proportionate deduction.'}
                 </div>
               </div>
 
               {/* WHAT YOU CAN DO NEXT */}
-              <div style={{ background: '#EFF6FF', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid #BFDBFE' }}>
-                <div style={{ fontSize: '0.6875rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#1E40AF', marginBottom: '0.375rem' }}>
+              <div style={{ background: 'var(--primary-subtle)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--primary-border)' }}>
+                <div style={{ fontSize: '0.6875rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-primary)', marginBottom: '0.375rem' }}>
                   What You Can Do Next
                 </div>
-                <div style={{ fontSize: '0.875rem', color: '#1E3A8A', lineHeight: 1.5, marginBottom: '0.75rem' }}>
+                <div style={{ fontSize: '0.875rem', color: 'var(--color-text)', lineHeight: 1.5, marginBottom: '0.75rem' }}>
                   {reconciliation.nextAction ||
                     'Review the room-rent evidence and submit a proportionate deduction waiver appeal, or request specialist escalation to verify ICU tariff exemptions.'}
                 </div>

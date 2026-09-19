@@ -71,12 +71,12 @@ export const EvidenceSection: React.FC<EvidenceSectionProps> = ({
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
-            <Layers size={16} color="#60a5fa" />
-            <span style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--primary-light)' }}>
+            <Layers size={16} color="var(--color-tertiary)" />
+            <span style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-primary)' }}>
               Stage 5 • Provenance & Evidence Verification
             </span>
           </div>
-          <h3 style={{ fontSize: '1.25rem', fontWeight: 600 }}>
+          <h3 style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--color-text)' }}>
             Structured Claim Evidence & Cross-Check Results
           </h3>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
@@ -84,7 +84,7 @@ export const EvidenceSection: React.FC<EvidenceSectionProps> = ({
           </p>
         </div>
 
-        <Badge variant="blue">
+        <Badge variant="primary">
           {evidence.length} Extracted Facts Verified
         </Badge>
       </div>
@@ -110,7 +110,7 @@ export const EvidenceSection: React.FC<EvidenceSectionProps> = ({
           background: '#FFFFFF',
           padding: '0.75rem 1rem',
           borderRadius: 'var(--radius-md)',
-          border: '1px solid #E2E8F0',
+          border: '1px solid var(--color-border)',
           boxShadow: 'var(--shadow-sm)',
           flexWrap: 'wrap',
           gap: '0.75rem',
@@ -131,7 +131,7 @@ export const EvidenceSection: React.FC<EvidenceSectionProps> = ({
             style={{
               width: '100%',
               background: '#FFFFFF',
-              border: '1px solid #CBD5E1',
+              border: '1px solid var(--color-border)',
               borderRadius: 'var(--radius-sm)',
               color: 'var(--text-primary)',
               padding: '0.375rem 0.75rem 0.375rem 2.25rem',
@@ -151,11 +151,11 @@ export const EvidenceSection: React.FC<EvidenceSectionProps> = ({
               key={st}
               onClick={() => setStatusFilter(st)}
               style={{
-                background: statusFilter === st ? '#EFF6FF' : '#FFFFFF',
-                border: statusFilter === st ? '1px solid #BFDBFE' : '1px solid #E2E8F0',
+                background: statusFilter === st ? 'var(--primary-subtle)' : '#FFFFFF',
+                border: statusFilter === st ? '1px solid var(--primary-border)' : '1px solid var(--color-border)',
                 borderRadius: 'var(--radius-sm)',
                 padding: '0.25rem 0.625rem',
-                color: statusFilter === st ? '#2563EB' : 'var(--text-secondary)',
+                color: statusFilter === st ? 'var(--color-primary)' : 'var(--text-secondary)',
                 fontSize: '0.75rem',
                 fontWeight: 600,
                 cursor: 'pointer',

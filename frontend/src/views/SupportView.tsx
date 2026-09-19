@@ -84,9 +84,9 @@ export const SupportView: React.FC = () => {
               ✓ Insurer Queries
             </div>
           </div>
-          <div style={{ marginTop: '1.25rem', background: '#EFF6FF', padding: '0.875rem', borderRadius: 'var(--radius-md)', border: '1px solid #BFDBFE', fontSize: '0.8125rem' }}>
-            <strong style={{ color: '#1E40AF' }}>Handoff Guarantee:</strong>
-            <p style={{ color: '#1E3A8A', marginTop: '0.25rem' }}>
+          <div style={{ marginTop: '1.25rem', background: 'var(--sage-subtle)', padding: '0.875rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--sage-border)', fontSize: '0.8125rem' }}>
+            <strong style={{ color: 'var(--color-primary)' }}>Handoff Guarantee:</strong>
+            <p style={{ color: 'var(--color-text)', marginTop: '0.25rem' }}>
               Human claims specialists receive pre-compiled dossier cards rather than unparsed, noisy chat transcripts.
             </p>
           </div>

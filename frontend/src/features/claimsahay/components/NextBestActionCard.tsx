@@ -54,14 +54,14 @@ export const NextBestActionCard: React.FC<NextBestActionCardProps> = ({
     <div
       style={{
         background: '#FFFFFF',
-        border: '1px solid #BFDBFE',
-        borderTop: '3px solid #2563EB',
+        border: '1px solid var(--color-border)',
+        borderTop: '3px solid var(--color-primary)',
         borderRadius: 'var(--radius-lg)',
         padding: '1.25rem',
-        boxShadow: 'var(--shadow-md)',
+        boxShadow: 'var(--shadow-sm)',
       }}
     >
-      {/* 14. NEXT BEST ACTION Dominant Header */}
+      {/* Next Best Action Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.625rem' }}>
         <span
           style={{
@@ -69,19 +69,19 @@ export const NextBestActionCard: React.FC<NextBestActionCardProps> = ({
             fontWeight: 700,
             textTransform: 'uppercase',
             letterSpacing: '0.05em',
-            color: '#2563EB',
+            color: 'var(--color-primary)',
           }}
         >
           Next Step
         </span>
-        <Badge variant="blue">Recommended</Badge>
+        <Badge variant="gold">Recommended</Badge>
       </div>
 
-      <h4 style={{ fontSize: '1rem', fontWeight: 700, color: '#0F172A', marginBottom: '0.375rem' }}>
+      <h4 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--color-text)', marginBottom: '0.375rem' }}>
         {formatActionName(primaryAction.action)}
       </h4>
 
-      <p style={{ fontSize: '0.8125rem', color: '#475569', lineHeight: 1.45, marginBottom: '1rem' }}>
+      <p style={{ fontSize: '0.8125rem', color: 'var(--color-text-secondary)', lineHeight: 1.45, marginBottom: '1rem' }}>
         <strong>Why: </strong>{whyText}
       </p>
 
@@ -113,8 +113,8 @@ export const NextBestActionCard: React.FC<NextBestActionCardProps> = ({
       </div>
 
       {otherActions.length > 0 && (
-        <div style={{ marginTop: '1rem', paddingTop: '0.75rem', borderTop: '1px solid #E2E8F0' }}>
-          <span style={{ fontSize: '0.6875rem', fontWeight: 600, color: '#64748B', textTransform: 'uppercase' }}>
+        <div style={{ marginTop: '1rem', paddingTop: '0.75rem', borderTop: '1px solid var(--color-border)' }}>
+          <span style={{ fontSize: '0.6875rem', fontWeight: 600, color: 'var(--color-text-muted)', textTransform: 'uppercase' }}>
             Alternative Actions:
           </span>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.375rem', marginTop: '0.375rem' }}>
@@ -127,7 +127,7 @@ export const NextBestActionCard: React.FC<NextBestActionCardProps> = ({
                   background: 'transparent',
                   border: 'none',
                   padding: '0.25rem 0',
-                  color: '#2563EB',
+                  color: 'var(--color-primary)',
                   fontSize: '0.75rem',
                   textAlign: 'left',
                   cursor: 'pointer',

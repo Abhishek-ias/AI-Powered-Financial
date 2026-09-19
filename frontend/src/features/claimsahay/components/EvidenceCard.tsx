@@ -65,7 +65,7 @@ export const EvidenceCard: React.FC<EvidenceCardProps> = ({ evidence, documentNa
         background: '#FFFFFF',
         border: isPolicyFlagged || isContradicted
           ? '1px solid #FDE68A'
-          : '1px solid #E2E8F0',
+          : '1px solid var(--color-border)',
         borderRadius: 'var(--radius-lg)',
         padding: '1rem 1.25rem',
         display: 'flex',
@@ -74,7 +74,7 @@ export const EvidenceCard: React.FC<EvidenceCardProps> = ({ evidence, documentNa
         boxShadow: 'var(--shadow-sm)',
       }}
     >
-      {/* 12. Header: Field Name & Status */}
+      {/* Header: Field Name & Status */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.5rem' }}>
         <div>
           <span
@@ -83,7 +83,7 @@ export const EvidenceCard: React.FC<EvidenceCardProps> = ({ evidence, documentNa
               fontWeight: 700,
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
-              color: '#64748B',
+              color: 'var(--color-text-muted)',
             }}
           >
             {formattedField}
@@ -92,7 +92,7 @@ export const EvidenceCard: React.FC<EvidenceCardProps> = ({ evidence, documentNa
             style={{
               fontSize: '1.25rem',
               fontWeight: 700,
-              color: '#0F172A',
+              color: 'var(--color-text)',
               marginTop: '0.125rem',
               fontFamily: isCurrency ? 'var(--font-mono)' : 'inherit',
             }}
@@ -107,27 +107,27 @@ export const EvidenceCard: React.FC<EvidenceCardProps> = ({ evidence, documentNa
         </div>
       </div>
 
-      {/* Provenance: Document Source & Page (Blue source accent) */}
+      {/* Provenance: Document Source & Page */}
       <div
         style={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           fontSize: '0.75rem',
-          color: '#475569',
-          background: '#F8FAFC',
+          color: 'var(--color-text-secondary)',
+          background: 'var(--bg-surface-secondary)',
           padding: '0.375rem 0.625rem',
           borderRadius: 'var(--radius-sm)',
-          border: '1px solid #E2E8F0',
+          border: '1px solid var(--color-border)',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
-          <FileText size={12} color="#2563EB" />
-          <span>Source: <strong style={{ color: '#0F172A' }}>{sourceLabel}</strong></span>
+          <FileText size={12} color="var(--color-primary)" />
+          <span>Source: <strong style={{ color: 'var(--color-text)' }}>{sourceLabel}</strong></span>
         </div>
 
         {evidence.sourcePage && (
-          <span style={{ color: '#64748B' }}>Page {evidence.sourcePage}</span>
+          <span style={{ color: 'var(--color-text-muted)' }}>Page {evidence.sourcePage}</span>
         )}
       </div>
 
@@ -141,7 +141,7 @@ export const EvidenceCard: React.FC<EvidenceCardProps> = ({ evidence, documentNa
               background: 'transparent',
               border: 'none',
               padding: 0,
-              color: '#2563EB',
+              color: 'var(--color-primary)',
               fontSize: '0.75rem',
               cursor: 'pointer',
               display: 'flex',
@@ -158,8 +158,8 @@ export const EvidenceCard: React.FC<EvidenceCardProps> = ({ evidence, documentNa
             <div
               style={{
                 marginTop: '0.375rem',
-                background: '#F8FAFC',
-                border: '1px solid #E2E8F0',
+                background: 'var(--bg-surface-secondary)',
+                border: '1px solid var(--color-border)',
                 borderRadius: 'var(--radius-sm)',
                 padding: '0.5rem 0.75rem',
                 fontSize: '0.75rem',

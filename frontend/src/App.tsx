@@ -14,10 +14,64 @@ import { ReadyStatus, UserRole } from './types';
 
 export function App() {
   const [activeTab, setActiveTab] = useState<'home' | 'claimsahay' | 'lending' | 'fintech' | 'journeys' | 'support'>('home');
+  const [selectedJourneyId, setSelectedJourneyId] = useState<string | null>(null);
   const [backendOnline, setBackendOnline] = useState<boolean>(false);
   const [readyStatus, setReadyStatus] = useState<ReadyStatus | null>(null);
   const [activeGoal, setActiveGoal] = useState<string>('');
   const [currentUser, setCurrentUser] = useState(getActiveUser());
+
+  const navigateToTab = (tab: 'home' | 'claimsahay' | 'lending' | 'fintech' | 'journeys' | 'support', updateHistory = true) => {
+    setActiveTab(tab);
+    if (tab !== 'claimsahay') {
+      setSelectedJourneyId(null);
+    }
+    if (updateHistory) {
+      const url = tab === 'home' ? '/' : `/${tab}`;
+      window.history.pushState({ tab }, '', url);
+    }
+  };
+
+  const openJourney = (journeyId: string, updateHistory = true) => {
+    setSelectedJourneyId(journeyId);
+    setActiveTab('claimsahay');
+    if (updateHistory) {
+      window.history.pushState({ tab: 'claimsahay', journeyId }, '', `/journeys/${journeyId}`);
+    }
+  };
+
+  // Popstate listener for Browser Back / Forward and deep links
+  useEffect(() => {
+    const handlePopState = () => {
+      const path = window.location.pathname;
+      const journeyMatch = path.match(/^\/journeys\/([a-zA-Z0-9_-]+)$/);
+      if (journeyMatch) {
+        openJourney(journeyMatch[1], false);
+      } else if (path === '/journeys') {
+        setSelectedJourneyId(null);
+        setActiveTab('journeys');
+      } else if (path === '/claimsahay') {
+        setSelectedJourneyId(null);
+        setActiveTab('claimsahay');
+      } else if (path === '/lending') {
+        setSelectedJourneyId(null);
+        setActiveTab('lending');
+      } else if (path === '/fintech') {
+        setSelectedJourneyId(null);
+        setActiveTab('fintech');
+      } else if (path === '/support') {
+        setSelectedJourneyId(null);
+        setActiveTab('support');
+      } else if (path === '/' || path === '') {
+        setSelectedJourneyId(null);
+        setActiveTab('home');
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    handlePopState();
+
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   // Check backend connectivity on mount
   useEffect(() => {
@@ -53,11 +107,12 @@ export function App() {
   const handleStartJourney = (goalMessage: string, domain?: 'INSURANCE' | 'LENDING' | 'FINTECH') => {
     setActiveGoal(goalMessage);
     if (domain === 'LENDING') {
-      setActiveTab('lending');
+      navigateToTab('lending');
     } else if (domain === 'FINTECH') {
-      setActiveTab('fintech');
+      navigateToTab('fintech');
     } else {
-      setActiveTab('claimsahay');
+      setSelectedJourneyId(null);
+      navigateToTab('claimsahay');
     }
   };
 
@@ -78,42 +133,42 @@ export function App() {
       <div className="nav-bar">
         <div className="nav-tabs">
           <button
-            onClick={() => setActiveTab('home')}
+            onClick={() => navigateToTab('home')}
             className={`nav-tab ${activeTab === 'home' ? 'active' : ''}`}
           >
             <Home size={15} />
             <span>Home</span>
           </button>
           <button
-            onClick={() => setActiveTab('claimsahay')}
+            onClick={() => navigateToTab('claimsahay')}
             className={`nav-tab ${activeTab === 'claimsahay' ? 'active' : ''}`}
           >
             <Shield size={15} />
             <span>ClaimSahay (Insurance)</span>
           </button>
           <button
-            onClick={() => setActiveTab('lending')}
+            onClick={() => navigateToTab('lending')}
             className={`nav-tab ${activeTab === 'lending' ? 'active' : ''}`}
           >
             <DollarSign size={15} />
             <span>Lending Copilot</span>
           </button>
           <button
-            onClick={() => setActiveTab('fintech')}
+            onClick={() => navigateToTab('fintech')}
             className={`nav-tab ${activeTab === 'fintech' ? 'active' : ''}`}
           >
             <CreditCard size={15} />
             <span>Fintech Disputes</span>
           </button>
           <button
-            onClick={() => setActiveTab('journeys')}
+            onClick={() => navigateToTab('journeys')}
             className={`nav-tab ${activeTab === 'journeys' ? 'active' : ''}`}
           >
             <History size={15} />
             <span>Journeys & Audit</span>
           </button>
           <button
-            onClick={() => setActiveTab('support')}
+            onClick={() => navigateToTab('support')}
             className={`nav-tab ${activeTab === 'support' ? 'active' : ''}`}
           >
             <LifeBuoy size={15} />
@@ -133,24 +188,29 @@ export function App() {
         {activeTab === 'home' && (
           <HomePage
             onStartJourney={handleStartJourney}
-            onNavigateTab={(tab) => setActiveTab(tab as any)}
+            onNavigateTab={(tab) => navigateToTab(tab as any)}
             readyStatus={readyStatus}
           />
         )}
         {activeTab === 'claimsahay' && (
           <ClaimSahayPage
             initialGoal={activeGoal}
-            onResetGoal={() => setActiveGoal('')}
+            initialJourneyId={selectedJourneyId || undefined}
+            onResetGoal={() => {
+              setActiveGoal('');
+              setSelectedJourneyId(null);
+            }}
+            onNavigateToJourneys={() => navigateToTab('journeys')}
           />
         )}
         {activeTab === 'lending' && <LendingPage />}
         {activeTab === 'fintech' && <FintechPage />}
         {activeTab === 'journeys' && (
           <JourneysPage
-            onSelectJourney={(j) => {
-              if (j.domain === 'INSURANCE') setActiveTab('claimsahay');
-              else if (j.domain === 'LENDING') setActiveTab('lending');
-              else if (j.domain === 'FINTECH') setActiveTab('fintech');
+            onSelectJourney={(j) => openJourney(j.id)}
+            onStartJourney={() => {
+              setSelectedJourneyId(null);
+              navigateToTab('claimsahay');
             }}
           />
         )}
@@ -158,7 +218,7 @@ export function App() {
       </main>
 
       {/* Institutional Enterprise Footer */}
-      <Footer onNavigateTab={(tab) => setActiveTab(tab as any)} />
+      <Footer onNavigateTab={(tab) => navigateToTab(tab as any)} />
     </div>
   );
 }

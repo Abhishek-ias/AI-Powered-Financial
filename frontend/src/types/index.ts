@@ -72,6 +72,14 @@ export interface Journey {
   documents?: DocumentItem[];
   evidenceItems?: EvidenceItem[];
   consents?: ConsentRecord[];
+  requirements?: JourneyRequirement[];
+  validationResults?: any[];
+  reconciliations?: any[];
+  timelineEvents?: TimelineEvent[];
+  workflowRuns?: any[];
+  claims?: any[];
+  approvalRequests?: any[];
+  supportCases?: any[];
 }
 
 export interface Question {

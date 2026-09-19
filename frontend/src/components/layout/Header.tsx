@@ -36,7 +36,7 @@ export const Header: React.FC<HeaderProps> = ({
       style={{
         height: 'var(--header-height)',
         background: '#FFFFFF',
-        borderBottom: '1px solid #E2E8F0',
+        borderBottom: '1px solid var(--border-subtle)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -46,26 +46,27 @@ export const Header: React.FC<HeaderProps> = ({
         zIndex: 50,
       }}
     >
-      {/* Brand & Product Identity (Dark Navy #0F172A) */}
+      {/* Brand & Product Identity (Forest Green & Dark Text) */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
         <div
           style={{
             width: '32px',
             height: '32px',
             borderRadius: 'var(--radius-md)',
-            background: 'var(--primary)',
+            background: 'var(--color-primary)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            boxShadow: 'var(--shadow-sm)',
           }}
         >
           <Shield size={18} color="#FFFFFF" />
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <span style={{ fontWeight: 700, fontSize: '1.0625rem', letterSpacing: '-0.02em', color: '#0F172A' }}>
+          <span style={{ fontWeight: 700, fontSize: '1.0625rem', letterSpacing: '-0.02em', color: 'var(--color-text)' }}>
             ClaimSahay
           </span>
-          <span className="header-brand-subtitle" style={{ fontSize: '0.75rem', color: '#64748B', borderLeft: '1px solid #E2E8F0', paddingLeft: '0.5rem' }}>
+          <span className="header-brand-subtitle" style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', borderLeft: '1px solid var(--border-subtle)', paddingLeft: '0.5rem' }}>
             AI Financial Journey Copilot
           </span>
         </div>
@@ -84,28 +85,28 @@ export const Header: React.FC<HeaderProps> = ({
         </Badge>
       </div>
 
-      {/* Right Controls: Persona Switcher (#F1F5F9 neutral surface) */}
+      {/* Right Controls: Persona Switcher */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
         <div
           style={{
             display: 'flex',
             alignItems: 'center',
             gap: '0.375rem',
-            background: '#F1F5F9',
+            background: 'var(--bg-surface-secondary)',
             padding: '0.25rem 0.625rem',
             borderRadius: 'var(--radius-md)',
-            border: '1px solid #E2E8F0',
+            border: '1px solid var(--border-subtle)',
           }}
         >
-          <User size={13} style={{ color: '#64748B' }} />
-          <span style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: 500 }}>Persona:</span>
+          <User size={13} style={{ color: 'var(--color-text-muted)' }} />
+          <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', fontWeight: 500 }}>Persona:</span>
           <select
             value={currentUser.userId}
             onChange={handleUserSelect}
             style={{
               background: 'transparent',
               border: 'none',
-              color: '#0F172A',
+              color: 'var(--color-text)',
               fontSize: '0.75rem',
               fontWeight: 600,
               outline: 'none',
@@ -113,7 +114,7 @@ export const Header: React.FC<HeaderProps> = ({
             }}
           >
             {DEMO_USERS.map(u => (
-              <option key={u.id} value={u.id} style={{ background: '#FFFFFF', color: '#0F172A' }}>
+              <option key={u.id} value={u.id} style={{ background: '#FFFFFF', color: '#14231C' }}>
                 {u.name} ({u.label})
               </option>
             ))}
