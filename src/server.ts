@@ -6,9 +6,10 @@ import { env, getProviderStatus } from './config/env';
 
 async function main() {
   const app = createApp();
-  const port = env.PORT;
+  const port = Number(process.env.PORT) || env.PORT || 3000;
+  const host = '0.0.0.0';
 
-  app.listen(port, '0.0.0.0', () => {
+  app.listen(port, host, () => {
     const providers = getProviderStatus();
     console.log('');
     console.log('╔══════════════════════════════════════════════════════╗');
