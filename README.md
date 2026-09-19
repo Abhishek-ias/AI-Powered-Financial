@@ -514,7 +514,7 @@ Response
    ↓
 React UI Update
 📁 Repository Structure
-AI-Powered-Fonancial/
+AI-Powered-Financial/
 │
 ├── frontend/
 │   ├── public/
